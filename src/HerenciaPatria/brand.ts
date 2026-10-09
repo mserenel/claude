@@ -1,5 +1,6 @@
 import "@fontsource/cormorant-garamond/600.css";
 import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
 
 export const colors = {
   azul: "#14233B",

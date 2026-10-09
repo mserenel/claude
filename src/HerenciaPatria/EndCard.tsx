@@ -16,12 +16,17 @@ const fadeIn = (frame: number, start: number, length = 14) =>
   });
 
 // Cierre: se oscurece la escena y aparece el logo original (sin modificar)
-// con el llamado a la acción.
-export const EndCard: React.FC<{ readonly cta: string }> = ({ cta }) => {
+// con el llamado a la acción y, si hay, los beneficios de compra.
+export const EndCard: React.FC<{
+  readonly cta: string;
+  readonly benefits?: string[];
+}> = ({ cta, benefits = [] }) => {
   const frame = useCurrentFrame();
-  const dim = fadeIn(frame, 0, 18);
-  const logo = fadeIn(frame, 10);
-  const text = fadeIn(frame, 24);
+  const fast = benefits.length > 0;
+  const dim = fadeIn(frame, 0, fast ? 12 : 18);
+  const logo = fadeIn(frame, fast ? 4 : 10);
+  const text = fadeIn(frame, fast ? 14 : 24);
+  const logoSize = fast ? 360 : 440;
 
   return (
     <AbsoluteFill>
@@ -32,14 +37,14 @@ export const EndCard: React.FC<{ readonly cta: string }> = ({ cta }) => {
         style={{
           alignItems: "center",
           justifyContent: "center",
-          paddingBottom: 120,
+          paddingBottom: fast ? 60 : 120,
         }}
       >
         <Img
           src={staticFile("logo-herencia-patria.png")}
           style={{
-            width: 440,
-            height: 440,
+            width: logoSize,
+            height: logoSize,
             opacity: logo,
             transform: `scale(${0.96 + 0.04 * logo})`,
           }}
@@ -69,6 +74,42 @@ export const EndCard: React.FC<{ readonly cta: string }> = ({ cta }) => {
         >
           {cta}
         </div>
+        {benefits.length > 0 ? (
+          <div
+            style={{
+              marginTop: 64,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            {benefits.map((b, i) => {
+              const t = fadeIn(frame, 26 + i * 7, 12);
+              return (
+                <div
+                  key={b}
+                  style={{
+                    opacity: t,
+                    transform: `translateY(${(1 - t) * 10}px)`,
+                    fontFamily: fonts.sans,
+                    fontWeight: 600,
+                    fontSize: 46,
+                    whiteSpace: "nowrap",
+                    letterSpacing: 0.5,
+                    color: colors.crema,
+                    padding: "18px 0",
+                    width: 900,
+                    textAlign: "center",
+                    borderTop:
+                      i === 0 ? undefined : "1px solid rgba(243,235,221,0.35)",
+                  }}
+                >
+                  {b}
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
       </AbsoluteFill>
     </AbsoluteFill>
   );

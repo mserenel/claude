@@ -91,23 +91,44 @@ const Camera: React.FC<{
 
 const hook = ["Hay piezas", "que llevan", "nuestra esencia."];
 
-const captions = (offset: number) =>
-  [
-    { from: 0, frames: 75, text: "La nobleza de los materiales." },
-    { from: 75, frames: 75, text: "El oficio detrás de cada terminación." },
-    { from: 150, frames: 75, text: "Ningún detalle está librado al azar." },
-    { from: 225, frames: 75, text: "Una pieza con identidad propia." },
-  ].map((c) => ({ ...c, from: c.from + offset }));
+// Cierre de 4 s: logo, frase y beneficios de compra.
+const CIERRE = 120;
+const benefits = [
+  "Envío gratis",
+  "3 cuotas sin interés",
+  "20% de descuento en transferencia",
+];
 
-const Texts: React.FC<{ readonly offset: number }> = ({ offset }) => (
-  <>
-    {captions(offset).map((t) => (
-      <Sequence key={t.text} from={t.from} durationInFrames={t.frames}>
-        {/* Arriba, sobre los árboles: abajo están el mate y las manos. */}
-        <Caption text={t.text} position="top" />
-      </Sequence>
-    ))}
-  </>
+const captionTexts = [
+  "La nobleza de los materiales.",
+  "El oficio detrás de cada terminación.",
+  "Ningún detalle está librado al azar.",
+  "Una pieza con identidad propia.",
+];
+
+// Los cuatro textos se reparten el tiempo entre el gancho y el cierre.
+const Texts: React.FC<{ readonly offset: number }> = ({ offset }) => {
+  const each = (CRUDO_FRAMES - CIERRE - offset) / captionTexts.length;
+  return (
+    <>
+      {captionTexts.map((text, i) => {
+        const from = Math.round(offset + i * each);
+        const to = Math.round(offset + (i + 1) * each);
+        return (
+          <Sequence key={text} from={from} durationInFrames={to - from}>
+            {/* Arriba, sobre los árboles: abajo están el mate y las manos. */}
+            <Caption text={text} position="top" />
+          </Sequence>
+        );
+      })}
+    </>
+  );
+};
+
+const Cierre: React.FC<{ readonly cta: string }> = ({ cta }) => (
+  <Sequence from={CRUDO_FRAMES - CIERRE}>
+    <EndCard cta={cta} benefits={benefits} />
+  </Sequence>
 );
 
 // A: abre con 2 s del mejor plano (el mate inclinado, la virola cincelada y
@@ -141,9 +162,7 @@ const CrudoA: React.FC<{ readonly cta: string }> = ({ cta }) => (
       />
     </Sequence>
     <Texts offset={HOOK_A} />
-    <Sequence from={HOOK_A + 300}>
-      <EndCard cta={cta} />
-    </Sequence>
+    <Cierre cta={cta} />
   </AbsoluteFill>
 );
 
@@ -177,9 +196,7 @@ const CrudoB: React.FC<{ readonly cta: string }> = ({ cta }) => {
         <BigTitle lines={hook} delay={8} />
       </Sequence>
       <Texts offset={HOOK_B} />
-      <Sequence from={HOOK_B + 300}>
-        <EndCard cta={cta} />
-      </Sequence>
+      <Cierre cta={cta} />
     </AbsoluteFill>
   );
 };
