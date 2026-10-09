@@ -3,11 +3,12 @@ import { Caption } from "./Caption";
 import { EndCard } from "./EndCard";
 import { Photo } from "./Photo";
 
-// Material (todo real, sin recortes ni composición):
+// Material:
 // - public/escena.jpg: foto del mate en la mesa, con luz de ventana.
-// - public/lado-*.jpg: capturas del video del giro (public/giro.mp4), una por
-//   cada lado del mate, elegidas por nitidez y escaladas con Lanczos:
-//   número (cuadro 341), escudo (1381), bandera (901) y pata (721).
+// - public/lado-*.jpg: una captura real de cada lado del mate (cuadros 341,
+//   1381, 901 y 721 de public/giro.mp4), recortada con BiRefNet, revisada a
+//   mano y apoyada en la mesa de la escena (tools/compose_foto.py; máscaras
+//   en tools/mascaras/).
 // - public/logo-herencia-patria.png: logo original.
 
 type Plano = {

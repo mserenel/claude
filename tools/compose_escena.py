@@ -39,12 +39,28 @@ def to_dst(x, y):
     return DST_CX + (x - TT_CX) * SCALE, DST_CY + (y - TT_CY) * SCALE
 
 
-def build_plate(escena_path, mask_path):
+def wood(px):
+    """1 para madera de la mesa (oscura y cálida), 0 para lo claro o gris."""
+    hsv = cv2.cvtColor(px[None].astype(np.uint8), cv2.COLOR_BGR2HSV)[0].astype(np.float32)
+    dark = np.clip((190 - hsv[:, 2]) / 40, 0, 1)
+    warm = np.clip((hsv[:, 1] - 50) / 40, 0, 1)
+    return (dark * warm)[:, None]
+
+
+def build_plate(escena_path, mask_path, blur=7, mirror=0, reflection=0):
     img = cv2.imread(escena_path).astype(np.float32)
     m = cv2.imread(mask_path, 0)
     m = cv2.dilate((m > 40).astype(np.uint8), np.ones((41, 41), np.uint8)) > 0
     # Relleno por filas: cada fila interpola entre sus bordes reales.
     out = img.copy()
+    # El relleno por filas cubre todo el ancho entre bordes (también el espacio
+    # entre las patas): ese es el hueco real.
+    span = np.zeros_like(m)
+    for y in range(img.shape[0]):
+        xs = np.where(m[y])[0]
+        if len(xs):
+            span[y, xs.min() : xs.max() + 1] = True
+    m = span
     for y in range(img.shape[0]):
         xs = np.where(m[y])[0]
         if len(xs) == 0:
@@ -52,6 +68,32 @@ def build_plate(escena_path, mask_path):
         x0, x1 = max(xs.min() - 1, 0), min(xs.max() + 1, img.shape[1] - 1)
         t = np.linspace(0, 1, x1 - x0 + 1)[:, None]
         out[y, x0 : x1 + 1] = img[y, x0] * (1 - t) + img[y, x1] * t
+    # Parte baja del hueco (la mesa): cada fila se rellena con madera de esa
+    # misma fila tomada de los dos costados, espejada sobre cada borde y
+    # fundida de izquierda a derecha. Misma fila = misma distancia a la
+    # cámara, así coinciden foco, escala y veta. Se extiende hacia abajo para
+    # tapar también el reflejo del mate original en el barniz, y el borde del
+    # relleno se funde con la foto.
+    if mirror:
+        ys = np.where(m.any(1))[0]
+        y0, yb = ys.max() - mirror, ys.max() + reflection
+        hole = np.zeros(m.shape, np.float32)
+        fill = img.copy()
+        cols = np.where(m[y0 : ys.max() + 1].any(0))[0]
+        xl, xr = cols.min() - 1, cols.max() + 1
+        for y in range(y0, min(yb, img.shape[0])):
+            xs = np.arange(xl + 1, xr)
+            t = ((xs - xl) / (xr - xl))[:, None]
+            left = img[y, np.clip(2 * xl - xs, 0, img.shape[1] - 1)]
+            right = img[y, np.clip(2 * xr - xs, 0, img.shape[1] - 1)]
+            # Solo madera: se descartan píxeles claros y sin color (flecos
+            # de la manta, lomos de libros).
+            wl = (1 - t) * (wood(left) + 1e-3)
+            wr = t * (wood(right) + 1e-3)
+            fill[y, xl + 1 : xr] = (left * wl + right * wr) / (wl + wr)
+            hole[y, xl + 1 : xr] = 1
+        hole = cv2.GaussianBlur(hole, (0, 0), 6)[..., None]
+        out = out * (1 - hole) + fill * hole
     out = np.clip(out, 0, 255).astype(np.uint8)
     # 3:4 -> 9:16: escalar a 1920 de alto y recortar al centro.
     h, w = out.shape[:2]
@@ -60,7 +102,9 @@ def build_plate(escena_path, mask_path):
     x = (out.shape[1] - W) // 2
     out = out[:, x : x + W]
     # Profundidad de campo: el fondo fuera de foco, como con un lente abierto.
-    return cv2.GaussianBlur(out, (0, 0), 7).astype(np.float32)
+    if blur:
+        out = cv2.GaussianBlur(out, (0, 0), blur)
+    return out.astype(np.float32)
 
 
 def soft_ellipse(cx, cy, rx, ry, blur):
