@@ -1,6 +1,6 @@
 import { Composition } from "remotion";
 import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
-import { Crudo, CRUDO_FRAMES } from "./HerenciaPatria/Crudo";
+import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
 
 // Cada <Composition> aparece en la barra lateral del Studio.
 
@@ -44,6 +44,19 @@ export const RemotionRoot: React.FC = () => {
           }}
         />
       ))}
+      {/* npx remotion render HP-Crudo-A-20s out/herencia-patria-crudo-A-20s.mp4 */}
+      <Composition
+        id="HP-Crudo-A-20s"
+        component={Crudo}
+        durationInFrames={CRUDO_FRAMES_20}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          hook: "A20" as const,
+          cta: "Tradición que se lleva en las manos.",
+        }}
+      />
     </>
   );
 };

@@ -1,11 +1,13 @@
 import {
   AbsoluteFill,
+  Audio,
   Easing,
   interpolate,
   OffthreadVideo,
   Sequence,
   staticFile,
   useCurrentFrame,
+  useVideoConfig,
 } from "remotion";
 import { BigTitle } from "./BigTitle";
 import { Caption } from "./Caption";
@@ -16,8 +18,17 @@ import { EndCard } from "./EndCard";
 // moderada, saturación leve) y escalado a 1620x2880, con margen para acercar
 // la cámara sin perder nitidez. El último cuadro se sostiene 1 s. Sonido
 // ambiente real del parque, filtrado y normalizado a -20 LUFS.
+//
+// Versión de 20 s: public/mate-crudo-lento.mp4 es el mismo video al 80 % de
+// velocidad, con cuadros intermedios por compensación de movimiento
+// (minterpolate), revisados a tamaño real en los tramos de más movimiento.
+// Su sonido se reemplaza por public/ambiente-20s.m4a: el ambiente limpio del
+// parque extendido a 20 s con un fundido entre dos tramos.
 
 export const CRUDO_FRAMES = 450;
+export const CRUDO_FRAMES_20 = 600;
+// Cuánto más largo es mate-crudo-lento.mp4 que mate-crudo.mp4.
+const LENTO = 1.25;
 
 type Key = [number, number];
 
@@ -40,14 +51,27 @@ const mate: [number, number, number][] = [
   [450, 44, 53],
 ];
 
-// Cámara en tiempo del video original: el punto de escala sigue al mate.
+// Cámara: el punto de escala sigue al mate. `from` y las claves de zoom van en
+// cuadros del archivo de video; `stretch` dice cuánto más lento es ese archivo
+// que el original, para ubicar al mate.
 const Camera: React.FC<{
+  readonly src?: string;
+  readonly stretch?: number;
+  readonly muted?: boolean;
   readonly from: number;
   readonly zoom: Key[];
   readonly focusY?: number;
   // Cuadro (del plano) desde el que el sonido baja hasta cero en 20 cuadros.
   readonly fadeOutAt?: number;
-}> = ({ from, zoom, focusY, fadeOutAt }) => {
+}> = ({
+  src = "mate-crudo.mp4",
+  stretch = 1,
+  muted,
+  from,
+  zoom,
+  focusY,
+  fadeOutAt,
+}) => {
   const f = useCurrentFrame() + from;
   const scale = interpolate(
     f,
@@ -61,15 +85,16 @@ const Camera: React.FC<{
   );
   const at = (i: 1 | 2) =>
     interpolate(
-      f,
+      f / stretch,
       mate.map((k) => k[0]),
       mate.map((k) => k[i]),
     );
   return (
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
       <OffthreadVideo
-        src={staticFile("mate-crudo.mp4")}
+        src={staticFile(src)}
         trimBefore={from}
+        muted={muted}
         volume={(f) =>
           fadeOutAt === undefined
             ? 1
@@ -91,7 +116,7 @@ const Camera: React.FC<{
 
 const hook = ["Hay piezas", "que llevan", "nuestra esencia."];
 
-// Cierre de 4 s: logo, frase y beneficios de compra.
+// Cierre: logo, frase y beneficios de compra (4 s; 5 s en la de 20 s).
 const CIERRE = 120;
 const benefits = [
   "Envío gratis",
@@ -107,8 +132,12 @@ const captionTexts = [
 ];
 
 // Los cuatro textos se reparten el tiempo entre el gancho y el cierre.
-const Texts: React.FC<{ readonly offset: number }> = ({ offset }) => {
-  const each = (CRUDO_FRAMES - CIERRE - offset) / captionTexts.length;
+const Texts: React.FC<{ readonly offset: number; readonly cierre: number }> = ({
+  offset,
+  cierre,
+}) => {
+  const { durationInFrames } = useVideoConfig();
+  const each = (durationInFrames - cierre - offset) / captionTexts.length;
   return (
     <>
       {captionTexts.map((text, i) => {
@@ -125,11 +154,17 @@ const Texts: React.FC<{ readonly offset: number }> = ({ offset }) => {
   );
 };
 
-const Cierre: React.FC<{ readonly cta: string }> = ({ cta }) => (
-  <Sequence from={CRUDO_FRAMES - CIERRE}>
-    <EndCard cta={cta} benefits={benefits} />
-  </Sequence>
-);
+const Cierre: React.FC<{ readonly cta: string; readonly cierre: number }> = ({
+  cta,
+  cierre,
+}) => {
+  const { durationInFrames } = useVideoConfig();
+  return (
+    <Sequence from={durationInFrames - cierre}>
+      <EndCard cta={cta} benefits={benefits} />
+    </Sequence>
+  );
+};
 
 // A: abre con 2 s del mejor plano (el mate inclinado, la virola cincelada y
 // la boca) bien cerca, y corta al comienzo del video.
@@ -161,8 +196,8 @@ const CrudoA: React.FC<{ readonly cta: string }> = ({ cta }) => (
         ]}
       />
     </Sequence>
-    <Texts offset={HOOK_A} />
-    <Cierre cta={cta} />
+    <Texts offset={HOOK_A} cierre={CIERRE} />
+    <Cierre cta={cta} cierre={CIERRE} />
   </AbsoluteFill>
 );
 
@@ -195,14 +230,62 @@ const CrudoB: React.FC<{ readonly cta: string }> = ({ cta }) => {
       <Sequence durationInFrames={HOOK_B}>
         <BigTitle lines={hook} delay={8} />
       </Sequence>
-      <Texts offset={HOOK_B} />
-      <Cierre cta={cta} />
+      <Texts offset={HOOK_B} cierre={CIERRE} />
+      <Cierre cta={cta} cierre={CIERRE} />
     </AbsoluteFill>
   );
 };
 
+// A de 20 s: mismo gancho, el resto en cámara lenta al 80 %, cada texto
+// ~3,2 s y el cierre con los beneficios 5 s.
+const CIERRE_20 = 150;
+const CrudoA20: React.FC<{ readonly cta: string }> = ({ cta }) => (
+  <AbsoluteFill style={{ backgroundColor: "black" }}>
+    <Audio src={staticFile("ambiente-20s.m4a")} />
+    <Sequence durationInFrames={HOOK_A}>
+      <Camera
+        muted
+        from={140}
+        zoom={[
+          [140, 1.55],
+          [200, 1.42],
+        ]}
+      />
+      <BigTitle lines={hook} />
+    </Sequence>
+    <Sequence from={HOOK_A}>
+      <Camera
+        muted
+        src="mate-crudo-lento.mp4"
+        stretch={LENTO}
+        from={0}
+        zoom={(
+          [
+            [0, 1],
+            [75, 1.15],
+            [135, 1.3],
+            [210, 1.38],
+            [255, 1.08],
+            [300, 1.25],
+            [390, 1.15],
+            [450, 1.2],
+          ] as Key[]
+        ).map(([k, z]) => [k * LENTO, z] as Key)}
+      />
+    </Sequence>
+    <Texts offset={HOOK_A} cierre={CIERRE_20} />
+    <Cierre cta={cta} cierre={CIERRE_20} />
+  </AbsoluteFill>
+);
+
 export const Crudo: React.FC<{
-  readonly hook: "A" | "B";
+  readonly hook: "A" | "B" | "A20";
   readonly cta: string;
 }> = ({ hook: version, cta }) =>
-  version === "A" ? <CrudoA cta={cta} /> : <CrudoB cta={cta} />;
+  version === "A" ? (
+    <CrudoA cta={cta} />
+  ) : version === "B" ? (
+    <CrudoB cta={cta} />
+  ) : (
+    <CrudoA20 cta={cta} />
+  );
