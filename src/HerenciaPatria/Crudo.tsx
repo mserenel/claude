@@ -2,7 +2,6 @@ import {
   AbsoluteFill,
   Audio,
   Easing,
-  Freeze,
   interpolate,
   OffthreadVideo,
   Sequence,
@@ -22,14 +21,12 @@ import { EndCard } from "./EndCard";
 //
 // Versión de 20 s: el video completo a velocidad real (sin cámara lenta: la
 // interpolación de cuadros dejaba contornos dobles en la pata del mate). El
-// último cuadro queda quieto debajo del cierre. El sonido es
+// cierre va sobre un plano abierto del comienzo, en movimiento. El sonido es
 // public/ambiente-20s.m4a: el ambiente limpio del parque extendido a 20 s con
 // un fundido entre dos tramos.
 
 export const CRUDO_FRAMES = 450;
 export const CRUDO_FRAMES_20 = 600;
-// Último cuadro con movimiento de mate-crudo.mp4 (14,1 s).
-const ULTIMO = 423;
 
 type Key = [number, number];
 
@@ -231,7 +228,7 @@ const CrudoB: React.FC<{ readonly cta: string }> = ({ cta }) => {
 
 // A de 20 s: mismo gancho; el resto del video a velocidad real, ahora
 // completo (incluye el giro de frente del final), cada texto ~3,3 s y el
-// cierre con los beneficios 5 s.
+// cierre con los beneficios 5 s, con movimiento real debajo hasta el final.
 const CIERRE_20 = 150;
 const zoom20: Key[] = [
   [0, 1],
@@ -241,7 +238,7 @@ const zoom20: Key[] = [
   [255, 1.08],
   [300, 1.25],
   [360, 1.12],
-  [ULTIMO, 1.22],
+  [390, 1.18],
 ];
 const CrudoA20: React.FC<{ readonly cta: string }> = ({ cta }) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
@@ -257,14 +254,24 @@ const CrudoA20: React.FC<{ readonly cta: string }> = ({ cta }) => (
       />
       <BigTitle lines={hook} />
     </Sequence>
-    <Sequence from={HOOK_A} durationInFrames={ULTIMO}>
+    <Sequence
+      from={HOOK_A}
+      durationInFrames={CRUDO_FRAMES_20 - HOOK_A - CIERRE_20}
+    >
       <Camera muted from={0} zoom={zoom20} />
     </Sequence>
-    {/* Debajo del cierre: el último cuadro quieto. */}
-    <Sequence from={HOOK_A + ULTIMO}>
-      <Freeze frame={ULTIMO - 1}>
-        <Camera muted from={0} zoom={zoom20} />
-      </Freeze>
+    {/* Plano final debajo del cierre: corte limpio (un fundido mostraba dos
+        mates superpuestos) a un plano abierto del comienzo, con el mate de
+        frente y en movimiento real hasta el último cuadro. */}
+    <Sequence from={CRUDO_FRAMES_20 - CIERRE_20}>
+      <Camera
+        muted
+        from={0}
+        zoom={[
+          [0, 1.02],
+          [CIERRE_20, 1.12],
+        ]}
+      />
     </Sequence>
     <Texts offset={HOOK_A} cierre={CIERRE_20} />
     <Cierre cta={cta} cierre={CIERRE_20} />
