@@ -1,54 +1,50 @@
 import { AbsoluteFill, Series } from "remotion";
 import { Caption } from "./Caption";
-import { Clip } from "./Clip";
 import { EndCard } from "./EndCard";
 import { Photo } from "./Photo";
 
-// Material:
-// - public/escena.jpg: foto real del mate en la mesa, con luz de ventana.
-// - public/giro-hq.mp4: el giro real del mate sobre su base real
-//   (public/giro.mp4 escalado con Lanczos). Sin recortes ni composición:
-//   el mate no pasa por ningún algoritmo que pueda alterarlo.
+// Material (todo real, sin recortes ni composición):
+// - public/escena.jpg: foto del mate en la mesa, con luz de ventana.
+// - public/lado-*.jpg: capturas del video del giro (public/giro.mp4), una por
+//   cada lado del mate, elegidas por nitidez y escaladas con Lanczos:
+//   número (cuadro 341), escudo (1381), bandera (901) y pata (721).
 // - public/logo-herencia-patria.png: logo original.
 
 type Plano = {
-  readonly from: number; // segundo del giro
+  readonly src: string;
   readonly frames: number;
   readonly zoom: [number, number];
   readonly focus: [number, number];
   readonly text: string;
 };
 
-const planos: Plano[] = [
-  // El 8 pasa por el frente a los 5 s.
+const lados: Plano[] = [
   {
-    from: 4.75,
-    frames: 42,
-    zoom: [1.32, 1.36],
-    focus: [50, 30],
+    src: "lado-numero.jpg",
+    frames: 60,
+    zoom: [1.06, 1.12],
+    focus: [50, 35],
     text: "Tu número.",
   },
-  // El escudo llega al frente a los 23 s (segunda vuelta).
   {
-    from: 21.4,
-    frames: 63,
-    zoom: [1, 1.04],
-    focus: [50, 55],
+    src: "lado-escudo.jpg",
+    frames: 60,
+    zoom: [1.12, 1.06],
+    focus: [50, 35],
     text: "Tu escudo.",
   },
-  // La bandera pasa por el frente a los 14,7 s.
   {
-    from: 13.2,
-    frames: 75,
-    zoom: [1.3, 1.34],
-    focus: [50, 30],
+    src: "lado-bandera.jpg",
+    frames: 60,
+    zoom: [1.06, 1.12],
+    focus: [50, 35],
     text: "Tus colores.",
   },
   {
-    from: 18.2,
-    frames: 54,
-    zoom: [1.18, 1.22],
-    focus: [50, 75],
+    src: "lado-pata.jpg",
+    frames: 66,
+    zoom: [1.12, 1.06],
+    focus: [50, 70],
     text: "Terminación en cada detalle.",
   },
 ];
@@ -56,7 +52,7 @@ const planos: Plano[] = [
 const HOOK = 75;
 const CIERRE = 90;
 export const AD_FRAMES =
-  HOOK + planos.reduce((total, p) => total + p.frames, 0) + CIERRE;
+  HOOK + lados.reduce((total, p) => total + p.frames, 0) + CIERRE;
 
 export type AdProps = {
   readonly hook: "A" | "B";
@@ -77,14 +73,9 @@ export const Ad: React.FC<AdProps> = ({ hook, cta }) => {
           <Photo src="escena.jpg" zoom={[1.45, 1.12]} focus={[52, 38]} />
           <Caption text={hooks[hook]} />
         </Series.Sequence>
-        {planos.map((p) => (
-          <Series.Sequence key={p.text} durationInFrames={p.frames}>
-            <Clip
-              src="giro-hq.mp4"
-              from={p.from}
-              zoom={p.zoom}
-              focus={p.focus}
-            />
+        {lados.map((p) => (
+          <Series.Sequence key={p.src} durationInFrames={p.frames}>
+            <Photo src={p.src} zoom={p.zoom} focus={p.focus} />
             <Caption text={p.text} />
           </Series.Sequence>
         ))}
