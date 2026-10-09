@@ -36,7 +36,9 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{ cta }}
+        defaultProps={{
+          cta: "Herencia Patria · Tradición que se lleva en las manos.",
+        }}
       />
     </>
   );
