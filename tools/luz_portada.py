@@ -55,11 +55,20 @@ def main():
     orig_l = orig.mean(2, keepdims=True)
     orig_sat = orig.max(2, keepdims=True) - orig.min(2, keepdims=True)
     metal = np.clip((orig_l - 0.42) / 0.15, 0, 1) * np.clip((0.16 - orig_sat) / 0.08, 0, 1)
+    zone = np.ones_like(metal)
     if metal_zone:
         # Solo dentro de la virola: el cuero claro no debe tomarse por metal.
         mx, my, mrx, mry = metal_zone
         dz = ((xx / w - mx) / mrx) ** 2 + ((yy / h - my) / mry) ** 2
-        metal = metal * np.clip((1 - dz) / 0.08, 0, 1)[..., None]
+        zone = np.clip((1 - dz) / 0.08, 0, 1)[..., None]
+        # El borde dorado (cordón de bronce) también conserva su color.
+        r, g, b = orig[..., 0:1], orig[..., 1:2], orig[..., 2:3]
+        gold = (
+            np.clip((orig_l - 0.3) / 0.1, 0, 1)
+            * np.clip(((r + g) / 2 - b - 0.08) / 0.06, 0, 1)
+            * np.clip((0.12 - np.abs(r - g)) / 0.06, 0, 1)
+        )
+        metal = np.maximum(metal, gold) * zone
     metal = np.asarray(
         Image.fromarray((metal[..., 0] * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(3))
     ).astype(np.float32)[..., None] / 255
@@ -71,7 +80,7 @@ def main():
     if bg_life:
         # Fondo: más color y contraste lejos del mate, para que no se vea
         # apagado. El producto no se toca.
-        bg = np.clip(d / 2.5, 0, 1)[..., None] * bg_life
+        bg = np.clip(d / 2.5, 0, 1)[..., None] * bg_life * (1 - metal)
         lum = im.mean(2, keepdims=True)
         lively = lum + (im - lum) * 1.35
         lively = lively + 0.12 * np.sin(np.pi * (lively - 0.5)) * (1 - np.abs(2 * lively - 1)) * 2
