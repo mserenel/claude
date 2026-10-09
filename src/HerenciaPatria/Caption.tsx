@@ -50,6 +50,7 @@ export const Caption: React.FC<{
           lineHeight: 1.02,
           color: colors.crema,
           textShadow: "0 2px 18px rgba(0,0,0,0.35)",
+          textWrap: "balance",
         }}
       >
         {text}

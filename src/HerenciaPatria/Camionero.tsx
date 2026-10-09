@@ -89,13 +89,13 @@ const Camera: React.FC<{ readonly from: number; readonly zoom: Key[] }> = ({
   );
 };
 
-const hook = ["Un mate", "que se elige", "para siempre."];
+const hook = ["La calidad", "se reconoce", "en los detalles."];
 
 const captionTexts = [
-  "Cuero crudo, al natural.",
-  "Boca ancha para cebar sin apuro.",
-  "Cada trenza, en su lugar.",
-  "Un clásico que no pasa de moda.",
+  "Materiales nobles, elegidos con criterio.",
+  "El trabajo artesanal se ve en cada terminación.",
+  "Cada elemento tiene su razón de ser.",
+  "Hecho para acompañarte durante años.",
 ];
 
 const benefits = [
