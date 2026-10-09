@@ -23,6 +23,10 @@ W, H = 1080, 1920
 
 # Geometría medida en el video original (464x832).
 TT_CX, TT_CY, TT_RX, TT_RY = 235, 674, 228, 66  # cara superior de la base
+# Profundidad con que se dibuja la cara superior: un poco mayor que la medida,
+# para que la huella del mate (estrella de la base) quede adentro y no en el
+# borde trasero, que es lo que lo hacía ver flotando.
+TOP_RY = 82
 SCALE = 2.1
 # Dónde cae el centro de la cara superior de la base en el cuadro final.
 DST_CX, DST_CY = 540, 1400
@@ -68,7 +72,7 @@ def soft_ellipse(cx, cy, rx, ry, blur):
 def build_base():
     """Devuelve (color, alpha) de la base giratoria negra mate, y la sombra."""
     cx, cy = DST_CX, DST_CY
-    rx, ry = TT_RX * SCALE, TT_RY * SCALE
+    rx, ry = TT_RX * SCALE, TOP_RY * SCALE
     color = np.zeros((H, W, 3), np.float32)
     alpha = np.zeros((H, W), np.float32)
 
@@ -86,12 +90,13 @@ def build_base():
     color[s] = side_col[s]
     alpha[s] = 1
 
-    # Cara superior, un poco más clara, con brillo suave a la derecha.
+    # Cara superior satinada: gris oscuro (no negro puro, para que se lean la
+    # sombra de contacto y el reflejo del mate) con el brillo del sol a la derecha.
     top = np.zeros((H, W), np.uint8)
     cv2.ellipse(top, (int(cx), int(cy)), (int(rx), int(ry)), 0, 0, 360, 1, -1)
     yy, xx = np.mgrid[0:H, 0:W]
     glow = np.exp(-(((xx - (cx + rx * 0.45)) / (rx * 0.6)) ** 2 + ((yy - cy) / (ry * 0.9)) ** 2))
-    top_col = 11 + 9 * (yy - (cy - ry)) / (2 * ry) + 38 * glow
+    top_col = 30 + 16 * (yy - (cy - ry)) / (2 * ry) + 62 * glow
     t = top.astype(bool)
     color[t] = np.dstack([top_col * 0.95, top_col * 0.95, top_col * 0.97])[t]
     alpha[t] = 1
@@ -107,7 +112,8 @@ def build_base():
     # Sombras sobre la mesa: oclusión debajo y proyectada hacia la izquierda.
     shadow = 0.75 * soft_ellipse(cx, cy + SIDE_H + 10, rx * 1.02, ry * 0.9, 14)
     shadow += 0.45 * soft_ellipse(cx - rx * 0.55, cy + SIDE_H + 6, rx * 1.05, ry * 0.75, 40)
-    return color, alpha, np.clip(shadow, 0, 0.85)
+    top_a = cv2.GaussianBlur(top.astype(np.float32), (0, 0), 0.8)
+    return color, alpha, np.clip(shadow, 0, 0.85), top_a
 
 
 def is_clean(m):
@@ -130,20 +136,48 @@ def relight(rgb, mask, bbox):
     return np.clip(out, 0, 255)
 
 
+def touch_the_base(frame, fw, mw, top_a, xx, yy):
+    """Lo que hace que el mate se vea apoyado y no flotando:
+    - sombra de contacto que sigue el borde inferior de la banda plateada;
+    - reflejo suave del mate en la cara satinada de la base, espejado en cada
+      columna sobre el punto donde el mate toca la base."""
+    solid = mw > 0.5
+    has = solid.any(0)
+    bottom = np.where(has, H - 1 - np.argmax(solid[::-1], 0), 0).astype(np.float32)
+    bottom = cv2.GaussianBlur(bottom[None, :], (0, 0), 3)[0]
+    below = (yy - bottom[None, :]) * has[None, :]
+    on_top = top_a * (1 - mw)
+
+    # Reflejo: y espejada = 2*borde - y.
+    map_y = (2 * bottom[None, :] - yy).astype(np.float32)
+    refl = cv2.remap(fw, xx, map_y, cv2.INTER_LINEAR, borderValue=0)
+    refl_a = cv2.remap(mw, xx, map_y, cv2.INTER_LINEAR, borderValue=0)
+    refl = cv2.GaussianBlur(refl, (0, 0), 2.5)
+    refl_a = cv2.GaussianBlur(refl_a, (0, 0), 2.5)
+    w = 0.32 * np.exp(-np.clip(below, 0, None) / 55) * (below > 0) * refl_a * on_top
+    frame = frame * (1 - w[..., None]) + refl * w[..., None]
+
+    # Sombra de contacto: oscurece justo debajo y alrededor del apoyo.
+    ao = cv2.GaussianBlur(np.roll(mw, 5, axis=0), (0, 0), 6)
+    ao = 0.85 * ao * on_top * (below > -25)
+    return frame * (1 - ao[..., None])
+
+
 def main():
     frames, masks, escena, escena_mask, out_dir = sys.argv[1:6]
     start, end, step = (int(v) for v in sys.argv[6:9])
     os.makedirs(out_dir, exist_ok=True)
 
     plate = build_plate(escena, escena_mask)
-    base_col, base_a, shadow = build_base()
+    base_col, base_a, shadow, top_a = build_base()
     bg = plate * (1 - shadow[..., None])
     bg = bg * (1 - base_a[..., None]) + base_col * base_a[..., None]
 
     # Afín fija video -> cuadro final (la cámara no se mueve).
     M = np.float32([[SCALE, 0, DST_CX - TT_CX * SCALE], [0, SCALE, DST_CY - TT_CY * SCALE]])
-    # Sombra de contacto del mate sobre la base (hacia la izquierda, lejos del sol).
-    contact = 0.8 * soft_ellipse(DST_CX - 30, DST_CY + 20, 300, 70, 18)
+    # Sombra general del mate sobre la base (hacia la izquierda, lejos del sol).
+    contact = 0.45 * soft_ellipse(DST_CX - 30, DST_CY + 20, 300, 70, 18)
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
 
     names = sorted(os.listdir(frames))
     bad = []
@@ -169,7 +203,8 @@ def main():
         xs = np.where(mw.max(0) > 0.5)[0]
         fw = relight(fw, mw, (xs.min(), xs.max()) if len(xs) else (0, W))
 
-        frame = bg * (1 - contact[..., None] * base_a[..., None])
+        frame = bg * (1 - contact[..., None] * top_a[..., None])
+        frame = touch_the_base(frame, fw, mw, top_a, xx, yy)
         frame = frame * (1 - mw[..., None]) + fw * mw[..., None]
         cv2.imwrite(os.path.join(out_dir, f"{n:05d}.png"), np.clip(frame, 0, 255).astype(np.uint8))
         if n % 50 == 0:
