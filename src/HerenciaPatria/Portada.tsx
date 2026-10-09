@@ -28,7 +28,7 @@ export const Portada: React.FC<{
       <AbsoluteFill
         style={{
           background:
-            "linear-gradient(to bottom, rgba(18,12,8,0.55) 0%, rgba(18,12,8,0.35) 30%, rgba(18,12,8,0) 48%)",
+            "linear-gradient(to bottom, rgba(18,12,8,0.4) 0%, rgba(18,12,8,0.22) 28%, rgba(18,12,8,0) 45%)",
         }}
       />
       <AbsoluteFill
