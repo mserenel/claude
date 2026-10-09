@@ -37,7 +37,7 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{
-          cta: "Herencia Patria · Tradición que se lleva en las manos.",
+          cta: "Tradición que se lleva en las manos.",
         }}
       />
     </>

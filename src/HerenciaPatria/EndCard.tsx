@@ -64,6 +64,7 @@ export const EndCard: React.FC<{ readonly cta: string }> = ({ cta }) => {
             color: colors.crema,
             textAlign: "center",
             maxWidth: 820,
+            textWrap: "balance",
           }}
         >
           {cta}
