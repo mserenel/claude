@@ -1,6 +1,7 @@
-import { Composition } from "remotion";
+import { Composition, Still } from "remotion";
 import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
 import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
+import { Portada } from "./HerenciaPatria/Portada";
 
 // Cada <Composition> aparece en la barra lateral del Studio.
 
@@ -55,6 +56,29 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           hook: "A20" as const,
           cta: "Tradición que se lleva en las manos.",
+        }}
+      />
+      {/* npx remotion still HP-Portada-Raiz entregas/portada-reel-raiz.jpg */}
+      <Still
+        id="HP-Portada-Raiz"
+        component={Portada}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          src: "portada-raiz.jpg",
+          lines: ["Hay piezas", "que llevan", "nuestra esencia."],
+        }}
+      />
+      <Still
+        id="HP-Portada-Tronco"
+        component={Portada}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          src: "portada-tronco.jpg",
+          lines: ["Hay piezas", "que llevan", "nuestra esencia."],
+          titleSize: 88,
+          top: 250,
         }}
       />
     </>
