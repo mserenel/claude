@@ -27,6 +27,8 @@ SCALE = 2.1
 # Dónde cae el centro de la cara superior de la base en el cuadro final.
 DST_CX, DST_CY = 540, 1400
 SIDE_H = 95  # alto del lateral de la base, en px finales
+FEET_Y = 722  # punto más bajo de las patas en el video (y)
+
 
 
 def to_dst(x, y):
@@ -108,6 +110,13 @@ def build_base():
     return color, alpha, np.clip(shadow, 0, 0.85)
 
 
+def is_clean(m):
+    """ISNet a veces incluye la base giratoria real en la máscara: se nota
+    porque hay máscara debajo de las patas o la base se ve más ancha que el
+    mate. Esos cuadros no se usan en la edición (ver src/HerenciaPatria/Ad.tsx)."""
+    return (m[FEET_Y:] > 128).sum() <= 200 and (m[680] > 128).sum() <= 300
+
+
 def relight(rgb, mask, bbox):
     x0, x1 = bbox
     xs = (np.arange(rgb.shape[1]) - x0) / max(x1 - x0, 1)
@@ -137,6 +146,7 @@ def main():
     contact = 0.8 * soft_ellipse(DST_CX - 30, DST_CY + 20, 300, 70, 18)
 
     names = sorted(os.listdir(frames))
+    bad = []
     for n, i in enumerate(range(start, end, step)):
         name = names[i]
         # Máscara suavizada en el tiempo (vecinos) para que el borde no tiemble.
@@ -147,6 +157,9 @@ def main():
         ]
         m = (0.25 * ms[0] + 0.5 * ms[1] + 0.25 * ms[-1]) / 255 if len(ms) == 3 else ms[0] / 255
         f = cv2.imread(os.path.join(frames, name)).astype(np.float32)
+        if not is_clean(m * 255):
+            bad.append(n)
+        m[FEET_Y:] = 0
 
         fw = cv2.warpAffine(f, M, (W, H), flags=cv2.INTER_LANCZOS4)
         mw = cv2.warpAffine(m, M, (W, H), flags=cv2.INTER_LINEAR)
@@ -161,6 +174,7 @@ def main():
         cv2.imwrite(os.path.join(out_dir, f"{n:05d}.png"), np.clip(frame, 0, 255).astype(np.uint8))
         if n % 50 == 0:
             print(n, flush=True)
+    print("cuadros con la base real en la máscara:", bad, flush=True)
 
 
 if __name__ == "__main__":

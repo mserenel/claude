@@ -1,4 +1,4 @@
-import { AbsoluteFill, Sequence, Series } from "remotion";
+import { AbsoluteFill, Series } from "remotion";
 import { Caption } from "./Caption";
 import { Clip } from "./Clip";
 import { EndCard } from "./EndCard";
@@ -6,31 +6,59 @@ import { Photo } from "./Photo";
 
 // Material:
 // - public/escena.jpg: foto real del mate en la mesa, con luz de ventana.
-// - public/giro-escena.mp4: el giro real del mate (public/giro.mp4), recortado
+// - public/giro-escena.mp4: el giro real del mate (public/giro.mp4) recortado
 //   cuadro a cuadro y apoyado sobre su base en la misma escena
-//   (tools/compose_escena.py). Arranca en el segundo 3,5 del giro original.
-//   Pasan por el frente: el 8 a los 1,5 s, el escudo a los 6,5 s y la
-//   bandera a los 11,2 s.
+//   (tools/compose_escena.py). Mismos tiempos que el video original.
+//   Se evitan los tramos donde el recorte incluyó la base real:
+//   3,7-4,7 s, 6,2-7,8 s, 10-11,3 s, 17,2-18,2 s y 20-21,1 s.
 // - public/logo-herencia-patria.png: logo original.
 
-const HOOK = 75;
-const GIRO = 360;
-const CIERRE = 90;
-export const AD_FRAMES = HOOK + GIRO + CIERRE;
-
-type Texto = {
-  readonly at: number;
+type Plano = {
+  readonly from: number; // segundo del giro
   readonly frames: number;
+  readonly zoom: [number, number];
+  readonly focus: [number, number];
   readonly text: string;
 };
 
-// Momentos del giro (en cuadros desde que empieza) donde aparece cada texto.
-const textosGiro: Texto[] = [
-  { at: 30, frames: 60, text: "Tu número." },
-  { at: 105, frames: 75, text: "Terminación en cada detalle." },
-  { at: 180, frames: 60, text: "Tu escudo." },
-  { at: 315, frames: 45, text: "Tus colores." },
+const planos: Plano[] = [
+  // El 8 pasa por el frente a los 5 s.
+  {
+    from: 4.75,
+    frames: 42,
+    zoom: [1.32, 1.36],
+    focus: [50, 30],
+    text: "Tu número.",
+  },
+  // El escudo llega al frente a los 23 s (segunda vuelta).
+  {
+    from: 21.4,
+    frames: 63,
+    zoom: [1, 1.04],
+    focus: [50, 55],
+    text: "Tu escudo.",
+  },
+  // La bandera pasa por el frente a los 14,7 s.
+  {
+    from: 13.2,
+    frames: 75,
+    zoom: [1.3, 1.34],
+    focus: [50, 30],
+    text: "Tus colores.",
+  },
+  {
+    from: 18.2,
+    frames: 54,
+    zoom: [1.18, 1.22],
+    focus: [50, 75],
+    text: "Terminación en cada detalle.",
+  },
 ];
+
+const HOOK = 75;
+const CIERRE = 90;
+export const AD_FRAMES =
+  HOOK + planos.reduce((total, p) => total + p.frames, 0) + CIERRE;
 
 export type AdProps = {
   readonly hook: "A" | "B";
@@ -51,14 +79,17 @@ export const Ad: React.FC<AdProps> = ({ hook, cta }) => {
           <Photo src="escena.jpg" zoom={[1.45, 1.12]} focus={[52, 38]} />
           <Caption text={hooks[hook]} />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={GIRO}>
-          <Clip src="giro-escena.mp4" zoom={[1, 1.06]} focus={[50, 55]} />
-          {textosGiro.map((t) => (
-            <Sequence key={t.text} from={t.at} durationInFrames={t.frames}>
-              <Caption text={t.text} />
-            </Sequence>
-          ))}
-        </Series.Sequence>
+        {planos.map((p) => (
+          <Series.Sequence key={p.text} durationInFrames={p.frames}>
+            <Clip
+              src="giro-escena.mp4"
+              from={p.from}
+              zoom={p.zoom}
+              focus={p.focus}
+            />
+            <Caption text={p.text} />
+          </Series.Sequence>
+        ))}
         <Series.Sequence durationInFrames={CIERRE}>
           <Photo src="escena.jpg" zoom={[1.05, 1]} focus={[50, 50]} />
           <EndCard cta={cta} />
