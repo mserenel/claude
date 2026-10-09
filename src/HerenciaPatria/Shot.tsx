@@ -18,8 +18,10 @@ export type ShotProps = {
   readonly focus: [number, number];
 };
 
-// Corrección de color moderada: solo contraste y exposición, sin virar el tono.
-const grade = "contrast(1.06) brightness(1.03) saturate(1.02)";
+// Look "low key": bajamos la exposición general y oscurecemos los bordes del
+// cuadro (viñeta, como la de un lente) para que la pared clara pase a un
+// fondo profundo y el mate quede iluminado al centro. No toca el producto.
+const grade = "contrast(1.1) brightness(0.96) saturate(1.03)";
 
 export const Shot: React.FC<ShotProps> = ({ from, rate, zoom, focus }) => {
   const frame = useCurrentFrame();
@@ -29,7 +31,7 @@ export const Shot: React.FC<ShotProps> = ({ from, rate, zoom, focus }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
       <OffthreadVideo
-        src={staticFile("mate.mp4")}
+        src={staticFile("mate-hq.mp4")}
         trimBefore={Math.round(from * fps)}
         playbackRate={rate}
         muted
@@ -40,6 +42,14 @@ export const Shot: React.FC<ShotProps> = ({ from, rate, zoom, focus }) => {
           filter: grade,
           transform: `scale(${scale})`,
           transformOrigin: `${focus[0]}% ${focus[1]}%`,
+        }}
+      />
+      <AbsoluteFill
+        style={{
+          background: [
+            "radial-gradient(ellipse 70% 52% at 50% 52%, rgba(8,14,26,0) 45%, rgba(8,14,26,0.55) 75%, rgba(8,14,26,0.9) 100%)",
+            "linear-gradient(to bottom, rgba(8,14,26,0.7) 0%, rgba(8,14,26,0) 30%)",
+          ].join(","),
         }}
       />
     </AbsoluteFill>

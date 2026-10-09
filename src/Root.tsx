@@ -5,7 +5,7 @@ import { Ad, AD_FRAMES, AdProps } from "./HerenciaPatria/Ad";
 
 const defaults: Omit<AdProps, "hook"> = {
   brand: "Herencia Patria",
-  cta: "Descubrilo en la tienda online",
+  cta: "Diseñá el tuyo en la tienda online",
 };
 
 export const RemotionRoot: React.FC = () => {

@@ -61,7 +61,7 @@ export const EndCard: React.FC<{
             letterSpacing: 1,
           }}
         >
-          {cta} →
+          {`${cta}\u00a0→`}
         </div>
       </div>
     </AbsoluteFill>
