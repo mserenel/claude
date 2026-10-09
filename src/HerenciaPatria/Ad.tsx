@@ -6,11 +6,9 @@ import { Photo } from "./Photo";
 
 // Material:
 // - public/escena.jpg: foto real del mate en la mesa, con luz de ventana.
-// - public/giro-escena.mp4: el giro real del mate (public/giro.mp4) recortado
-//   cuadro a cuadro y apoyado sobre su base en la misma escena
-//   (tools/compose_escena.py). Mismos tiempos que el video original.
-//   Se evitan los tramos donde el recorte incluyó la base real:
-//   3,7-4,7 s, 6,2-7,8 s, 10-11,3 s, 17,2-18,2 s y 20-21,1 s.
+// - public/giro-hq.mp4: el giro real del mate sobre su base real
+//   (public/giro.mp4 escalado con Lanczos). Sin recortes ni composición:
+//   el mate no pasa por ningún algoritmo que pueda alterarlo.
 // - public/logo-herencia-patria.png: logo original.
 
 type Plano = {
@@ -82,7 +80,7 @@ export const Ad: React.FC<AdProps> = ({ hook, cta }) => {
         {planos.map((p) => (
           <Series.Sequence key={p.text} durationInFrames={p.frames}>
             <Clip
-              src="giro-escena.mp4"
+              src="giro-hq.mp4"
               from={p.from}
               zoom={p.zoom}
               focus={p.focus}
