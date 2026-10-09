@@ -1,69 +1,74 @@
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from "remotion";
-import { colors, fonts, safe } from "./brand";
-import { Scrim } from "./Caption";
+import {
+  AbsoluteFill,
+  Easing,
+  Img,
+  interpolate,
+  staticFile,
+  useCurrentFrame,
+} from "remotion";
+import { colors, fonts } from "./brand";
 
-const fadeIn = (frame: number, start: number) =>
-  interpolate(frame, [start, start + 12], [0, 1], {
+const fadeIn = (frame: number, start: number, length = 14) =>
+  interpolate(frame, [start, start + length], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.cubic),
   });
 
-export const EndCard: React.FC<{
-  readonly brand: string;
-  readonly cta: string;
-}> = ({ brand, cta }) => {
+// Cierre: se oscurece la escena y aparece el logo original (sin modificar)
+// con el llamado a la acción.
+export const EndCard: React.FC<{ readonly cta: string }> = ({ cta }) => {
   const frame = useCurrentFrame();
-  const a = fadeIn(frame, 18);
-  const b = fadeIn(frame, 30);
+  const dim = fadeIn(frame, 0, 18);
+  const logo = fadeIn(frame, 10);
+  const text = fadeIn(frame, 24);
 
   return (
     <AbsoluteFill>
-      <Scrim />
-      <div
+      <AbsoluteFill
+        style={{ backgroundColor: colors.azul, opacity: 0.72 * dim }}
+      />
+      <AbsoluteFill
         style={{
-          position: "absolute",
-          left: safe.left,
-          right: safe.right,
-          bottom: safe.bottom + 40,
-          color: colors.crema,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingBottom: 120,
         }}
       >
-        {/* Texto, no logo: el logo original se reemplaza acá cuando esté. */}
-        <div
+        <Img
+          src={staticFile("logo-herencia-patria.png")}
           style={{
-            opacity: a,
-            fontFamily: fonts.serif,
-            fontWeight: 600,
-            fontSize: 96,
-            lineHeight: 1,
-            textShadow: "0 2px 18px rgba(0,0,0,0.35)",
+            width: 440,
+            height: 440,
+            opacity: logo,
+            transform: `scale(${0.96 + 0.04 * logo})`,
           }}
-        >
-          {brand}
-        </div>
+        />
         <div
           style={{
-            opacity: a,
+            opacity: logo,
             width: 120,
             height: 3,
-            margin: "28px 0",
+            margin: "56px 0 40px",
             backgroundColor: colors.mostaza,
           }}
         />
         <div
           style={{
-            opacity: b,
-            transform: `translateY(${(1 - b) * 12}px)`,
-            fontFamily: fonts.sans,
-            fontWeight: 500,
-            fontSize: 48,
-            letterSpacing: 1,
+            opacity: text,
+            transform: `translateY(${(1 - text) * 12}px)`,
+            fontFamily: fonts.serif,
+            fontWeight: 600,
+            fontSize: 76,
+            lineHeight: 1.05,
+            color: colors.crema,
+            textAlign: "center",
+            maxWidth: 820,
           }}
         >
-          {`${cta}\u00a0→`}
+          {cta}
         </div>
-      </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

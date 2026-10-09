@@ -39,7 +39,7 @@ export const Caption: React.FC<{
   );
 };
 
-// Degradé azul profundo detrás del texto para que se lea sobre cualquier
+// Degradé oscuro cálido detrás del texto para que se lea sobre cualquier
 // toma. Va arriba cuando el detalle del plano está abajo.
 export const Scrim: React.FC<{ readonly position?: "top" | "bottom" }> = ({
   position = "bottom",
@@ -51,7 +51,7 @@ export const Scrim: React.FC<{ readonly position?: "top" | "bottom" }> = ({
       right: 0,
       [position]: 0,
       height: position === "bottom" ? 1000 : 800,
-      background: `linear-gradient(to ${position}, rgba(20,35,59,0) 0%, rgba(20,35,59,0.55) 55%, rgba(20,35,59,0.8) 100%)`,
+      background: `linear-gradient(to ${position}, rgba(18,12,8,0) 0%, rgba(18,12,8,0.5) 55%, rgba(18,12,8,0.75) 100%)`,
     }}
   />
 );

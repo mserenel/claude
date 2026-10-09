@@ -1,12 +1,9 @@
 import { Composition } from "remotion";
-import { Ad, AD_FRAMES, AdProps } from "./HerenciaPatria/Ad";
+import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
 
 // Cada <Composition> aparece en la barra lateral del Studio.
 
-const defaults: Omit<AdProps, "hook"> = {
-  brand: "Herencia Patria",
-  cta: "Diseñá el tuyo en la tienda online",
-};
+const cta = "Diseñá el tuyo en nuestra tienda online";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -19,7 +16,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{ ...defaults, hook: "A" as const }}
+        defaultProps={{ hook: "A" as const, cta }}
       />
       <Composition
         id="HP-Reel-B"
@@ -28,7 +25,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{ ...defaults, hook: "B" as const }}
+        defaultProps={{ hook: "B" as const, cta }}
       />
     </>
   );

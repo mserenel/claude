@@ -1,125 +1,67 @@
-import { AbsoluteFill, Series } from "remotion";
+import { AbsoluteFill, Sequence, Series } from "remotion";
 import { Caption } from "./Caption";
+import { Clip } from "./Clip";
 import { EndCard } from "./EndCard";
-import { Shot, ShotProps } from "./Shot";
+import { Photo } from "./Photo";
 
-type Plano = ShotProps & {
+// Material:
+// - public/escena.jpg: foto real del mate en la mesa, con luz de ventana.
+// - public/giro-escena.mp4: el giro real del mate (public/giro.mp4), recortado
+//   cuadro a cuadro y apoyado sobre su base en la misma escena
+//   (tools/compose_escena.py). Arranca en el segundo 3,5 del giro original.
+//   Pasan por el frente: el 8 a los 1,5 s, el escudo a los 6,5 s y la
+//   bandera a los 11,2 s.
+// - public/logo-herencia-patria.png: logo original.
+
+const HOOK = 75;
+const GIRO = 360;
+const CIERRE = 90;
+export const AD_FRAMES = HOOK + GIRO + CIERRE;
+
+type Texto = {
+  readonly at: number;
   readonly frames: number;
-  readonly text?: string;
-  readonly textPosition?: "top" | "bottom";
+  readonly text: string;
 };
 
-// Material: public/mate-hq.mp4 (escalado desde public/mate.mp4), un giro de
-// 360° del mate filmado a 60 fps. Apliques de la virola, cuando pasan por el
-// centro: número 8 ≈ 4,1 s, escudo ≈ 8,1 s, bandera ≈ 12,9 s.
-// Costura: 1,5-6 s. Base y patas: todo el giro.
-
-const numero: Plano = {
-  frames: 60,
-  from: 3.6,
-  rate: 0.5,
-  zoom: [1.3, 1.34],
-  focus: [50, 20],
-  text: "Tu número.",
-};
-
-const escudo: Plano = {
-  frames: 60,
-  from: 7.6,
-  rate: 0.5,
-  zoom: [1.3, 1.34],
-  focus: [50, 20],
-  text: "Tu escudo.",
-};
-
-const bandera: Plano = {
-  frames: 60,
-  from: 12.4,
-  rate: 0.5,
-  zoom: [1.3, 1.34],
-  focus: [50, 20],
-  text: "Tus colores.",
-};
-
-const costura: Plano = {
-  frames: 75,
-  from: 1.6,
-  rate: 0.5,
-  zoom: [1.15, 1.2],
-  focus: [50, 50],
-  text: "Terminación en cada detalle.",
-};
-
-const base: Plano = {
-  frames: 75,
-  from: 10.0,
-  rate: 0.5,
-  zoom: [1.25, 1.3],
-  focus: [50, 88],
-  text: "Hecho a tu gusto.",
-  textPosition: "top",
-};
-
-const cierre: ShotProps & { frames: number } = {
-  frames: 120,
-  from: 0,
-  rate: 1,
-  zoom: [1, 1.05],
-  focus: [50, 45],
-};
-
-const versiones: Record<"A" | "B", Plano[]> = {
-  // A: arranca con una pregunta sobre el detalle personalizado.
-  A: [
-    { ...numero, text: "¿Cuál es tu número?" },
-    escudo,
-    bandera,
-    costura,
-    base,
-  ],
-  // B: arranca con el producto completo y la promesa.
-  B: [
-    {
-      frames: 60,
-      from: 9.4,
-      rate: 1,
-      zoom: [1, 1.03],
-      focus: [50, 45],
-      text: "Un mate hecho a tu gusto.",
-    },
-    numero,
-    escudo,
-    bandera,
-    { ...costura, frames: 90 },
-  ],
-};
+// Momentos del giro (en cuadros desde que empieza) donde aparece cada texto.
+const textosGiro: Texto[] = [
+  { at: 30, frames: 60, text: "Tu número." },
+  { at: 105, frames: 75, text: "Terminación en cada detalle." },
+  { at: 180, frames: 60, text: "Tu escudo." },
+  { at: 315, frames: 45, text: "Tus colores." },
+];
 
 export type AdProps = {
   readonly hook: "A" | "B";
-  readonly brand: string;
   readonly cta: string;
 };
 
-export const AD_FRAMES = [...versiones.A, cierre].reduce(
-  (total, p) => total + p.frames,
-  0,
-);
+const hooks: Record<AdProps["hook"], string> = {
+  A: "Un mate hecho a tu gusto.",
+  B: "¿Cómo sería el tuyo?",
+};
 
-export const Ad: React.FC<AdProps> = ({ hook, brand, cta }) => {
+export const Ad: React.FC<AdProps> = ({ hook, cta }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
       <Series>
-        {versiones[hook].map((p, i) => (
-          <Series.Sequence key={i} durationInFrames={p.frames}>
-            <Shot {...p} />
-            {p.text ? (
-              <Caption text={p.text} position={p.textPosition} />
-            ) : null}
-          </Series.Sequence>
-        ))}
-        <Series.Sequence durationInFrames={cierre.frames}>
-          <Shot {...cierre} />
-          <EndCard brand={brand} cta={cta} />
+        <Series.Sequence durationInFrames={HOOK}>
+          {/* Arranca cerca del escudo con el sol encima y se abre. */}
+          <Photo src="escena.jpg" zoom={[1.45, 1.12]} focus={[52, 38]} />
+          <Caption text={hooks[hook]} />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={GIRO}>
+          <Clip src="giro-escena.mp4" zoom={[1, 1.06]} focus={[50, 55]} />
+          {textosGiro.map((t) => (
+            <Sequence key={t.text} from={t.at} durationInFrames={t.frames}>
+              <Caption text={t.text} />
+            </Sequence>
+          ))}
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={CIERRE}>
+          <Photo src="escena.jpg" zoom={[1.05, 1]} focus={[50, 50]} />
+          <EndCard cta={cta} />
         </Series.Sequence>
       </Series>
     </AbsoluteFill>
