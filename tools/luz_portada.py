@@ -22,6 +22,7 @@ def main():
     cx, cy, rx, ry = (float(v) for v in sys.argv[3:7])
     warm = float(sys.argv[7]) if len(sys.argv) > 7 else 1.0
     im = np.asarray(Image.open(src).convert("RGB")).astype(np.float32) / 255
+    orig = im.copy()
     h, w, _ = im.shape
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
     d = ((xx / w - cx) / rx) ** 2 + ((yy / h - cy) / ry) ** 2
@@ -40,6 +41,21 @@ def main():
     im[..., 2] *= 1 - 0.07 * warm
     luma = im.mean(2, keepdims=True)
     im = luma + (im - luma) * 1.06
+    # El metal (claro y sin color en la foto original) no se aclara: vuelve a
+    # sus tonos originales, con un poco de definición local para marcar el
+    # cincelado. El resto de la imagen se queda con la corrección.
+    from PIL import ImageFilter
+
+    orig_l = orig.mean(2, keepdims=True)
+    orig_sat = orig.max(2, keepdims=True) - orig.min(2, keepdims=True)
+    metal = np.clip((orig_l - 0.42) / 0.15, 0, 1) * np.clip((0.16 - orig_sat) / 0.08, 0, 1)
+    metal = np.asarray(
+        Image.fromarray((metal[..., 0] * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(3))
+    ).astype(np.float32)[..., None] / 255
+    o_img = Image.fromarray((orig * 255).astype(np.uint8))
+    o_blur = np.asarray(o_img.filter(ImageFilter.GaussianBlur(5))).astype(np.float32) / 255
+    metal_px = orig + 0.6 * (orig - o_blur)
+    im = im * (1 - metal) + metal_px * metal
     out = Image.fromarray((np.clip(im, 0, 1) * 255).astype(np.uint8))
     # PNG para no sumar otra compresión JPEG antes del render.
     out.save(dst, quality=95) if dst.lower().endswith((".jpg", ".jpeg")) else out.save(dst)
