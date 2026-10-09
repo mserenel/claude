@@ -5,9 +5,10 @@ Mismo criterio que el video: curva en S suave, tono algo más cálido y una
 aclara el producto sin tocar su forma ni sus detalles, más un leve oscurecido
 de bordes para llevar la mirada al centro.
 
-Uso: python luz_portada.py ENTRADA.jpg SALIDA.jpg CX CY RX RY [CALIDEZ]
+Uso: python luz_portada.py ENTRADA.jpg SALIDA.jpg CX CY RX RY [CALIDEZ] [CONTRASTE]
 (CX, CY, RX, RY: centro y radios del mate, en fracción de la imagen;
-CALIDEZ: 1 = completa, 0.5 = la mitad, para fotos que ya son cálidas)
+CALIDEZ: 1 = completa, 0.5 = la mitad, para fotos que ya son cálidas;
+CONTRASTE: 1 = normal, más alto para acercarse al sol directo del feed)
 """
 
 import sys
@@ -32,7 +33,8 @@ def main():
 
     # Contraste en S y calidez moderada.
     im = np.clip(im, 0, 1)
-    im = im + 0.08 * np.sin(np.pi * (im - 0.5)) * (1 - np.abs(2 * im - 1)) * 2
+    contrast = float(sys.argv[8]) if len(sys.argv) > 8 else 1.0
+    im = im + 0.08 * contrast * np.sin(np.pi * (im - 0.5)) * (1 - np.abs(2 * im - 1)) * 2
     im[..., 0] *= 1 + 0.04 * warm
     im[..., 1] *= 1 + 0.01 * warm
     im[..., 2] *= 1 - 0.07 * warm
