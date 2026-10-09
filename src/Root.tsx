@@ -28,18 +28,22 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         defaultProps={{ hook: "B" as const, cta }}
       />
-      {/* npx remotion render HP-Crudo out/herencia-patria-crudo.mp4 */}
-      <Composition
-        id="HP-Crudo"
-        component={Crudo}
-        durationInFrames={CRUDO_FRAMES}
-        fps={30}
-        width={1080}
-        height={1920}
-        defaultProps={{
-          cta: "Tradición que se lleva en las manos.",
-        }}
-      />
+      {/* npx remotion render HP-Crudo-A out/herencia-patria-crudo-A.mp4 */}
+      {(["A", "B"] as const).map((hook) => (
+        <Composition
+          key={hook}
+          id={`HP-Crudo-${hook}`}
+          component={Crudo}
+          durationInFrames={CRUDO_FRAMES}
+          fps={30}
+          width={1080}
+          height={1920}
+          defaultProps={{
+            hook,
+            cta: "Tradición que se lleva en las manos.",
+          }}
+        />
+      ))}
     </>
   );
 };
