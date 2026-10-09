@@ -45,7 +45,9 @@ const Camera: React.FC<{
   readonly from: number;
   readonly zoom: Key[];
   readonly focusY?: number;
-}> = ({ from, zoom, focusY }) => {
+  // Cuadro (del plano) desde el que el sonido baja hasta cero en 20 cuadros.
+  readonly fadeOutAt?: number;
+}> = ({ from, zoom, focusY, fadeOutAt }) => {
   const f = useCurrentFrame() + from;
   const scale = interpolate(
     f,
@@ -68,6 +70,14 @@ const Camera: React.FC<{
       <OffthreadVideo
         src={staticFile("mate-crudo.mp4")}
         trimBefore={from}
+        volume={(f) =>
+          fadeOutAt === undefined
+            ? 1
+            : interpolate(f, [fadeOutAt, fadeOutAt + 20], [1, 0], {
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+              })
+        }
         style={{
           width: "100%",
           height: "100%",
@@ -118,6 +128,7 @@ const CrudoA: React.FC<{ readonly cta: string }> = ({ cta }) => (
     <Sequence from={HOOK_A}>
       <Camera
         from={0}
+        fadeOutAt={CRUDO_FRAMES - HOOK_A - 20}
         zoom={[
           [0, 1],
           [75, 1.15],
