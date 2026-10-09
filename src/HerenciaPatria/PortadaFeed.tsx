@@ -102,15 +102,23 @@ export const PortadaFeed: React.FC<{
           ) : null}
         </div>
       </AbsoluteFill>
+      {/* La corteza de abajo es clara y con mucha textura: un oscurecido
+          suave en la esquina, como una viñeta, para que el logo se despegue. */}
+      <AbsoluteFill
+        style={{
+          background:
+            "radial-gradient(circle 300px at 88% 81%, rgba(18,12,8,0.62) 0%, rgba(18,12,8,0.35) 45%, rgba(18,12,8,0) 100%)",
+        }}
+      />
       <Img
         src={staticFile("logo-herencia-patria.png")}
         style={{
+          filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.6))",
           position: "absolute",
           right: 64,
-          bottom: 1920 - 1680 + 44,
-          width: 150,
-          height: 150,
-          opacity: 0.92,
+          bottom: 1920 - 1680 + 70,
+          width: 180,
+          height: 180,
         }}
       />
     </AbsoluteFill>
