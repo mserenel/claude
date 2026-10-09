@@ -1,6 +1,7 @@
 import { Composition, Still } from "remotion";
 import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
 import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
+import { Camionero, CAMIONERO_FRAMES } from "./HerenciaPatria/Camionero";
 import { Portada } from "./HerenciaPatria/Portada";
 import { PortadaFeed } from "./HerenciaPatria/PortadaFeed";
 
@@ -82,6 +83,16 @@ export const RemotionRoot: React.FC = () => {
           top: 250,
         }}
       />
+      {/* npx remotion render HP-Camionero entregas/herencia-patria-camionero.mp4 */}
+      <Composition
+        id="HP-Camionero"
+        component={Camionero}
+        durationInFrames={CAMIONERO_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ cta: "Tradición que se lleva en las manos." }}
+      />
       {/* npx remotion still HP-Portada-Feed entregas/portada-reel-feed.jpg */}
       <Still
         id="HP-Portada-Feed"
@@ -94,6 +105,21 @@ export const RemotionRoot: React.FC = () => {
           name: "TORPEDO",
           sub: "Cuero Crudo",
           family: "caslon" as const,
+        }}
+      />
+      {/* npx remotion still HP-Portada-Camionero entregas/portada-camionero.png */}
+      <Still
+        id="HP-Portada-Camionero"
+        component={PortadaFeed}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          src: "portada-camionero.png",
+          kicker: "Mate",
+          name: "CAMIONERO",
+          sub: "Cuero Crudo",
+          family: "caslon" as const,
+          logoSide: "left" as const,
         }}
       />
     </>

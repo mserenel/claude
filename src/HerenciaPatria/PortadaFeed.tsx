@@ -16,7 +16,18 @@ export const PortadaFeed: React.FC<{
   readonly sub: string;
   readonly tag?: string;
   readonly family?: "caslon" | "playfair";
-}> = ({ src, kicker, name, sub, tag, family = "caslon" }) => {
+  // Esquina del logo: a la derecha como en el feed, salvo que ahí haya algo
+  // (una mano, por ejemplo).
+  readonly logoSide?: "right" | "left";
+}> = ({
+  src,
+  kicker,
+  name,
+  sub,
+  tag,
+  family = "caslon",
+  logoSide = "right",
+}) => {
   const f =
     family === "caslon"
       ? { font: '"Libre Caslon Text", serif', italic: 400, bold: 700 }
@@ -106,8 +117,7 @@ export const PortadaFeed: React.FC<{
           suave en la esquina, como una viñeta, para que el logo se despegue. */}
       <AbsoluteFill
         style={{
-          background:
-            "radial-gradient(circle 300px at 88% 81%, rgba(18,12,8,0.62) 0%, rgba(18,12,8,0.35) 45%, rgba(18,12,8,0) 100%)",
+          background: `radial-gradient(circle 300px at ${logoSide === "right" ? 88 : 12}% 81%, rgba(18,12,8,0.62) 0%, rgba(18,12,8,0.35) 45%, rgba(18,12,8,0) 100%)`,
         }}
       />
       <Img
@@ -115,7 +125,7 @@ export const PortadaFeed: React.FC<{
         style={{
           filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.6))",
           position: "absolute",
-          right: 64,
+          [logoSide]: 64,
           bottom: 1920 - 1680 + 70,
           width: 180,
           height: 180,
