@@ -1,20 +1,39 @@
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from "remotion";
+import {
+  AbsoluteFill,
+  Easing,
+  interpolate,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import { colors, fonts, safe } from "./brand";
 
 export const Caption: React.FC<{
   readonly text: string;
   readonly position?: "top" | "bottom";
-}> = ({ text, position = "bottom" }) => {
+  // El último texto antes del cierre también apaga su degradé; entre textos
+  // el degradé queda, porque el siguiente lo reemplaza.
+  readonly last?: boolean;
+}> = ({ text, position = "bottom", last }) => {
   const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
   const enter = interpolate(frame, [4, 14], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.cubic),
   });
+  // Sale con un fundido corto, para no cortar de golpe al terminar.
+  const exit = interpolate(
+    frame,
+    [durationInFrames - 8, durationInFrames],
+    [1, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
 
   return (
     <AbsoluteFill>
-      <Scrim position={position} />
+      <AbsoluteFill style={{ opacity: last ? exit : 1 }}>
+        <Scrim position={position} />
+      </AbsoluteFill>
       <div
         style={{
           position: "absolute",
@@ -23,7 +42,7 @@ export const Caption: React.FC<{
           ...(position === "bottom"
             ? { bottom: safe.bottom + 40 }
             : { top: safe.top + 40 }),
-          opacity: enter,
+          opacity: enter * exit,
           transform: `translateY(${(1 - enter) * 16}px)`,
           fontFamily: fonts.serif,
           fontWeight: 600,

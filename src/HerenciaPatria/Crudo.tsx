@@ -2,6 +2,7 @@ import {
   AbsoluteFill,
   Audio,
   Easing,
+  Freeze,
   interpolate,
   OffthreadVideo,
   Sequence,
@@ -19,16 +20,16 @@ import { EndCard } from "./EndCard";
 // la cámara sin perder nitidez. El último cuadro se sostiene 1 s. Sonido
 // ambiente real del parque, filtrado y normalizado a -20 LUFS.
 //
-// Versión de 20 s: public/mate-crudo-lento.mp4 es el mismo video al 80 % de
-// velocidad, con cuadros intermedios por compensación de movimiento
-// (minterpolate), revisados a tamaño real en los tramos de más movimiento.
-// Su sonido se reemplaza por public/ambiente-20s.m4a: el ambiente limpio del
-// parque extendido a 20 s con un fundido entre dos tramos.
+// Versión de 20 s: el video completo a velocidad real (sin cámara lenta: la
+// interpolación de cuadros dejaba contornos dobles en la pata del mate). El
+// último cuadro queda quieto debajo del cierre. El sonido es
+// public/ambiente-20s.m4a: el ambiente limpio del parque extendido a 20 s con
+// un fundido entre dos tramos.
 
 export const CRUDO_FRAMES = 450;
 export const CRUDO_FRAMES_20 = 600;
-// Cuánto más largo es mate-crudo-lento.mp4 que mate-crudo.mp4.
-const LENTO = 1.25;
+// Último cuadro con movimiento de mate-crudo.mp4 (14,1 s).
+const ULTIMO = 423;
 
 type Key = [number, number];
 
@@ -51,27 +52,15 @@ const mate: [number, number, number][] = [
   [450, 44, 53],
 ];
 
-// Cámara: el punto de escala sigue al mate. `from` y las claves de zoom van en
-// cuadros del archivo de video; `stretch` dice cuánto más lento es ese archivo
-// que el original, para ubicar al mate.
+// Cámara en tiempo del video original: el punto de escala sigue al mate.
 const Camera: React.FC<{
-  readonly src?: string;
-  readonly stretch?: number;
   readonly muted?: boolean;
   readonly from: number;
   readonly zoom: Key[];
   readonly focusY?: number;
   // Cuadro (del plano) desde el que el sonido baja hasta cero en 20 cuadros.
   readonly fadeOutAt?: number;
-}> = ({
-  src = "mate-crudo.mp4",
-  stretch = 1,
-  muted,
-  from,
-  zoom,
-  focusY,
-  fadeOutAt,
-}) => {
+}> = ({ muted, from, zoom, focusY, fadeOutAt }) => {
   const f = useCurrentFrame() + from;
   const scale = interpolate(
     f,
@@ -85,14 +74,14 @@ const Camera: React.FC<{
   );
   const at = (i: 1 | 2) =>
     interpolate(
-      f / stretch,
+      f,
       mate.map((k) => k[0]),
       mate.map((k) => k[i]),
     );
   return (
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
       <OffthreadVideo
-        src={staticFile(src)}
+        src={staticFile("mate-crudo.mp4")}
         trimBefore={from}
         muted={muted}
         volume={(f) =>
@@ -146,7 +135,11 @@ const Texts: React.FC<{ readonly offset: number; readonly cierre: number }> = ({
         return (
           <Sequence key={text} from={from} durationInFrames={to - from}>
             {/* Arriba, sobre los árboles: abajo están el mate y las manos. */}
-            <Caption text={text} position="top" />
+            <Caption
+              text={text}
+              position="top"
+              last={i === captionTexts.length - 1}
+            />
           </Sequence>
         );
       })}
@@ -236,9 +229,20 @@ const CrudoB: React.FC<{ readonly cta: string }> = ({ cta }) => {
   );
 };
 
-// A de 20 s: mismo gancho, el resto en cámara lenta al 80 %, cada texto
-// ~3,2 s y el cierre con los beneficios 5 s.
+// A de 20 s: mismo gancho; el resto del video a velocidad real, ahora
+// completo (incluye el giro de frente del final), cada texto ~3,3 s y el
+// cierre con los beneficios 5 s.
 const CIERRE_20 = 150;
+const zoom20: Key[] = [
+  [0, 1],
+  [75, 1.15],
+  [135, 1.3],
+  [210, 1.38],
+  [255, 1.08],
+  [300, 1.25],
+  [360, 1.12],
+  [ULTIMO, 1.22],
+];
 const CrudoA20: React.FC<{ readonly cta: string }> = ({ cta }) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <Audio src={staticFile("ambiente-20s.m4a")} />
@@ -253,25 +257,14 @@ const CrudoA20: React.FC<{ readonly cta: string }> = ({ cta }) => (
       />
       <BigTitle lines={hook} />
     </Sequence>
-    <Sequence from={HOOK_A}>
-      <Camera
-        muted
-        src="mate-crudo-lento.mp4"
-        stretch={LENTO}
-        from={0}
-        zoom={(
-          [
-            [0, 1],
-            [75, 1.15],
-            [135, 1.3],
-            [210, 1.38],
-            [255, 1.08],
-            [300, 1.25],
-            [390, 1.15],
-            [450, 1.2],
-          ] as Key[]
-        ).map(([k, z]) => [k * LENTO, z] as Key)}
-      />
+    <Sequence from={HOOK_A} durationInFrames={ULTIMO}>
+      <Camera muted from={0} zoom={zoom20} />
+    </Sequence>
+    {/* Debajo del cierre: el último cuadro quieto. */}
+    <Sequence from={HOOK_A + ULTIMO}>
+      <Freeze frame={ULTIMO - 1}>
+        <Camera muted from={0} zoom={zoom20} />
+      </Freeze>
     </Sequence>
     <Texts offset={HOOK_A} cierre={CIERRE_20} />
     <Cierre cta={cta} cierre={CIERRE_20} />
