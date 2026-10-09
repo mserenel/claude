@@ -67,7 +67,7 @@ export const BigTitle: React.FC<{
             width: 140,
             height: 4,
             marginTop: 34,
-            backgroundColor: colors.mostaza,
+            backgroundColor: colors.crema,
             transformOrigin: "left",
             transform: `scaleX(${interpolate(
               frame,

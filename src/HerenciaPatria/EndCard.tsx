@@ -50,7 +50,7 @@ export const EndCard: React.FC<{ readonly cta: string }> = ({ cta }) => {
             width: 120,
             height: 3,
             margin: "56px 0 40px",
-            backgroundColor: colors.mostaza,
+            backgroundColor: colors.crema,
           }}
         />
         <div
