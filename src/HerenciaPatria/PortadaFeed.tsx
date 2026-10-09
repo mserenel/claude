@@ -24,6 +24,9 @@ export const PortadaFeed: React.FC<{
   readonly top?: number;
   readonly titleScale?: number;
   readonly zoom?: number;
+  // Encuadre horizontal de la foto (% como object-position), para centrar
+  // el producto.
+  readonly focusX?: number;
 }> = ({
   src,
   kicker,
@@ -35,6 +38,7 @@ export const PortadaFeed: React.FC<{
   top = 370,
   titleScale = 1,
   zoom = 1,
+  focusX = 50,
 }) => {
   const f =
     family === "caslon"
@@ -49,6 +53,7 @@ export const PortadaFeed: React.FC<{
           width: "100%",
           height: "100%",
           objectFit: "cover",
+          objectPosition: `${focusX}% 50%`,
           transform: `scale(${zoom})`,
           transformOrigin: "50% 0%",
         }}

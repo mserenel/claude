@@ -138,6 +138,7 @@ export const RemotionRoot: React.FC = () => {
           top: 365,
           titleScale: 0.8,
           zoom: 1.15,
+          focusX: 40,
         }}
       />
     </>
