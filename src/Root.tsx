@@ -89,7 +89,7 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{
-          src: "portada-raiz-feed.jpg",
+          src: "portada-raiz-feed.png",
           kicker: "Mate",
           name: "TORPEDO",
           sub: "Cuero Crudo",

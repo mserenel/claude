@@ -40,7 +40,9 @@ def main():
     im[..., 2] *= 1 - 0.07 * warm
     luma = im.mean(2, keepdims=True)
     im = luma + (im - luma) * 1.06
-    Image.fromarray((np.clip(im, 0, 1) * 255).astype(np.uint8)).save(dst, quality=95)
+    out = Image.fromarray((np.clip(im, 0, 1) * 255).astype(np.uint8))
+    # PNG para no sumar otra compresión JPEG antes del render.
+    out.save(dst, quality=95) if dst.lower().endswith((".jpg", ".jpeg")) else out.save(dst)
 
 
 if __name__ == "__main__":
