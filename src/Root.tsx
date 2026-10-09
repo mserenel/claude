@@ -93,7 +93,6 @@ export const RemotionRoot: React.FC = () => {
           kicker: "Mate",
           name: "TORPEDO",
           sub: "Cuero Crudo",
-          tag: "Exclusivo",
           family: "caslon" as const,
         }}
       />
