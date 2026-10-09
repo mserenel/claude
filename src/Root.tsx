@@ -122,6 +122,24 @@ export const RemotionRoot: React.FC = () => {
           logoSide: "left" as const,
         }}
       />
+      {/* npx remotion still HP-Portada-Camionero-Volcado entregas/portada-camionero-volcado.png */}
+      <Still
+        id="HP-Portada-Camionero-Volcado"
+        component={PortadaFeed}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          src: "portada-camionero-volcado.png",
+          kicker: "Mate",
+          name: "CAMIONERO",
+          sub: "Volcado · Cuero Crudo",
+          family: "caslon" as const,
+          logoSide: "right" as const,
+          top: 365,
+          titleScale: 0.8,
+          zoom: 1.15,
+        }}
+      />
     </>
   );
 };

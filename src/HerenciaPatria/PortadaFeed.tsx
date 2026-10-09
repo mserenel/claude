@@ -19,6 +19,11 @@ export const PortadaFeed: React.FC<{
   // Esquina del logo: a la derecha como en el feed, salvo que ahí haya algo
   // (una mano, por ejemplo).
   readonly logoSide?: "right" | "left";
+  // Para fotos con el producto alto: dónde empieza el título, su escala y un
+  // leve acercamiento desde arriba que baja el mate.
+  readonly top?: number;
+  readonly titleScale?: number;
+  readonly zoom?: number;
 }> = ({
   src,
   kicker,
@@ -27,6 +32,9 @@ export const PortadaFeed: React.FC<{
   tag,
   family = "caslon",
   logoSide = "right",
+  top = 370,
+  titleScale = 1,
+  zoom = 1,
 }) => {
   const f =
     family === "caslon"
@@ -37,7 +45,13 @@ export const PortadaFeed: React.FC<{
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
       <Img
         src={staticFile(src)}
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          transform: `scale(${zoom})`,
+          transformOrigin: "50% 0%",
+        }}
       />
       <AbsoluteFill
         style={{
@@ -45,7 +59,7 @@ export const PortadaFeed: React.FC<{
             "linear-gradient(to bottom, rgba(18,12,8,0.45) 0%, rgba(18,12,8,0.25) 30%, rgba(18,12,8,0) 46%)",
         }}
       />
-      <AbsoluteFill style={{ alignItems: "center", paddingTop: 370 }}>
+      <AbsoluteFill style={{ alignItems: "center", paddingTop: top }}>
         <div
           style={{
             display: "flex",
@@ -59,7 +73,7 @@ export const PortadaFeed: React.FC<{
             style={{
               fontStyle: "italic",
               fontWeight: f.italic,
-              fontSize: 80,
+              fontSize: 80 * titleScale,
               lineHeight: 1.05,
               marginLeft: 8,
             }}
@@ -69,7 +83,7 @@ export const PortadaFeed: React.FC<{
           <div
             style={{
               fontWeight: f.bold,
-              fontSize: 138,
+              fontSize: 138 * titleScale,
               lineHeight: 1,
               letterSpacing: 1,
             }}
@@ -81,7 +95,7 @@ export const PortadaFeed: React.FC<{
               alignSelf: "flex-end",
               fontStyle: "italic",
               fontWeight: f.italic,
-              fontSize: 80,
+              fontSize: 80 * titleScale,
               lineHeight: 1.15,
             }}
           >
