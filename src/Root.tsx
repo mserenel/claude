@@ -9,6 +9,10 @@ import { PortadaFeed } from "./HerenciaPatria/PortadaFeed";
 
 const cta = "Diseñá el tuyo en nuestra tienda online";
 
+// Mismo tamaño y altura de título en todas las portadas de la serie. Arranca
+// más abajo que el ícono de Reels, que en la grilla va arriba a la derecha.
+const tituloPortada = { top: 440, titleScale: 0.8 };
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
@@ -105,6 +109,7 @@ export const RemotionRoot: React.FC = () => {
           name: "TORPEDO",
           sub: "Cuero Crudo",
           family: "caslon" as const,
+          ...tituloPortada,
         }}
       />
       {/* npx remotion still HP-Portada-Camionero entregas/portada-camionero.png */}
@@ -135,9 +140,8 @@ export const RemotionRoot: React.FC = () => {
           sub: "Volcado · Cuero Crudo",
           family: "caslon" as const,
           logoSide: "right" as const,
-          top: 365,
-          titleScale: 0.8,
-          zoom: 1.15,
+          ...tituloPortada,
+          zoom: 1.24,
           focusX: 40,
         }}
       />
