@@ -11,7 +11,7 @@ const cta = "Diseñá el tuyo en nuestra tienda online";
 
 // Mismo tamaño y altura de título en todas las portadas de la serie. Arranca
 // más abajo que el ícono de Reels, que en la grilla va arriba a la derecha.
-const tituloPortada = { top: 440, titleScale: 0.8 };
+const tituloPortada = { top: 430, titleScale: 0.92 };
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -141,7 +141,7 @@ export const RemotionRoot: React.FC = () => {
           family: "caslon" as const,
           logoSide: "right" as const,
           ...tituloPortada,
-          zoom: 1.24,
+          zoom: 1.3,
           focusX: 40,
         }}
       />

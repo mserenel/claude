@@ -44,7 +44,7 @@ export const PortadaFeed: React.FC<{
     family === "caslon"
       ? { font: '"Libre Caslon Text", serif', italic: 400, bold: 700 }
       : { font: '"Playfair Display", serif', italic: 600, bold: 700 };
-  const shadow = "0 3px 22px rgba(0,0,0,0.45)";
+  const shadow = "0 2px 4px rgba(0,0,0,0.55), 0 4px 26px rgba(0,0,0,0.55)";
   return (
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
       <Img
@@ -61,7 +61,7 @@ export const PortadaFeed: React.FC<{
       <AbsoluteFill
         style={{
           background:
-            "linear-gradient(to bottom, rgba(18,12,8,0.45) 0%, rgba(18,12,8,0.25) 30%, rgba(18,12,8,0) 46%)",
+            "linear-gradient(to bottom, rgba(18,12,8,0.62) 0%, rgba(18,12,8,0.5) 28%, rgba(18,12,8,0.18) 40%, rgba(18,12,8,0) 48%)",
         }}
       />
       <AbsoluteFill style={{ alignItems: "center", paddingTop: top }}>
@@ -78,7 +78,7 @@ export const PortadaFeed: React.FC<{
             style={{
               fontStyle: "italic",
               fontWeight: f.italic,
-              fontSize: 80 * titleScale,
+              fontSize: 96 * titleScale,
               lineHeight: 1.05,
               marginLeft: 8,
             }}
@@ -100,7 +100,7 @@ export const PortadaFeed: React.FC<{
               alignSelf: "flex-end",
               fontStyle: "italic",
               fontWeight: f.italic,
-              fontSize: 80 * titleScale,
+              fontSize: 96 * titleScale,
               lineHeight: 1.15,
             }}
           >
