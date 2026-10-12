@@ -50,7 +50,7 @@ const guion: Linea[] = [
 
 // Preocupado mientras plantea el problema; pícaro desde que da el consejo.
 const CAMBIO = 214;
-const FUNDIDO = 4;
+const FUNDIDO = 14;
 const VOZ_FIN = 659;
 const CIERRE = 95;
 export const PATRICIO_FRAMES = VOZ_FIN + 16 + CIERRE;
@@ -94,7 +94,7 @@ const Cara: React.FC<{ readonly expr: Expr; readonly opacity: number }> = ({
         style={{
           ...imgStyle,
           clipPath: boca[expr],
-          transform: `scaleY(${1 + 0.085 * a})`,
+          transform: `scaleY(${1 + 0.07 * a})`,
           transformOrigin: `50% ${bocaTop[expr]}`,
         }}
       />
@@ -104,18 +104,20 @@ const Cara: React.FC<{ readonly expr: Expr; readonly opacity: number }> = ({
 
 const Personaje: React.FC = () => {
   const f = useCurrentFrame();
-  // Voz suavizada (~0,3 s) para los movimientos de cabeza.
+  // Voz muy suavizada (~0,8 s, centrada) para la cabeza: acompaña las
+  // frases, no cada sílaba.
   let s = 0;
-  for (let i = 0; i < 9; i++) s += amp(f - i);
-  const habla = s / 9;
+  for (let i = -12; i <= 12; i++) s += amp(f + i) * (1 - Math.abs(i) / 13);
+  const habla = s / 13;
   const breath = 1 + 0.012 * Math.sin((f / 30) * Math.PI * 0.9);
   const sway =
-    0.8 * Math.sin((f / 30) * Math.PI * 0.45) +
-    1.6 * habla * Math.sin((f / 30) * Math.PI * 1.7);
-  const nod = 7 * habla;
+    0.7 * Math.sin((f / 30) * Math.PI * 0.4) +
+    0.9 * habla * Math.sin((f / 30) * Math.PI * 0.9);
+  const nod = 4 * habla;
   const guino = interpolate(f, [CAMBIO, CAMBIO + FUNDIDO], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
+    easing: Easing.inOut(Easing.sin),
   });
   const pop = interpolate(f, [CAMBIO, CAMBIO + 5, CAMBIO + 14], [1, 1.03, 1], {
     extrapolateLeft: "clamp",

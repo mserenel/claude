@@ -31,11 +31,13 @@ syl = np.clip(e / (loc + 1e-9), 0, 1) ** 2 * gate
 # A 30 fps (cada 33,3 ms): máximo de los tramos de 10 ms que cubre el cuadro.
 n = int(len(x) / 1600)
 v = np.array([syl[int(i * 10 / 3):int((i + 1) * 10 / 3) + 1].max() for i in range(n)])
-# Ataque rápido, caída corta: la boca se cierra entre sílabas.
+# Movimiento suave: la boca abre en ~3 cuadros y cierra en ~5, sin saltos.
 env = np.zeros_like(v)
 for i in range(n):
     prev = env[i - 1] if i else 0
-    env[i] = v[i] if v[i] > prev else prev * 0.45 + v[i] * 0.55
+    k = 0.45 if v[i] > prev else 0.3
+    env[i] = prev + (v[i] - prev) * k
+env = env * 0.85
 vals = ",".join(f"{e:.2f}" for e in env)
 with open(out, "w") as f:
     f.write(
