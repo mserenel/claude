@@ -106,7 +106,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{ cta: "Y vos, ¿desde dónde mateás hoy? Contanos." }}
+        defaultProps={{ tagline: "Tradición que se lleva en las manos." }}
       />
       {/* npx remotion still HP-Portada-Feed entregas/portada-reel-feed.jpg */}
       <Still

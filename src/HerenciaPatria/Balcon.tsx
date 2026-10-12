@@ -1,35 +1,46 @@
+import "@fontsource/libre-caslon-text/400-italic.css";
+import "@fontsource/libre-caslon-text/400.css";
 import {
   AbsoluteFill,
   Easing,
+  Img,
   interpolate,
   OffthreadVideo,
-  Sequence,
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import { BigTitle } from "./BigTitle";
-import { Caption } from "./Caption";
-import { EndCard } from "./EndCard";
+import { colors } from "./brand";
 
-// Reel pensado para interacción: el mate en el balcón con la ciudad de fondo.
-// public/balcon.mp4: IMG_6966 (1080x1920, sin sonido) a 30 fps con la misma
-// corrección de luz que el resto de la serie. El video no trae audio: se
-// publica con un audio de la biblioteca de Instagram.
+// Reel de estilo de vida, no de anuncio: el mate en el balcón con la ciudad.
+// public/balcon.mp4: IMG_6966 (1080x1920, sin sonido) a 30 fps, con una
+// corrección natural (un poco más de luz y color, sin oscurecer el cielo).
+// Sin degradés ni cierre en bloque: texto mínimo en azul de marca sobre el
+// cielo claro, y la cámara se abre despacio del mate a la ciudad. Se publica
+// con un audio de la biblioteca de Instagram.
 
-export const BALCON_FRAMES = 450;
-const HOOK = 75;
-const CIERRE = 120;
+// 12 s: la cámara original va subiendo y después de ese punto casi no queda
+// cielo para el cierre. Un Reel más corto además se ve completo más veces.
+export const BALCON_FRAMES = 360;
 
-// La toma ya se mueve sola (un paneo lento alrededor del mate): la cámara
-// solo agrega un acercamiento suave, centrado en el mate.
-const Camera: React.FC = () => {
+const fade = (f: number, a: number, b: number, c: number, d: number) =>
+  interpolate(f, [a, b, c, d], [0, 1, 1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.inOut(Easing.sin),
+  });
+
+const serif = '"Libre Caslon Text", serif';
+
+export const Balcon: React.FC<{ readonly tagline: string }> = ({ tagline }) => {
   const f = useCurrentFrame();
-  const scale = interpolate(
-    f,
-    [0, HOOK, BALCON_FRAMES - CIERRE, BALCON_FRAMES],
-    [1.18, 1.04, 1.12, 1.06],
-    { easing: Easing.inOut(Easing.sin) },
-  );
+  // Arranca cerca del mate y se abre hasta mostrar toda la vista.
+  const scale = interpolate(f, [0, BALCON_FRAMES], [1.15, 1.0], {
+    easing: Easing.inOut(Easing.sin),
+  });
+  const pregunta = fade(f, 10, 34, 115, 140);
+  const cierre = fade(f, 270, 296, 400, 410);
+  const rise = (o: number) => `translateY(${(1 - o) * 14}px)`;
+
   return (
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
       <OffthreadVideo
@@ -39,53 +50,63 @@ const Camera: React.FC = () => {
           width: "100%",
           height: "100%",
           transform: `scale(${scale})`,
-          transformOrigin: "50% 66%",
+          transformOrigin: "50% 64%",
         }}
       />
-    </AbsoluteFill>
-  );
-};
-
-// El gancho es una pregunta: invita a comentar, y los comentarios le dan
-// alcance al Reel.
-const hook = ["¿Con qué vista", "tomás tus", "mates hoy?"];
-
-const captionTexts = [
-  "Guarda griega en la virola.",
-  "Detalles en metal hasta en las patas.",
-  "Un mate para cada momento del día.",
-];
-
-const benefits = [
-  "Envío gratis",
-  "3 cuotas sin interés",
-  "20% de descuento en transferencia",
-];
-
-export const Balcon: React.FC<{ readonly cta: string }> = ({ cta }) => {
-  const each = (BALCON_FRAMES - CIERRE - HOOK) / captionTexts.length;
-  return (
-    <AbsoluteFill style={{ backgroundColor: "black" }}>
-      <Camera />
-      <Sequence durationInFrames={HOOK}>
-        <BigTitle lines={hook} />
-      </Sequence>
-      {captionTexts.map((text, i) => {
-        const from = Math.round(HOOK + i * each);
-        const to = Math.round(HOOK + (i + 1) * each);
-        return (
-          <Sequence key={text} from={from} durationInFrames={to - from}>
-            <Caption
-              text={text}
-              position="top"
-              last={i === captionTexts.length - 1}
-            />
-          </Sequence>
-        );
-      })}
-      <Sequence from={BALCON_FRAMES - CIERRE}>
-        <EndCard cta={cta} benefits={benefits} />
-      </Sequence>
+      <AbsoluteFill
+        style={{ alignItems: "center", paddingTop: 200, textAlign: "center" }}
+      >
+        <div
+          style={{
+            opacity: pregunta,
+            transform: rise(pregunta),
+            fontFamily: serif,
+            fontSize: 78,
+            lineHeight: 1.18,
+            color: colors.azul,
+            textShadow: "0 1px 14px rgba(255,255,255,0.6)",
+          }}
+        >
+          <div>¿Con qué vista</div>
+          <div style={{ fontStyle: "italic" }}>tomás tus mates?</div>
+        </div>
+      </AbsoluteFill>
+      <AbsoluteFill
+        style={{ alignItems: "center", paddingTop: 165, textAlign: "center" }}
+      >
+        <div
+          style={{
+            opacity: cierre,
+            transform: rise(cierre),
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Img
+            src={staticFile("logo-herencia-patria.png")}
+            style={{
+              width: 112,
+              height: 112,
+              filter:
+                "drop-shadow(0 0 1px rgba(20,35,59,1)) drop-shadow(0 0 3px rgba(20,35,59,0.9)) drop-shadow(0 2px 16px rgba(20,35,59,0.55))",
+            }}
+          />
+          <div
+            style={{
+              marginTop: 16,
+              fontFamily: serif,
+              fontStyle: "italic",
+              fontSize: 44,
+              whiteSpace: "nowrap",
+              color: colors.azul,
+              textShadow: "0 1px 14px rgba(255,255,255,0.6)",
+            }}
+          >
+            {tagline}
+          </div>
+        </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
