@@ -1,6 +1,7 @@
 import "@fontsource/comic-neue/700.css";
 import {
   AbsoluteFill,
+  Audio,
   Easing,
   Img,
   interpolate,
@@ -13,40 +14,50 @@ import { colors } from "./brand";
 // Don Patricio, versión historieta animada (motion comic). Usa las dos
 // ilustraciones oficiales sin modificarlas: el personaje "respira" y se
 // balancea apenas, cambia de expresión con un corte de viñeta y habla con
-// globos de diálogo. Sin animación de boca: eso requiere un generador de
-// video (ver la biblia del personaje).
+// globos de diálogo, con su voz sincronizada. Sin animación de boca: eso
+// requiere un generador de video (ver la biblia del personaje).
 
 type Expr = "preocupado" | "guino";
 
 type Linea = {
-  readonly frames: number;
   readonly expr: Expr;
   readonly text: string;
+  // Duración de la voz (s) de public/patricio-voz/linea_N.wav, generada con
+  // tools/voz_patricio.py.
+  readonly voz: number;
+  // Pausa después de la línea, en cuadros (el "sorbo de mate" de la biblia).
+  readonly pausa?: number;
 };
 
 // Tip: la bombilla tapada. Tono de la biblia: de usted, pausado, con remate.
 const guion: Linea[] = [
-  { frames: 80, expr: "preocupado", text: "¿Se le tapa la bombilla, m'hijo?" },
+  { expr: "preocupado", voz: 1.99, text: "¿Se le tapa la bombilla, m'hijo?" },
   {
-    frames: 85,
     expr: "preocupado",
+    voz: 3.022,
     text: "No es culpa de la bombilla. Es cómo arma el mate.",
   },
   {
-    frames: 110,
     expr: "guino",
+    voz: 5.494,
     text: "Ponga la yerba, tape la boca con la mano y sacúdalo boca abajo. Así se va el polvillo.",
   },
   {
-    frames: 105,
     expr: "guino",
+    voz: 5.039,
     text: "Inclínelo, moje del costado y meta la bombilla ahí. Y después no la mueva más.",
   },
-  { frames: 95, expr: "guino", text: "Y ahí está el secreto." },
+  { expr: "guino", voz: 1.655, text: "Y ahí está el secreto.", pausa: 34 },
 ];
 
+// La voz arranca unos cuadros después de que aparece el globo.
+const ENTRADA = 4;
+const habla = (l: Linea) => Math.ceil(l.voz * 30);
+const duracion = (l: Linea) => ENTRADA + habla(l) + (l.pausa ?? 14);
+
 const CIERRE = 90;
-export const PATRICIO_FRAMES = guion.reduce((t, l) => t + l.frames, 0) + CIERRE;
+export const PATRICIO_FRAMES =
+  guion.reduce((t, l) => t + duracion(l), 0) + CIERRE;
 
 const fondo = "#F2E8D6";
 const tinta = "#1A1A1A";
@@ -88,9 +99,11 @@ const Personaje: React.FC<{ readonly expr: Expr }> = ({ expr }) => {
 const Globo: React.FC<{
   readonly text: string;
   readonly frames: number;
+  // Cuadros que dura la voz: el texto se escribe a ese ritmo.
+  readonly speech: number;
   // El primer globo aparece completo desde el cuadro 0: es el gancho.
   readonly instant?: boolean;
-}> = ({ text, frames, instant }) => {
+}> = ({ text, frames, speech, instant }) => {
   const f = useCurrentFrame();
   const enter = instant
     ? 1
@@ -105,15 +118,10 @@ const Globo: React.FC<{
   const shown = instant
     ? text.length
     : Math.round(
-        interpolate(
-          f,
-          [6, Math.min(frames - 20, 6 + text.length * 1.1)],
-          [0, text.length],
-          {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-          },
-        ),
+        interpolate(f, [ENTRADA, ENTRADA + speech], [0, text.length], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        }),
       );
   return (
     <AbsoluteFill style={{ opacity: exit }}>
@@ -227,10 +235,10 @@ const Cierre: React.FC = () => {
 
 export const DonPatricio: React.FC = () => {
   let at = 0;
-  const bloques = guion.map((l) => {
+  const bloques = guion.map((l, i) => {
     const from = at;
-    at += l.frames;
-    return { ...l, from };
+    at += duracion(l);
+    return { ...l, from, frames: duracion(l), speech: habla(l), i };
   });
   // Viñetas: un tramo por cada racha de la misma expresión.
   const tramos: { from: number; frames: number; expr: Expr }[] = [];
@@ -250,7 +258,15 @@ export const DonPatricio: React.FC = () => {
       ))}
       {bloques.map((b) => (
         <Sequence key={b.from} from={b.from} durationInFrames={b.frames}>
-          <Globo text={b.text} frames={b.frames} instant={b.from === 0} />
+          <Globo
+            text={b.text}
+            frames={b.frames}
+            speech={b.speech}
+            instant={b.from === 0}
+          />
+          <Sequence from={ENTRADA}>
+            <Audio src={staticFile(`patricio-voz/linea_${b.i}.wav`)} />
+          </Sequence>
         </Sequence>
       ))}
       <Sequence from={at}>
