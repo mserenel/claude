@@ -3,6 +3,7 @@ import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
 import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
 import { Camionero, CAMIONERO_FRAMES } from "./HerenciaPatria/Camionero";
 import { Balcon, BALCON_FRAMES } from "./HerenciaPatria/Balcon";
+import { DonPatricio, PATRICIO_FRAMES } from "./HerenciaPatria/DonPatricio";
 import { Portada } from "./HerenciaPatria/Portada";
 import { PortadaFeed } from "./HerenciaPatria/PortadaFeed";
 
@@ -107,6 +108,15 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ tagline: "Tradición que se lleva en las manos." }}
+      />
+      {/* npx remotion render HP-DonPatricio-Bombilla entregas/don-patricio-bombilla.mp4 */}
+      <Composition
+        id="HP-DonPatricio-Bombilla"
+        component={DonPatricio}
+        durationInFrames={PATRICIO_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
       />
       {/* npx remotion still HP-Portada-Feed entregas/portada-reel-feed.jpg */}
       <Still
