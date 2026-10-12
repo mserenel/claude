@@ -2,6 +2,7 @@ import { Composition, Still } from "remotion";
 import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
 import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
 import { Camionero, CAMIONERO_FRAMES } from "./HerenciaPatria/Camionero";
+import { Balcon, BALCON_FRAMES } from "./HerenciaPatria/Balcon";
 import { Portada } from "./HerenciaPatria/Portada";
 import { PortadaFeed } from "./HerenciaPatria/PortadaFeed";
 
@@ -96,6 +97,16 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ cta: "Calidad que se aprecia." }}
+      />
+      {/* npx remotion render HP-Balcon entregas/herencia-patria-balcon.mp4 */}
+      <Composition
+        id="HP-Balcon"
+        component={Balcon}
+        durationInFrames={BALCON_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ cta: "Y vos, ¿desde dónde mateás hoy? Contanos." }}
       />
       {/* npx remotion still HP-Portada-Feed entregas/portada-reel-feed.jpg */}
       <Still
