@@ -10,80 +10,127 @@ import {
   useCurrentFrame,
 } from "remotion";
 import { colors } from "./brand";
+import { vozEnvolvente } from "./patricioVoz";
 
 // Don Patricio, versión historieta animada (motion comic). Usa las dos
-// ilustraciones oficiales sin modificarlas: el personaje "respira" y se
-// balancea apenas, cambia de expresión con un corte de viñeta y habla con
-// globos de diálogo, con su voz sincronizada. Sin animación de boca: eso
-// requiere un generador de video (ver la biblia del personaje).
+// ilustraciones oficiales sin redibujarlas, con la voz de ElevenLabs
+// (public/patricio-voz/elevenlabs-bombilla.mp3). Para que "hable": la parte
+// de abajo de la cara (bigote y mentón) se estira apenas al ritmo de la voz,
+// la cabeza asiente con los acentos y las expresiones cambian con un fundido.
 
 type Expr = "preocupado" | "guino";
 
+// Tramos de la voz, medidos en sus pausas (cuadros a 30 fps). El texto de
+// cada globo se escribe mientras dura su tramo.
 type Linea = {
-  readonly expr: Expr;
+  readonly from: number;
+  readonly to: number;
   readonly text: string;
-  // Duración de la voz (s) de public/patricio-voz/linea_N.wav, generada con
-  // tools/voz_patricio.py.
-  readonly voz: number;
-  // Pausa después de la línea, en cuadros (el "sorbo de mate" de la biblia).
-  readonly pausa?: number;
 };
 
-// Tip: la bombilla tapada. Tono de la biblia: de usted, pausado, con remate.
 const guion: Linea[] = [
-  { expr: "preocupado", voz: 1.99, text: "¿Se le tapa la bombilla, m'hijo?" },
+  { from: 0, to: 86, text: "¡Buenas, m'hijo! ¿Se le tapa la bombilla?" },
   {
-    expr: "preocupado",
-    voz: 3.022,
-    text: "No es culpa de la bombilla. Es cómo arma el mate.",
+    from: 97,
+    to: 203,
+    text: "¡No es culpa de la bombilla, eh! Es cómo arma el mate.",
   },
   {
-    expr: "guino",
-    voz: 5.494,
-    text: "Ponga la yerba, tape la boca con la mano y sacúdalo boca abajo. Así se va el polvillo.",
+    from: 219,
+    to: 409,
+    text: "Mire: ponga la yerba, tape la boca con la mano, ¡y sacúdalo boca abajo! Así se va el polvillo.",
   },
   {
-    expr: "guino",
-    voz: 5.039,
-    text: "Inclínelo, moje del costado y meta la bombilla ahí. Y después no la mueva más.",
+    from: 418,
+    to: 542,
+    text: "Después lo inclina, moja del costadito y mete la bombilla ahí. ¡Y no la mueva más, eh!",
   },
-  { expr: "guino", voz: 1.655, text: "Y ahí está el secreto.", pausa: 34 },
+  { from: 596, to: 659, text: "Y ahí está el secreto." },
 ];
 
-// La voz arranca unos cuadros después de que aparece el globo.
-const ENTRADA = 4;
-const habla = (l: Linea) => Math.ceil(l.voz * 30);
-const duracion = (l: Linea) => ENTRADA + habla(l) + (l.pausa ?? 14);
+// Preocupado mientras plantea el problema; pícaro desde que da el consejo.
+const CAMBIO = 214;
+const FUNDIDO = 4;
+const VOZ_FIN = 659;
+const CIERRE = 95;
+export const PATRICIO_FRAMES = VOZ_FIN + 16 + CIERRE;
 
-const CIERRE = 90;
-export const PATRICIO_FRAMES =
-  guion.reduce((t, l) => t + duracion(l), 0) + CIERRE;
+// Zona de bigote y mentón de cada ilustración (en % de la imagen original,
+// 1145x1374), sin tocar la bombilla.
+const boca: Record<Expr, string> = {
+  guino:
+    "polygon(47% 46.5%, 75% 46.5%, 75% 51%, 69% 54%, 68% 59%, 49% 59%, 46% 52.5%)",
+  preocupado:
+    "polygon(47% 50%, 75% 50%, 75% 54%, 70% 57.5%, 69% 60.5%, 50% 60.5%, 47% 55.5%)",
+};
+// Borde de arriba de esa zona: desde ahí se estira hacia abajo.
+const bocaTop: Record<Expr, string> = { guino: "46.5%", preocupado: "50%" };
 
 const fondo = "#F2E8D6";
 const tinta = "#1A1A1A";
 const letra = '"Comic Neue", sans-serif';
 
-const Personaje: React.FC<{ readonly expr: Expr }> = ({ expr }) => {
+const amp = (f: number) => vozEnvolvente[Math.max(0, f)] ?? 0;
+
+const Cara: React.FC<{ readonly expr: Expr; readonly opacity: number }> = ({
+  expr,
+  opacity,
+}) => {
   const f = useCurrentFrame();
-  // Respiración y balanceo suaves, y un "pop" corto al cambiar de viñeta.
+  const a = amp(f);
+  const imgStyle: React.CSSProperties = {
+    position: "absolute",
+    inset: 0,
+    width: "100%",
+    height: "100%",
+  };
+  return (
+    <AbsoluteFill style={{ opacity }}>
+      <Img src={staticFile(`patricio-${expr}.png`)} style={imgStyle} />
+      {/* "Mandíbula": la misma imagen recortada a bigote y mentón, estirada
+          hacia abajo según el volumen de la voz. */}
+      <Img
+        src={staticFile(`patricio-${expr}.png`)}
+        style={{
+          ...imgStyle,
+          clipPath: boca[expr],
+          transform: `scaleY(${1 + 0.085 * a})`,
+          transformOrigin: `50% ${bocaTop[expr]}`,
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
+const Personaje: React.FC = () => {
+  const f = useCurrentFrame();
+  // Voz suavizada (~0,3 s) para los movimientos de cabeza.
+  let s = 0;
+  for (let i = 0; i < 9; i++) s += amp(f - i);
+  const habla = s / 9;
   const breath = 1 + 0.012 * Math.sin((f / 30) * Math.PI * 0.9);
-  const sway = 0.7 * Math.sin((f / 30) * Math.PI * 0.45);
-  const pop = interpolate(f, [0, 7], [1.035, 1], {
+  const sway =
+    0.8 * Math.sin((f / 30) * Math.PI * 0.45) +
+    1.6 * habla * Math.sin((f / 30) * Math.PI * 1.7);
+  const nod = 7 * habla;
+  const guino = interpolate(f, [CAMBIO, CAMBIO + FUNDIDO], [0, 1], {
+    extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
-    easing: Easing.out(Easing.back(2)),
+  });
+  const pop = interpolate(f, [CAMBIO, CAMBIO + 5, CAMBIO + 14], [1, 1.03, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
   });
   return (
     <AbsoluteFill>
-      <Img
-        src={staticFile(`patricio-${expr}.png`)}
+      <div
         style={{
           position: "absolute",
           left: 40,
           top: 640,
           width: 1000,
           height: 1200,
-          objectFit: "cover",
-          transform: `scale(${breath * pop}) rotate(${sway}deg)`,
+          transform: `translateY(${nod}px) scale(${breath * pop}) rotate(${sway}deg)`,
           transformOrigin: "50% 95%",
           // Bordes fundidos con el fondo crema del video.
           maskImage:
@@ -91,7 +138,10 @@ const Personaje: React.FC<{ readonly expr: Expr }> = ({ expr }) => {
           WebkitMaskImage:
             "radial-gradient(ellipse 62% 60% at 50% 48%, black 70%, transparent 100%)",
         }}
-      />
+      >
+        <Cara expr="preocupado" opacity={1 - guino} />
+        <Cara expr="guino" opacity={guino} />
+      </div>
     </AbsoluteFill>
   );
 };
@@ -99,7 +149,7 @@ const Personaje: React.FC<{ readonly expr: Expr }> = ({ expr }) => {
 const Globo: React.FC<{
   readonly text: string;
   readonly frames: number;
-  // Cuadros que dura la voz: el texto se escribe a ese ritmo.
+  // Cuadros que dura su tramo de voz: el texto se escribe a ese ritmo.
   readonly speech: number;
   // El primer globo aparece completo desde el cuadro 0: es el gancho.
   readonly instant?: boolean;
@@ -118,7 +168,7 @@ const Globo: React.FC<{
   const shown = instant
     ? text.length
     : Math.round(
-        interpolate(f, [ENTRADA, ENTRADA + speech], [0, text.length], {
+        interpolate(f, [0, speech], [0, text.length], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
         }),
@@ -234,42 +284,25 @@ const Cierre: React.FC = () => {
 };
 
 export const DonPatricio: React.FC = () => {
-  let at = 0;
-  const bloques = guion.map((l, i) => {
-    const from = at;
-    at += duracion(l);
-    return { ...l, from, frames: duracion(l), speech: habla(l), i };
-  });
-  // Viñetas: un tramo por cada racha de la misma expresión.
-  const tramos: { from: number; frames: number; expr: Expr }[] = [];
-  for (const b of bloques) {
-    const last = tramos[tramos.length - 1];
-    if (last && last.expr === b.expr) last.frames += b.frames;
-    else tramos.push({ from: b.from, frames: b.frames, expr: b.expr });
-  }
-  tramos[tramos.length - 1].frames += CIERRE;
-
   return (
     <AbsoluteFill style={{ backgroundColor: fondo }}>
-      {tramos.map((t) => (
-        <Sequence key={t.from} from={t.from} durationInFrames={t.frames}>
-          <Personaje expr={t.expr} />
-        </Sequence>
-      ))}
-      {bloques.map((b) => (
-        <Sequence key={b.from} from={b.from} durationInFrames={b.frames}>
-          <Globo
-            text={b.text}
-            frames={b.frames}
-            speech={b.speech}
-            instant={b.from === 0}
-          />
-          <Sequence from={ENTRADA}>
-            <Audio src={staticFile(`patricio-voz/linea_${b.i}.wav`)} />
+      <Personaje />
+      <Audio src={staticFile("patricio-voz/elevenlabs-bombilla.mp3")} />
+      {guion.map((l, i) => {
+        // Cada globo queda hasta que empieza el siguiente (o el cierre).
+        const next = guion[i + 1]?.from ?? VOZ_FIN + 16;
+        return (
+          <Sequence key={l.from} from={l.from} durationInFrames={next - l.from}>
+            <Globo
+              text={l.text}
+              frames={next - l.from}
+              speech={l.to - l.from}
+              instant={l.from === 0}
+            />
           </Sequence>
-        </Sequence>
-      ))}
-      <Sequence from={at}>
+        );
+      })}
+      <Sequence from={VOZ_FIN + 16}>
         <Cierre />
       </Sequence>
     </AbsoluteFill>
