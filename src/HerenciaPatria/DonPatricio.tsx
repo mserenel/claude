@@ -1,4 +1,5 @@
-import "@fontsource/comic-neue/700.css";
+import "@fontsource/kalam/700.css";
+import "@fontsource/rye/400.css";
 import {
   AbsoluteFill,
   Audio,
@@ -124,9 +125,19 @@ const ajuste: Record<Expr, [number, number]> = {
   preocupado: [-0.6, -4.6],
 };
 
-const fondo = "#F2E8D6";
+// Estilo de historieta argentina de revista (Patoruzú, Rico Tipo): papel de
+// diario amarillento, viñeta con borde de tinta, título de portada en letra
+// de cartel antiguo y globos ovalados con letra de rotulista en mayúsculas.
+const papel = "#E6D3A8";
+// El fondo de las ilustraciones: adentro de la viñeta no se nota el borde.
+const fondoVineta = "#EFE3CC";
 const tinta = "#1A1A1A";
-const letra = '"Comic Neue", sans-serif';
+const letra = '"Kalam", cursive';
+const cartel = '"Rye", serif';
+
+// Viñeta: debajo del título y hasta casi el borde (la parte de abajo la tapa
+// la interfaz de Instagram de todas formas).
+const VINETA = { left: 34, right: 34, top: 300, bottom: 34 };
 
 const amp = (f: number) => vozEnvolvente[Math.max(0, f)] ?? 0;
 
@@ -209,17 +220,18 @@ const Personaje: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          left: 40,
-          top: 640,
-          width: 1000,
-          height: 1200,
+          // Más grande que la viñeta: el cuerpo queda cortado por el borde,
+          // como en un cuadro de historieta.
+          left: -38,
+          top: 290,
+          width: 1117,
+          height: 1340,
           transform: `translateY(${nod}px) scale(${breath * pop}) rotate(${sway}deg)`,
           transformOrigin: "50% 95%",
-          // Bordes fundidos con el fondo crema del video.
-          maskImage:
-            "radial-gradient(ellipse 62% 60% at 50% 48%, black 70%, transparent 100%)",
+          // El corte de abajo de la ilustración se funde con la viñeta.
+          maskImage: "linear-gradient(to bottom, black 90%, transparent 100%)",
           WebkitMaskImage:
-            "radial-gradient(ellipse 62% 60% at 50% 48%, black 70%, transparent 100%)",
+            "linear-gradient(to bottom, black 90%, transparent 100%)",
         }}
       >
         {/* Cada cara entra por encima de la anterior, que sigue entera
@@ -267,30 +279,31 @@ const Globo: React.FC<{
       <div
         style={{
           position: "absolute",
-          left: 80,
-          right: 80,
-          top: 250,
-          minHeight: 300,
+          left: 20,
+          right: 20,
+          top: 22,
+          minHeight: 250,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "36px 48px",
+          padding: "64px 140px",
           background: "white",
-          border: `6px solid ${tinta}`,
-          borderRadius: 60,
-          boxShadow: `6px 8px 0 ${tinta}`,
+          border: `5px solid ${tinta}`,
+          // Globo ovalado, como en las historietas de revista.
+          borderRadius: "50%",
           transform: `scale(${enter})`,
-          transformOrigin: "60% 100%",
+          transformOrigin: "62% 100%",
         }}
       >
         <div
           style={{
             fontFamily: letra,
             fontWeight: 700,
-            fontSize: 64,
-            lineHeight: 1.18,
+            fontSize: 50,
+            lineHeight: 1.1,
             color: tinta,
             textAlign: "center",
+            textTransform: "uppercase",
             textWrap: "balance",
           }}
         >
@@ -302,23 +315,60 @@ const Globo: React.FC<{
         {/* Cola del globo, apuntando a la boca de Don Patricio. */}
         <svg
           width="120"
-          height="120"
-          viewBox="0 0 120 120"
-          style={{ position: "absolute", bottom: -104, left: "58%" }}
+          height="130"
+          viewBox="0 0 120 130"
+          style={{ position: "absolute", bottom: -118, left: "60%" }}
         >
           <path
-            d="M10 0 L70 0 L95 110 Z"
+            d="M14 0 Q40 70 92 124 Q62 60 70 0 Z"
             fill="white"
             stroke={tinta}
-            strokeWidth="6"
+            strokeWidth="5"
             strokeLinejoin="round"
           />
-          <rect x="4" y="-8" width="72" height="12" fill="white" />
+          <rect x="8" y="-10" width="70" height="14" fill="white" />
         </svg>
       </div>
     </AbsoluteFill>
   );
 };
+
+// Título de tapa de revista, arriba de la viñeta.
+const Cabecera: React.FC = () => (
+  <AbsoluteFill style={{ alignItems: "center", paddingTop: 92 }}>
+    <div
+      style={{
+        fontFamily: cartel,
+        fontSize: 104,
+        lineHeight: 1,
+        color: colors.azul,
+        letterSpacing: 2,
+        textShadow: `4px 4px 0 ${tinta}`,
+        WebkitTextStroke: `2px ${tinta}`,
+      }}
+    >
+      DON PATRICIO
+    </div>
+    <div
+      style={{
+        marginTop: 14,
+        display: "flex",
+        alignItems: "center",
+        gap: 18,
+        fontFamily: letra,
+        fontWeight: 700,
+        fontSize: 38,
+        color: tinta,
+        textTransform: "uppercase",
+        letterSpacing: 1,
+      }}
+    >
+      <span style={{ width: 54, height: 4, background: tinta }} />
+      Secreto Nº 1: la bombilla tapada
+      <span style={{ width: 54, height: 4, background: tinta }} />
+    </div>
+  </AbsoluteFill>
+);
 
 const Cierre: React.FC = () => {
   const f = useCurrentFrame();
@@ -330,70 +380,160 @@ const Cierre: React.FC = () => {
     <AbsoluteFill
       style={{
         alignItems: "center",
-        paddingTop: 270,
+        paddingTop: 70,
         opacity: t,
         transform: `translateY(${(1 - t) * 16}px)`,
       }}
     >
-      {/* El logo es blanco: va sobre un círculo azul de marca. */}
+      {/* Recuadro de texto (cartucho) como los de las revistas. */}
       <div
         style={{
-          width: 250,
-          height: 250,
-          borderRadius: "50%",
-          background: colors.azul,
-          border: `6px solid ${tinta}`,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          padding: "26px 40px 30px",
+          background: "#F3D77A",
+          border: `5px solid ${tinta}`,
+          boxShadow: `6px 6px 0 ${tinta}`,
         }}
       >
-        <Img
-          src={staticFile("logo-herencia-patria.png")}
-          style={{ width: 220, height: 220 }}
-        />
-      </div>
-      <div
-        style={{
-          marginTop: 22,
-          fontFamily: letra,
-          fontWeight: 700,
-          fontSize: 54,
-          lineHeight: 1.15,
-          color: colors.azul,
-          textAlign: "center",
-          maxWidth: 860,
-          textWrap: "balance",
-        }}
-      >
-        Seguí a Herencia Patria para más secretos de Don Patricio
+        <div
+          style={{
+            fontFamily: cartel,
+            fontSize: 64,
+            color: tinta,
+            letterSpacing: 2,
+          }}
+        >
+          CONTINUARÁ…
+        </div>
+        <div
+          style={{
+            marginTop: 18,
+            display: "flex",
+            alignItems: "center",
+            gap: 22,
+          }}
+        >
+          {/* El logo es blanco: va sobre un círculo azul de marca. */}
+          <div
+            style={{
+              width: 130,
+              height: 130,
+              flexShrink: 0,
+              borderRadius: "50%",
+              background: colors.azul,
+              border: `4px solid ${tinta}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Img
+              src={staticFile("logo-herencia-patria.png")}
+              style={{ width: 114, height: 114 }}
+            />
+          </div>
+          <div
+            style={{
+              fontFamily: letra,
+              fontWeight: 700,
+              fontSize: 40,
+              lineHeight: 1.12,
+              color: tinta,
+              textTransform: "uppercase",
+              maxWidth: 640,
+            }}
+          >
+            Seguí a Herencia Patria para más secretos de Don Patricio
+          </div>
+        </div>
       </div>
     </AbsoluteFill>
   );
 };
 
+// Papel de revista impreso: grano, trama de puntos de imprenta y bordes
+// gastados, por encima de todo (el dibujo y los textos están "impresos").
+const Papel: React.FC = () => (
+  <AbsoluteFill style={{ pointerEvents: "none" }}>
+    <svg width="1080" height="1920" style={{ position: "absolute" }}>
+      <filter id="grano">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.9"
+          numOctaves="2"
+          seed="7"
+        />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0.45  0 0 0 0 0.35  0 0 0 0 0.2  0 0 0 0.55 0"
+        />
+      </filter>
+      <rect width="1080" height="1920" filter="url(#grano)" opacity="0.35" />
+    </svg>
+    <AbsoluteFill
+      style={{
+        backgroundImage:
+          "radial-gradient(circle, rgba(60,40,10,0.09) 1.3px, transparent 1.9px)",
+        backgroundSize: "8px 8px",
+        mixBlendMode: "multiply",
+      }}
+    />
+    <AbsoluteFill
+      style={{
+        background:
+          "radial-gradient(ellipse 75% 70% at 50% 50%, rgba(0,0,0,0) 55%, rgba(110,70,20,0.28) 100%)",
+        mixBlendMode: "multiply",
+      }}
+    />
+    {/* Un tono amarillento parejo: papel de diario con años. */}
+    <AbsoluteFill
+      style={{ background: "rgba(225,190,120,0.16)", mixBlendMode: "multiply" }}
+    />
+  </AbsoluteFill>
+);
+
 export const DonPatricio: React.FC = () => {
   return (
-    <AbsoluteFill style={{ backgroundColor: fondo }}>
-      <Personaje />
+    <AbsoluteFill style={{ backgroundColor: papel }}>
+      <Cabecera />
+      <div
+        style={{
+          position: "absolute",
+          ...VINETA,
+          overflow: "hidden",
+          background: fondoVineta,
+          border: `7px solid ${tinta}`,
+          // Colores de imprenta: un poco menos saturados y más cálidos.
+          filter: "sepia(0.12) saturate(0.92) contrast(1.04)",
+        }}
+      >
+        <Personaje />
+        {guion.map((l, i) => {
+          // Cada globo queda hasta que empieza el siguiente (o el cierre).
+          const next = guion[i + 1]?.from ?? VOZ_FIN + 16;
+          return (
+            <Sequence
+              key={l.from}
+              from={l.from}
+              durationInFrames={next - l.from}
+            >
+              <Globo
+                text={l.text}
+                frames={next - l.from}
+                speech={l.to - l.from}
+                instant={l.from === 0}
+              />
+            </Sequence>
+          );
+        })}
+      </div>
       <Audio src={staticFile("patricio-voz/elevenlabs-bombilla.mp3")} />
-      {guion.map((l, i) => {
-        // Cada globo queda hasta que empieza el siguiente (o el cierre).
-        const next = guion[i + 1]?.from ?? VOZ_FIN + 16;
-        return (
-          <Sequence key={l.from} from={l.from} durationInFrames={next - l.from}>
-            <Globo
-              text={l.text}
-              frames={next - l.from}
-              speech={l.to - l.from}
-              instant={l.from === 0}
-            />
-          </Sequence>
-        );
-      })}
       <Sequence from={VOZ_FIN + 16}>
         <Cierre />
       </Sequence>
+      <Papel />
     </AbsoluteFill>
   );
 };
