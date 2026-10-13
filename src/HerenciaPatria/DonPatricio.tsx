@@ -12,13 +12,22 @@ import {
 import { colors } from "./brand";
 import { vozEnvolvente } from "./patricioVoz";
 
-// Don Patricio, versión historieta animada (motion comic). Usa las dos
+// Don Patricio, versión historieta animada (motion comic). Usa las
 // ilustraciones oficiales sin redibujarlas, con la voz de ElevenLabs
 // (public/patricio-voz/elevenlabs-bombilla.mp3). Para que "hable": la parte
 // de abajo de la cara (bigote y mentón) se estira apenas al ritmo de la voz,
-// la cabeza asiente con los acentos y las expresiones cambian con un fundido.
+// la cabeza asiente con los acentos y la expresión cambia con cada idea,
+// con un fundido en las pausas de la voz.
 
-type Expr = "preocupado" | "guino";
+type Expr =
+  | "explica"
+  | "preocupado"
+  | "senala"
+  | "sorpresa"
+  | "contento"
+  | "serena"
+  | "guino"
+  | "orgullo";
 
 // Tramos de la voz, medidos en sus pausas (cuadros a 30 fps). El texto de
 // cada globo se escribe mientras dura su tramo.
@@ -48,23 +57,72 @@ const guion: Linea[] = [
   { from: 596, to: 659, text: "Y ahí está el secreto." },
 ];
 
-// Preocupado mientras plantea el problema; pícaro desde que da el consejo.
-const CAMBIO = 214;
-const FUNDIDO = 14;
+// Qué cara pone desde cada cuadro: cada cambio cae en una pausa de la voz.
+const caras: { readonly from: number; readonly expr: Expr }[] = [
+  { from: 0, expr: "explica" }, // ¡Buenas, m'hijo!
+  { from: 46, expr: "preocupado" }, // ¿Se le tapa la bombilla?
+  { from: 92, expr: "senala" }, // ¡No es culpa de la bombilla, eh!
+  { from: 211, expr: "explica" }, // Mire: ponga la yerba...
+  { from: 316, expr: "sorpresa" }, // ¡y sacúdalo boca abajo!
+  { from: 367, expr: "contento" }, // Así se va el polvillo.
+  { from: 418, expr: "serena" }, // Después lo inclina...
+  { from: 547, expr: "senala" }, // ¡Y no la mueva más, eh!
+  { from: 594, expr: "guino" }, // Y ahí está el secreto.
+  { from: 668, expr: "orgullo" }, // levanta el mate, satisfecho
+];
+const FUNDIDO = 6;
+
 const VOZ_FIN = 659;
 const CIERRE = 95;
 export const PATRICIO_FRAMES = VOZ_FIN + 16 + CIERRE;
 
 // Zona de bigote y mentón de cada ilustración (en % de la imagen original,
-// 1145x1374), sin tocar la bombilla.
-const boca: Record<Expr, string> = {
-  guino:
-    "polygon(47% 46.5%, 75% 46.5%, 75% 51%, 69% 54%, 68% 59%, 49% 59%, 46% 52.5%)",
-  preocupado:
-    "polygon(47% 50%, 75% 50%, 75% 54%, 70% 57.5%, 69% 60.5%, 50% 60.5%, 47% 55.5%)",
+// 1145x1374), sin tocar la bombilla. "orgullo" no habla.
+const boca: Partial<Record<Expr, { clip: string; top: string }>> = {
+  guino: {
+    clip: "polygon(47% 46.5%, 75% 46.5%, 75% 51%, 69% 54%, 68% 59%, 49% 59%, 46% 52.5%)",
+    top: "46.5%",
+  },
+  preocupado: {
+    clip: "polygon(47% 50%, 75% 50%, 75% 54%, 70% 57.5%, 69% 60.5%, 50% 60.5%, 47% 55.5%)",
+    top: "50%",
+  },
+  serena: {
+    clip: "polygon(45% 39%, 71% 39%, 71% 43%, 66% 45%, 65% 51%, 46% 52%, 43% 46%)",
+    top: "39%",
+  },
+  sorpresa: {
+    clip: "polygon(47% 41%, 72% 41%, 72% 45.5%, 66% 47%, 66% 55.5%, 50% 56%, 46% 49%)",
+    top: "41%",
+  },
+  explica: {
+    clip: "polygon(44% 37%, 67% 37%, 67% 41%, 64% 42%, 65% 52.5%, 48% 53%, 44% 46%)",
+    top: "37%",
+  },
+  senala: {
+    clip: "polygon(45% 38%, 71% 38%, 71% 43%, 66% 44%, 66% 53.5%, 49% 54%, 45% 47%)",
+    top: "38%",
+  },
+  contento: {
+    clip: "polygon(46% 38%, 70% 38%, 70% 42%, 66% 44%, 66% 52.5%, 49% 53%, 45% 47%)",
+    top: "38%",
+  },
 };
-// Borde de arriba de esa zona: desde ahí se estira hacia abajo.
-const bocaTop: Record<Expr, string> = { guino: "46.5%", preocupado: "50%" };
+
+// Cada ilustración tiene la cabeza en un lugar un poco distinto: se corre
+// (en % de la imagen) para que la cara quede siempre en el mismo lugar y el
+// cambio se vea como un gesto, no como un salto. "orgullo" levanta la
+// cabeza: se corrige sólo a medias.
+const ajuste: Record<Expr, [number, number]> = {
+  serena: [0, 0],
+  sorpresa: [0, -1.2],
+  orgullo: [1.4, 2],
+  explica: [3.3, 1.7],
+  senala: [1, -1],
+  contento: [0.6, 0],
+  guino: [0.2, -3.5],
+  preocupado: [-0.6, -4.6],
+};
 
 const fondo = "#F2E8D6";
 const tinta = "#1A1A1A";
@@ -78,6 +136,9 @@ const Cara: React.FC<{ readonly expr: Expr; readonly opacity: number }> = ({
 }) => {
   const f = useCurrentFrame();
   const a = amp(f);
+  const src = staticFile(`patricio-${expr}.png`);
+  const b = boca[expr];
+  const [dx, dy] = ajuste[expr];
   const imgStyle: React.CSSProperties = {
     position: "absolute",
     inset: 0,
@@ -85,19 +146,21 @@ const Cara: React.FC<{ readonly expr: Expr; readonly opacity: number }> = ({
     height: "100%",
   };
   return (
-    <AbsoluteFill style={{ opacity }}>
-      <Img src={staticFile(`patricio-${expr}.png`)} style={imgStyle} />
+    <AbsoluteFill style={{ opacity, transform: `translate(${dx}%, ${dy}%)` }}>
+      <Img src={src} style={imgStyle} />
       {/* "Mandíbula": la misma imagen recortada a bigote y mentón, estirada
           hacia abajo según el volumen de la voz. */}
-      <Img
-        src={staticFile(`patricio-${expr}.png`)}
-        style={{
-          ...imgStyle,
-          clipPath: boca[expr],
-          transform: `scaleY(${1 + 0.07 * a})`,
-          transformOrigin: `50% ${bocaTop[expr]}`,
-        }}
-      />
+      {b ? (
+        <Img
+          src={src}
+          style={{
+            ...imgStyle,
+            clipPath: b.clip,
+            transform: `scaleY(${1 + 0.07 * a})`,
+            transformOrigin: `50% ${b.top}`,
+          }}
+        />
+      ) : null}
     </AbsoluteFill>
   );
 };
@@ -114,15 +177,33 @@ const Personaje: React.FC = () => {
     0.7 * Math.sin((f / 30) * Math.PI * 0.4) +
     0.9 * habla * Math.sin((f / 30) * Math.PI * 0.9);
   const nod = 4 * habla;
-  const guino = interpolate(f, [CAMBIO, CAMBIO + FUNDIDO], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.inOut(Easing.sin),
-  });
-  const pop = interpolate(f, [CAMBIO, CAMBIO + 5, CAMBIO + 14], [1, 1.03, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
+  // Un pequeño impulso en cada cambio de cara, como quien cambia de gesto.
+  let pop = 1;
+  for (const c of caras.slice(1)) {
+    pop *= interpolate(
+      f,
+      [c.from - 8, c.from, c.from + 10, c.from + 24],
+      [1, 0.985, 1.015, 1],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+        easing: Easing.inOut(Easing.sin),
+      },
+    );
+  }
+  const entra = (i: number) =>
+    i === 0
+      ? 1
+      : interpolate(
+          f,
+          [caras[i].from - FUNDIDO / 2, caras[i].from + FUNDIDO / 2],
+          [0, 1],
+          {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+            easing: Easing.inOut(Easing.sin),
+          },
+        );
   return (
     <AbsoluteFill>
       <div
@@ -141,8 +222,14 @@ const Personaje: React.FC = () => {
             "radial-gradient(ellipse 62% 60% at 50% 48%, black 70%, transparent 100%)",
         }}
       >
-        <Cara expr="preocupado" opacity={1 - guino} />
-        <Cara expr="guino" opacity={guino} />
+        {/* Cada cara entra por encima de la anterior, que sigue entera
+            debajo hasta que la nueva termina de aparecer. */}
+        {caras.map((c, i) => {
+          const o = entra(i);
+          const tapada = i + 1 < caras.length && entra(i + 1) >= 1;
+          if (o <= 0 || tapada) return null;
+          return <Cara key={c.from} expr={c.expr} opacity={o} />;
+        })}
       </div>
     </AbsoluteFill>
   );
