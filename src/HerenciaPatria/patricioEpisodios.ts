@@ -45,42 +45,54 @@ export const bombilla: Episodio = {
   ],
 };
 
+// Mientras no hay audio: una "voz" de mentira, unas cinco sílabas por segundo
+// durante cada tramo del guion, para que la boca se mueva en la vista previa.
+const vozSimulada = (guion: Episodio["guion"], frames: number) =>
+  Array.from({ length: frames }, (_, f) => {
+    const l = guion.find((g) => f >= g.from && f < g.to);
+    if (!l) return 0;
+    const sil = Math.abs(Math.sin(((f - l.from) / 30) * Math.PI * 5));
+    return 0.25 + 0.6 * sil;
+  });
+
 // Borrador: los cuadros son estimados hasta tener el audio de ElevenLabs
-// (patricio-voz/elevenlabs-agua.mp3); ahí se miden las pausas, se genera su
-// envolvente y se registra la composición en Root.tsx.
+// (patricio-voz/elevenlabs-agua.mp3); ahí se miden las pausas y se genera su
+// envolvente.
+const guionAgua: Episodio["guion"] = [
+  {
+    from: 0,
+    to: 75,
+    text: "¡Si silba la pava, ya le quemó la yerba, m'hijo!",
+  },
+  {
+    from: 85,
+    to: 165,
+    text: "Y así el mate sale amargo y se lava enseguida.",
+  },
+  {
+    from: 175,
+    to: 275,
+    text: "El agua va calentita, no hervida: entre setenta y ochenta grados.",
+  },
+  {
+    from: 285,
+    to: 385,
+    text: "¿Cómo sabe? Cuando la pava empieza a hacer ruidito... ¡ahí la saca!",
+  },
+  {
+    from: 395,
+    to: 500,
+    text: "¿Se le pasó? Échele un buen chorro de agua fría, o déjela descansar un ratito.",
+  },
+  { from: 510, to: 570, text: "Ahhh... ¡eso sí es un mate!" },
+];
+
 export const agua: Episodio = {
   titulo: "Secreto Nº 2: el agua nunca hervida",
-  audio: "elevenlabs-agua.mp3",
-  voz: [],
+  audio: null,
+  voz: vozSimulada(guionAgua, 570),
   vozFin: 570,
-  guion: [
-    {
-      from: 0,
-      to: 75,
-      text: "¡Si silba la pava, ya le quemó la yerba, m'hijo!",
-    },
-    {
-      from: 85,
-      to: 165,
-      text: "Y así el mate sale amargo y se lava enseguida.",
-    },
-    {
-      from: 175,
-      to: 275,
-      text: "El agua va calentita, no hervida: entre setenta y ochenta grados.",
-    },
-    {
-      from: 285,
-      to: 385,
-      text: "¿Cómo sabe? Cuando la pava empieza a hacer ruidito... ¡ahí la saca!",
-    },
-    {
-      from: 395,
-      to: 500,
-      text: "¿Se le pasó? Échele un buen chorro de agua fría, o déjela descansar un ratito.",
-    },
-    { from: 510, to: 570, text: "Ahhh... ¡eso sí es un mate!" },
-  ],
+  guion: guionAgua,
   caras: [
     { from: 0, expr: "indignado" }, // ¡Si silba la pava...!
     { from: 80, expr: "preocupado" }, // Y así el mate sale amargo...

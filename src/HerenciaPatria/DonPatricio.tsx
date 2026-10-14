@@ -47,8 +47,8 @@ type Linea = {
 export type Episodio = {
   // "Secreto Nº 1: la bombilla tapada"
   readonly titulo: string;
-  // En public/patricio-voz/.
-  readonly audio: string;
+  // En public/patricio-voz/. Sin audio, el video sale mudo (para revisar).
+  readonly audio: string | null;
   // Volumen de la voz por cuadro (tools/envolvente_voz.py).
   readonly voz: readonly number[];
   readonly guion: readonly Linea[];
@@ -569,7 +569,9 @@ export const DonPatricio: React.FC<{ readonly ep: Episodio }> = ({ ep }) => {
             );
           })}
         </div>
-        <Audio src={staticFile(`patricio-voz/${ep.audio}`)} />
+        {ep.audio ? (
+          <Audio src={staticFile(`patricio-voz/${ep.audio}`)} />
+        ) : null}
         <Sequence from={vozFin + 16}>
           <Cierre />
         </Sequence>

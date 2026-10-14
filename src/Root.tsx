@@ -4,7 +4,7 @@ import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
 import { Camionero, CAMIONERO_FRAMES } from "./HerenciaPatria/Camionero";
 import { Balcon, BALCON_FRAMES } from "./HerenciaPatria/Balcon";
 import { DonPatricio, episodioFrames } from "./HerenciaPatria/DonPatricio";
-import { bombilla } from "./HerenciaPatria/patricioEpisodios";
+import { agua, bombilla } from "./HerenciaPatria/patricioEpisodios";
 import { Portada } from "./HerenciaPatria/Portada";
 import { PortadaFeed } from "./HerenciaPatria/PortadaFeed";
 
@@ -119,6 +119,16 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ ep: bombilla }}
+      />
+      {/* npx remotion render HP-DonPatricio-Agua entregas/don-patricio-agua.mp4 */}
+      <Composition
+        id="HP-DonPatricio-Agua"
+        component={DonPatricio}
+        durationInFrames={episodioFrames(agua)}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ ep: agua }}
       />
       {/* npx remotion still HP-Portada-Feed entregas/portada-reel-feed.jpg */}
       <Still
