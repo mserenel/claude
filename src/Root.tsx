@@ -3,7 +3,8 @@ import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
 import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
 import { Camionero, CAMIONERO_FRAMES } from "./HerenciaPatria/Camionero";
 import { Balcon, BALCON_FRAMES } from "./HerenciaPatria/Balcon";
-import { DonPatricio, PATRICIO_FRAMES } from "./HerenciaPatria/DonPatricio";
+import { DonPatricio, episodioFrames } from "./HerenciaPatria/DonPatricio";
+import { bombilla } from "./HerenciaPatria/patricioEpisodios";
 import { Portada } from "./HerenciaPatria/Portada";
 import { PortadaFeed } from "./HerenciaPatria/PortadaFeed";
 
@@ -113,10 +114,11 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="HP-DonPatricio-Bombilla"
         component={DonPatricio}
-        durationInFrames={PATRICIO_FRAMES}
+        durationInFrames={episodioFrames(bombilla)}
         fps={30}
         width={1080}
         height={1920}
+        defaultProps={{ ep: bombilla }}
       />
       {/* npx remotion still HP-Portada-Feed entregas/portada-reel-feed.jpg */}
       <Still

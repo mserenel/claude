@@ -1,5 +1,6 @@
 import "@fontsource/kalam/700.css";
 import "@fontsource/rye/400.css";
+import { createContext, useContext } from "react";
 import {
   AbsoluteFill,
   Audio,
@@ -11,16 +12,18 @@ import {
   useCurrentFrame,
 } from "remotion";
 import { colors } from "./brand";
-import { vozEnvolvente } from "./patricioVoz";
 
 // Don Patricio, versión historieta animada (motion comic). Usa las
-// ilustraciones oficiales sin redibujarlas, con la voz de ElevenLabs
-// (public/patricio-voz/elevenlabs-bombilla.mp3). Para que "hable": la parte
+// ilustraciones oficiales sin redibujarlas, con la voz de ElevenLabs. Cada
+// "Secreto" es un Episodio (guion, caras y audio, en patricioEpisodios.ts) y
+// este archivo es la puesta en escena común. Para que "hable": la parte
 // de abajo de la cara (bigote y mentón) se estira apenas al ritmo de la voz,
 // la cabeza asiente con los acentos y la expresión cambia con cada idea,
 // con un fundido en las pausas de la voz.
 
-type Expr =
+export type Expr =
+  | "pensativo"
+  | "satisfecho"
   | "saludo"
   | "indignado"
   | "mate"
@@ -41,48 +44,34 @@ type Linea = {
   readonly text: string;
 };
 
-const guion: Linea[] = [
-  { from: 0, to: 86, text: "¡Buenas, m'hijo! ¿Se le tapa la bombilla?" },
-  {
-    from: 97,
-    to: 203,
-    text: "¡No es culpa de la bombilla, eh! Es cómo arma el mate.",
-  },
-  {
-    from: 219,
-    to: 409,
-    text: "Mire: ponga la yerba, tape la boca con la mano, ¡y sacúdalo boca abajo! Así se va el polvillo.",
-  },
-  {
-    from: 418,
-    to: 542,
-    text: "Después lo inclina, moja del costadito y mete la bombilla ahí. ¡Y no la mueva más, eh!",
-  },
-  { from: 596, to: 659, text: "Y ahí está el secreto." },
-];
+export type Episodio = {
+  // "Secreto Nº 1: la bombilla tapada"
+  readonly titulo: string;
+  // En public/patricio-voz/.
+  readonly audio: string;
+  // Volumen de la voz por cuadro (tools/envolvente_voz.py).
+  readonly voz: readonly number[];
+  readonly guion: readonly Linea[];
+  // Qué cara pone desde cada cuadro: cada cambio cae en una pausa de la voz.
+  readonly caras: readonly { readonly from: number; readonly expr: Expr }[];
+  // Cuadro en que termina la voz.
+  readonly vozFin: number;
+};
 
-// Qué cara pone desde cada cuadro: cada cambio cae en una pausa de la voz.
-const caras: { readonly from: number; readonly expr: Expr }[] = [
-  { from: 0, expr: "saludo" }, // ¡Buenas, m'hijo!
-  { from: 46, expr: "preocupado" }, // ¿Se le tapa la bombilla?
-  { from: 92, expr: "indignado" }, // ¡No es culpa de la bombilla, eh!
-  { from: 162, expr: "senala" }, // Es cómo arma el mate.
-  { from: 211, expr: "explica" }, // Mire: ponga la yerba...
-  { from: 316, expr: "sorpresa" }, // ¡y sacúdalo boca abajo!
-  { from: 367, expr: "contento" }, // Así se va el polvillo.
-  { from: 418, expr: "serena" }, // Después lo inclina...
-  { from: 547, expr: "senala" }, // ¡Y no la mueva más, eh!
-  { from: 594, expr: "guino" }, // Y ahí está el secreto.
-  { from: 668, expr: "mate" }, // se toma un mate, satisfecho
-];
 const FUNDIDO = 6;
-
-const VOZ_FIN = 659;
 const CIERRE = 95;
-export const PATRICIO_FRAMES = VOZ_FIN + 16 + CIERRE;
+export const episodioFrames = (ep: Episodio) => ep.vozFin + 16 + CIERRE;
+
+const Ep = createContext<Episodio | null>(null);
+const useEp = () => {
+  const ep = useContext(Ep);
+  if (!ep) throw new Error("Falta el episodio");
+  return ep;
+};
 
 // Zona de bigote y mentón de cada ilustración (en % de la imagen original,
-// 1145x1374), sin tocar la bombilla. "orgullo" y "mate" no hablan.
+// 1145x1374), sin tocar la bombilla. "orgullo", "mate" y "satisfecho" no
+// hablan; "pensativo" tampoco: tiene la mano en el mentón.
 const boca: Partial<Record<Expr, { clip: string; top: string }>> = {
   saludo: {
     clip: "polygon(44% 40%, 70% 40%, 70% 46%, 66% 49%, 64% 53.5%, 47% 53.5%, 44% 49%)",
@@ -125,8 +114,11 @@ const boca: Partial<Record<Expr, { clip: string; top: string }>> = {
 // Cada ilustración tiene la cabeza en un lugar un poco distinto: se corre
 // (en % de la imagen) para que la cara quede siempre en el mismo lugar y el
 // cambio se vea como un gesto, no como un salto. "orgullo" levanta la
-// cabeza y "saludo" está de frente: se corrigen sólo a medias.
+// cabeza ("satisfecho" también) y "saludo" está de frente: se corrigen sólo a
+// medias.
 const ajuste: Record<Expr, [number, number]> = {
+  pensativo: [0.4, -0.1],
+  satisfecho: [1.4, 2.2],
   saludo: [-3.5, 0.5],
   indignado: [0.4, 3.1],
   mate: [1.6, 0.7],
@@ -154,14 +146,17 @@ const cartel = '"Rye", serif';
 // la interfaz de Instagram de todas formas).
 const VINETA = { left: 34, right: 34, top: 300, bottom: 34 };
 
-const amp = (f: number) => vozEnvolvente[Math.max(0, f)] ?? 0;
+const useAmp = () => {
+  const { voz } = useEp();
+  return (f: number) => voz[Math.max(0, f)] ?? 0;
+};
 
 const Cara: React.FC<{ readonly expr: Expr; readonly opacity: number }> = ({
   expr,
   opacity,
 }) => {
   const f = useCurrentFrame();
-  const a = amp(f);
+  const a = useAmp()(f);
   const src = staticFile(`patricio-campo/${expr}.png`);
   const b = boca[expr];
   const [dx, dy] = ajuste[expr];
@@ -193,6 +188,8 @@ const Cara: React.FC<{ readonly expr: Expr; readonly opacity: number }> = ({
 
 const Personaje: React.FC = () => {
   const f = useCurrentFrame();
+  const amp = useAmp();
+  const { caras } = useEp();
   // Voz muy suavizada (~0,8 s, centrada) para la cabeza: acompaña las
   // frases, no cada sílaba.
   let s = 0;
@@ -352,7 +349,7 @@ const Globo: React.FC<{
 // que no parezca una foto quieta.
 const Campo: React.FC = () => {
   const f = useCurrentFrame();
-  const z = interpolate(f, [0, PATRICIO_FRAMES], [1, 1.05]);
+  const z = interpolate(f, [0, episodioFrames(useEp())], [1, 1.05]);
   return (
     <Img
       src={staticFile("campo-tranquera.png")}
@@ -371,41 +368,44 @@ const Campo: React.FC = () => {
 };
 
 // Título de tapa de revista, arriba de la viñeta.
-const Cabecera: React.FC = () => (
-  <AbsoluteFill style={{ alignItems: "center", paddingTop: 92 }}>
-    <div
-      style={{
-        fontFamily: cartel,
-        fontSize: 104,
-        lineHeight: 1,
-        color: colors.azul,
-        letterSpacing: 2,
-        textShadow: `4px 4px 0 ${tinta}`,
-        WebkitTextStroke: `2px ${tinta}`,
-      }}
-    >
-      DON PATRICIO
-    </div>
-    <div
-      style={{
-        marginTop: 14,
-        display: "flex",
-        alignItems: "center",
-        gap: 18,
-        fontFamily: letra,
-        fontWeight: 700,
-        fontSize: 38,
-        color: tinta,
-        textTransform: "uppercase",
-        letterSpacing: 1,
-      }}
-    >
-      <span style={{ width: 54, height: 4, background: tinta }} />
-      Secreto Nº 1: la bombilla tapada
-      <span style={{ width: 54, height: 4, background: tinta }} />
-    </div>
-  </AbsoluteFill>
-);
+const Cabecera: React.FC = () => {
+  const { titulo } = useEp();
+  return (
+    <AbsoluteFill style={{ alignItems: "center", paddingTop: 92 }}>
+      <div
+        style={{
+          fontFamily: cartel,
+          fontSize: 104,
+          lineHeight: 1,
+          color: colors.azul,
+          letterSpacing: 2,
+          textShadow: `4px 4px 0 ${tinta}`,
+          WebkitTextStroke: `2px ${tinta}`,
+        }}
+      >
+        DON PATRICIO
+      </div>
+      <div
+        style={{
+          marginTop: 14,
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          fontFamily: letra,
+          fontWeight: 700,
+          fontSize: 38,
+          color: tinta,
+          textTransform: "uppercase",
+          letterSpacing: 1,
+        }}
+      >
+        <span style={{ width: 54, height: 4, background: tinta }} />
+        {titulo}
+        <span style={{ width: 54, height: 4, background: tinta }} />
+      </div>
+    </AbsoluteFill>
+  );
+};
 
 const Cierre: React.FC = () => {
   const f = useCurrentFrame();
@@ -531,47 +531,50 @@ const Papel: React.FC = () => (
   </AbsoluteFill>
 );
 
-export const DonPatricio: React.FC = () => {
+export const DonPatricio: React.FC<{ readonly ep: Episodio }> = ({ ep }) => {
+  const { guion, vozFin } = ep;
   return (
-    <AbsoluteFill style={{ backgroundColor: papel }}>
-      <Cabecera />
-      <div
-        style={{
-          position: "absolute",
-          ...VINETA,
-          overflow: "hidden",
-          background: fondoVineta,
-          border: `7px solid ${tinta}`,
-          // Colores de imprenta: un poco menos saturados y más cálidos.
-          filter: "sepia(0.12) saturate(0.92) contrast(1.04)",
-        }}
-      >
-        <Campo />
-        <Personaje />
-        {guion.map((l, i) => {
-          // Cada globo queda hasta que empieza el siguiente (o el cierre).
-          const next = guion[i + 1]?.from ?? VOZ_FIN + 16;
-          return (
-            <Sequence
-              key={l.from}
-              from={l.from}
-              durationInFrames={next - l.from}
-            >
-              <Globo
-                text={l.text}
-                frames={next - l.from}
-                speech={l.to - l.from}
-                instant={l.from === 0}
-              />
-            </Sequence>
-          );
-        })}
-      </div>
-      <Audio src={staticFile("patricio-voz/elevenlabs-bombilla.mp3")} />
-      <Sequence from={VOZ_FIN + 16}>
-        <Cierre />
-      </Sequence>
-      <Papel />
-    </AbsoluteFill>
+    <Ep.Provider value={ep}>
+      <AbsoluteFill style={{ backgroundColor: papel }}>
+        <Cabecera />
+        <div
+          style={{
+            position: "absolute",
+            ...VINETA,
+            overflow: "hidden",
+            background: fondoVineta,
+            border: `7px solid ${tinta}`,
+            // Colores de imprenta: un poco menos saturados y más cálidos.
+            filter: "sepia(0.12) saturate(0.92) contrast(1.04)",
+          }}
+        >
+          <Campo />
+          <Personaje />
+          {guion.map((l, i) => {
+            // Cada globo queda hasta que empieza el siguiente (o el cierre).
+            const next = guion[i + 1]?.from ?? vozFin + 16;
+            return (
+              <Sequence
+                key={l.from}
+                from={l.from}
+                durationInFrames={next - l.from}
+              >
+                <Globo
+                  text={l.text}
+                  frames={next - l.from}
+                  speech={l.to - l.from}
+                  instant={l.from === 0}
+                />
+              </Sequence>
+            );
+          })}
+        </div>
+        <Audio src={staticFile(`patricio-voz/${ep.audio}`)} />
+        <Sequence from={vozFin + 16}>
+          <Cierre />
+        </Sequence>
+        <Papel />
+      </AbsoluteFill>
+    </Ep.Provider>
   );
 };
