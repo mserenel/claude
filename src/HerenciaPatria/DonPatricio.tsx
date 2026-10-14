@@ -144,8 +144,8 @@ const ajuste: Record<Expr, [number, number]> = {
 // diario amarillento, viñeta con borde de tinta, título de portada en letra
 // de cartel antiguo y globos ovalados con letra de rotulista en mayúsculas.
 const papel = "#E6D3A8";
-// El fondo de las ilustraciones: adentro de la viñeta no se nota el borde.
-const fondoVineta = "#EFE3CC";
+// Si el campo tarda en cargar, la viñeta queda celeste cielo.
+const fondoVineta = "#8EC3DF";
 const tinta = "#1A1A1A";
 const letra = '"Kalam", cursive';
 const cartel = '"Rye", serif';
@@ -162,7 +162,7 @@ const Cara: React.FC<{ readonly expr: Expr; readonly opacity: number }> = ({
 }) => {
   const f = useCurrentFrame();
   const a = amp(f);
-  const src = staticFile(`patricio-${expr}.png`);
+  const src = staticFile(`patricio-campo/${expr}.png`);
   const b = boca[expr];
   const [dx, dy] = ajuste[expr];
   const imgStyle: React.CSSProperties = {
@@ -235,12 +235,13 @@ const Personaje: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          // Más grande que la viñeta: el cuerpo queda cortado por el borde,
-          // como en un cuadro de historieta.
-          left: -38,
-          top: 290,
-          width: 1117,
-          height: 1340,
+          // Recortado (public/patricio-campo, tools/recorte_patricio.py) y
+          // parado en el campo: el cuerpo queda cortado por el borde de abajo,
+          // como en un cuadro de historieta, y se ve el rancho y la tranquera.
+          left: 14,
+          top: 493,
+          width: 949,
+          height: 1139,
           transform: `translateY(${nod}px) scale(${breath * pop}) rotate(${sway}deg)`,
           transformOrigin: "50% 95%",
           // El corte de abajo de la ilustración se funde con la viñeta.
@@ -249,12 +250,11 @@ const Personaje: React.FC = () => {
             "linear-gradient(to bottom, black 90%, transparent 100%)",
         }}
       >
-        {/* Cada cara entra por encima de la anterior, que sigue entera
-            debajo hasta que la nueva termina de aparecer. */}
+        {/* Fundido cruzado: la cara nueva aparece mientras la anterior se va
+            (están recortadas, así que no puede quedar una entera debajo). */}
         {caras.map((c, i) => {
-          const o = entra(i);
-          const tapada = i + 1 < caras.length && entra(i + 1) >= 1;
-          if (o <= 0 || tapada) return null;
+          const o = entra(i) * (i + 1 < caras.length ? 1 - entra(i + 1) : 1);
+          if (o <= 0) return null;
           return <Cara key={c.from} expr={c.expr} opacity={o} />;
         })}
       </div>
@@ -345,6 +345,28 @@ const Globo: React.FC<{
         </svg>
       </div>
     </AbsoluteFill>
+  );
+};
+
+// El campo con el rancho y la tranquera, con un acercamiento muy lento para
+// que no parezca una foto quieta.
+const Campo: React.FC = () => {
+  const f = useCurrentFrame();
+  const z = interpolate(f, [0, PATRICIO_FRAMES], [1, 1.05]);
+  return (
+    <Img
+      src={staticFile("campo-tranquera.png")}
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        objectPosition: "50% 0%",
+        transform: `scale(${z})`,
+        transformOrigin: "50% 40%",
+      }}
+    />
   );
 };
 
@@ -524,6 +546,7 @@ export const DonPatricio: React.FC = () => {
           filter: "sepia(0.12) saturate(0.92) contrast(1.04)",
         }}
       >
+        <Campo />
         <Personaje />
         {guion.map((l, i) => {
           // Cada globo queda hasta que empieza el siguiente (o el cierre).
