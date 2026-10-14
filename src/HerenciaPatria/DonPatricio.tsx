@@ -266,7 +266,9 @@ const Globo: React.FC<{
   readonly speech: number;
   // El primer globo aparece completo desde el cuadro 0: es el gancho.
   readonly instant?: boolean;
-}> = ({ text, frames, speech, instant }) => {
+  // El globo del cierre lleva el logo de la marca al lado del texto.
+  readonly logo?: boolean;
+}> = ({ text, frames, speech, instant, logo }) => {
   const f = useCurrentFrame();
   const enter = instant
     ? 1
@@ -307,6 +309,28 @@ const Globo: React.FC<{
           transformOrigin: "62% 100%",
         }}
       >
+        {logo ? (
+          // El logo es blanco: va sobre un círculo azul de marca.
+          <div
+            style={{
+              width: 120,
+              height: 120,
+              flexShrink: 0,
+              marginRight: 26,
+              borderRadius: "50%",
+              background: colors.azul,
+              border: `4px solid ${tinta}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Img
+              src={staticFile("logo-herencia-patria.png")}
+              style={{ width: 104, height: 104 }}
+            />
+          </div>
+        ) : null}
         <div
           style={{
             fontFamily: letra,
@@ -368,8 +392,15 @@ const Campo: React.FC = () => {
 };
 
 // Título de tapa de revista, arriba de la viñeta.
+// Al final, la línea de abajo pasa del número de Secreto a "Continuará…".
 const Cabecera: React.FC = () => {
-  const { titulo } = useEp();
+  const { titulo, vozFin } = useEp();
+  const f = useCurrentFrame();
+  const fin = interpolate(f, [vozFin + 16, vozFin + 30], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.inOut(Easing.sin),
+  });
   return (
     <AbsoluteFill style={{ alignItems: "center", paddingTop: 92 }}>
       <div
@@ -400,91 +431,15 @@ const Cabecera: React.FC = () => {
         }}
       >
         <span style={{ width: 54, height: 4, background: tinta }} />
-        {titulo}
+        <span style={{ display: "grid" }}>
+          <span style={{ gridArea: "1 / 1", opacity: 1 - fin }}>{titulo}</span>
+          <span
+            style={{ gridArea: "1 / 1", opacity: fin, textAlign: "center" }}
+          >
+            Continuará…
+          </span>
+        </span>
         <span style={{ width: 54, height: 4, background: tinta }} />
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-const Cierre: React.FC = () => {
-  const f = useCurrentFrame();
-  const t = interpolate(f, [0, 14], [0, 1], {
-    extrapolateRight: "clamp",
-    easing: Easing.out(Easing.cubic),
-  });
-  return (
-    <AbsoluteFill
-      style={{
-        alignItems: "center",
-        paddingTop: 70,
-        opacity: t,
-        transform: `translateY(${(1 - t) * 16}px)`,
-      }}
-    >
-      {/* Recuadro de texto (cartucho) como los de las revistas. */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "26px 40px 30px",
-          background: "#F3D77A",
-          border: `5px solid ${tinta}`,
-          boxShadow: `6px 6px 0 ${tinta}`,
-        }}
-      >
-        <div
-          style={{
-            fontFamily: cartel,
-            fontSize: 64,
-            color: tinta,
-            letterSpacing: 2,
-          }}
-        >
-          CONTINUARÁ…
-        </div>
-        <div
-          style={{
-            marginTop: 18,
-            display: "flex",
-            alignItems: "center",
-            gap: 22,
-          }}
-        >
-          {/* El logo es blanco: va sobre un círculo azul de marca. */}
-          <div
-            style={{
-              width: 130,
-              height: 130,
-              flexShrink: 0,
-              borderRadius: "50%",
-              background: colors.azul,
-              border: `4px solid ${tinta}`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Img
-              src={staticFile("logo-herencia-patria.png")}
-              style={{ width: 114, height: 114 }}
-            />
-          </div>
-          <div
-            style={{
-              fontFamily: letra,
-              fontWeight: 700,
-              fontSize: 40,
-              lineHeight: 1.12,
-              color: tinta,
-              textTransform: "uppercase",
-              maxWidth: 640,
-            }}
-          >
-            Seguí a Herencia Patria para más secretos de Don Patricio
-          </div>
-        </div>
       </div>
     </AbsoluteFill>
   );
@@ -568,13 +523,19 @@ export const DonPatricio: React.FC<{ readonly ep: Episodio }> = ({ ep }) => {
               </Sequence>
             );
           })}
+          {/* Cierre: Don Patricio invita a seguir la cuenta, en su globo. */}
+          <Sequence from={vozFin + 16}>
+            <Globo
+              text="¡Siga a Herencia Patria para más secretos, m'hijo!"
+              frames={CIERRE + 30}
+              speech={24}
+              logo
+            />
+          </Sequence>
         </div>
         {ep.audio ? (
           <Audio src={staticFile(`patricio-voz/${ep.audio}`)} />
         ) : null}
-        <Sequence from={vozFin + 16}>
-          <Cierre />
-        </Sequence>
         <Papel />
       </AbsoluteFill>
     </Ep.Provider>

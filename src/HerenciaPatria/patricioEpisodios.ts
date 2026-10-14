@@ -94,12 +94,12 @@ export const agua: Episodio = {
   vozFin: 570,
   guion: guionAgua,
   caras: [
-    { from: 0, expr: "indignado" }, // ¡Si silba la pava...!
+    { from: 0, expr: "sorpresa" }, // ¡Si silba la pava...!
     { from: 80, expr: "preocupado" }, // Y así el mate sale amargo...
     { from: 170, expr: "senala" }, // El agua va calentita...
     { from: 280, expr: "pensativo" }, // ¿Cómo sabe? ... ruidito
     { from: 345, expr: "explica" }, // ¡ahí la saca!
-    { from: 390, expr: "sorpresa" }, // ¿Se le pasó?
+    { from: 390, expr: "serena" }, // ¿Se le pasó? (tranquilo, tiene arreglo)
     { from: 420, expr: "guino" }, // Échele un buen chorro...
     { from: 505, expr: "mate" }, // Ahhh...
     { from: 545, expr: "satisfecho" }, // ¡eso sí es un mate!
