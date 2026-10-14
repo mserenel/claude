@@ -21,6 +21,9 @@ import { vozEnvolvente } from "./patricioVoz";
 // con un fundido en las pausas de la voz.
 
 type Expr =
+  | "saludo"
+  | "indignado"
+  | "mate"
   | "explica"
   | "preocupado"
   | "senala"
@@ -60,16 +63,17 @@ const guion: Linea[] = [
 
 // Qué cara pone desde cada cuadro: cada cambio cae en una pausa de la voz.
 const caras: { readonly from: number; readonly expr: Expr }[] = [
-  { from: 0, expr: "explica" }, // ¡Buenas, m'hijo!
+  { from: 0, expr: "saludo" }, // ¡Buenas, m'hijo!
   { from: 46, expr: "preocupado" }, // ¿Se le tapa la bombilla?
-  { from: 92, expr: "senala" }, // ¡No es culpa de la bombilla, eh!
+  { from: 92, expr: "indignado" }, // ¡No es culpa de la bombilla, eh!
+  { from: 162, expr: "senala" }, // Es cómo arma el mate.
   { from: 211, expr: "explica" }, // Mire: ponga la yerba...
   { from: 316, expr: "sorpresa" }, // ¡y sacúdalo boca abajo!
   { from: 367, expr: "contento" }, // Así se va el polvillo.
   { from: 418, expr: "serena" }, // Después lo inclina...
   { from: 547, expr: "senala" }, // ¡Y no la mueva más, eh!
   { from: 594, expr: "guino" }, // Y ahí está el secreto.
-  { from: 668, expr: "orgullo" }, // levanta el mate, satisfecho
+  { from: 668, expr: "mate" }, // se toma un mate, satisfecho
 ];
 const FUNDIDO = 6;
 
@@ -78,8 +82,16 @@ const CIERRE = 95;
 export const PATRICIO_FRAMES = VOZ_FIN + 16 + CIERRE;
 
 // Zona de bigote y mentón de cada ilustración (en % de la imagen original,
-// 1145x1374), sin tocar la bombilla. "orgullo" no habla.
+// 1145x1374), sin tocar la bombilla. "orgullo" y "mate" no hablan.
 const boca: Partial<Record<Expr, { clip: string; top: string }>> = {
+  saludo: {
+    clip: "polygon(44% 40%, 70% 40%, 70% 46%, 66% 49%, 64% 53.5%, 47% 53.5%, 44% 49%)",
+    top: "40%",
+  },
+  indignado: {
+    clip: "polygon(43% 38%, 64% 38%, 64% 41%, 59% 42%, 59% 54.5%, 44% 55%, 41% 47%)",
+    top: "38%",
+  },
   guino: {
     clip: "polygon(47% 46.5%, 75% 46.5%, 75% 51%, 69% 54%, 68% 59%, 49% 59%, 46% 52.5%)",
     top: "46.5%",
@@ -113,8 +125,11 @@ const boca: Partial<Record<Expr, { clip: string; top: string }>> = {
 // Cada ilustración tiene la cabeza en un lugar un poco distinto: se corre
 // (en % de la imagen) para que la cara quede siempre en el mismo lugar y el
 // cambio se vea como un gesto, no como un salto. "orgullo" levanta la
-// cabeza: se corrige sólo a medias.
+// cabeza y "saludo" está de frente: se corrigen sólo a medias.
 const ajuste: Record<Expr, [number, number]> = {
+  saludo: [-3.5, 0.5],
+  indignado: [0.4, 3.1],
+  mate: [1.6, 0.7],
   serena: [0, 0],
   sorpresa: [0, -1.2],
   orgullo: [1.4, 2],
