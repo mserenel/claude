@@ -3,6 +3,7 @@ import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
 import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
 import { Camionero, CAMIONERO_FRAMES } from "./HerenciaPatria/Camionero";
 import { Balcon, BALCON_FRAMES } from "./HerenciaPatria/Balcon";
+import { MateNegro, MATE_NEGRO_FRAMES } from "./HerenciaPatria/MateNegro";
 import { DonPatricio, episodioFrames } from "./HerenciaPatria/DonPatricio";
 import { agua, bombilla } from "./HerenciaPatria/patricioEpisodios";
 import { Portada } from "./HerenciaPatria/Portada";
@@ -99,6 +100,16 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ cta: "Calidad que se aprecia." }}
+      />
+      {/* npx remotion render HP-MateNegro entregas/herencia-patria-mate-negro.mp4 */}
+      <Composition
+        id="HP-MateNegro"
+        component={MateNegro}
+        durationInFrames={MATE_NEGRO_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ cta: "Tradición que se lleva en las manos." }}
       />
       {/* npx remotion render HP-Balcon entregas/herencia-patria-balcon.mp4 */}
       <Composition

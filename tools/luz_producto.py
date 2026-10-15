@@ -46,8 +46,11 @@ clahe = cv2.createCLAHE(clipLimit=1.6, tileGridSize=(8, 8)).apply(L8).astype(np.
 Lp = 0.55 * Ls + 0.45 * clahe
 lab_p = lab.copy()
 lab_p[..., 0] = np.clip(Lp, 0, 1) * 100
-# Metal menos amarillo (alpaca): baja el croma en las zonas claras del producto.
-claro = np.clip((L - 0.25) / 0.3, 0, 1)
+# Metal menos amarillo (alpaca): baja el croma en las zonas claras y poco
+# saturadas del producto. Lo que tiene color propio (el interior de la
+# calabaza, croma > 30) no se toca.
+croma = np.hypot(lab[..., 1], lab[..., 2])
+claro = np.clip((L - 0.25) / 0.3, 0, 1) * (1 - np.clip((croma - 18) / 12, 0, 1))
 lab_p[..., 1] *= 1 - 0.35 * claro
 lab_p[..., 2] *= 1 - 0.45 * claro
 prod = cv2.cvtColor(lab_p, cv2.COLOR_LAB2BGR)
