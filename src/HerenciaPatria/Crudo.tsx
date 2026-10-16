@@ -51,7 +51,7 @@ const mate: [number, number, number][] = [
 ];
 
 // Cámara en tiempo del video original: el punto de escala sigue al mate.
-const Camera: React.FC<{
+export const Camera: React.FC<{
   readonly muted?: boolean;
   readonly from: number;
   readonly zoom: Key[];
@@ -263,37 +263,6 @@ const ctaTipo: Parte[] = [
   { t: "que se lleva en las manos.", k: "italica" },
 ];
 
-// Versión de venta (para pauta): en el gancho se entiende qué es, después de
-// qué está hecho y la oferta aparece antes del cierre, para quien no llega al
-// final. Materiales confirmados por la marca.
-const ventaHook: Parte[] = [
-  { t: "Mate Torpedo", k: "italica" },
-  { t: "de cuero crudo,", k: "chica" },
-  { t: "hecho a mano.", k: "grande" },
-];
-const ventaTextos: Parte[][] = [
-  [
-    { t: "Cuerpo de", k: "chica" },
-    { t: "calabaza", k: "grande" },
-    { t: "forrado en cuero crudo.", k: "italica" },
-  ],
-  [
-    { t: "Costura de", k: "chica" },
-    { t: "tiento", k: "grande" },
-    { t: "y virola de alpaca.", k: "italica" },
-  ],
-  [
-    { t: "Cada uno es", k: "chica" },
-    { t: "único.", k: "grande" },
-    { t: "Una pieza con identidad.", k: "italica" },
-  ],
-  [
-    { t: "Envío gratis", k: "grande" },
-    { t: "3 cuotas sin interés", k: "chica" },
-    { t: "20% off en transferencia", k: "chica" },
-  ],
-];
-
 type Guion = {
   readonly hook: Parte[];
   readonly textos: Parte[][];
@@ -302,20 +271,8 @@ type Guion = {
   readonly precio?: { readonly lista: string; readonly transferencia: string };
   readonly beneficios?: string[];
 };
-const guiones: Record<"A20" | "VENTA", Guion> = {
+const guiones: Record<"A20", Guion> = {
   A20: { hook: hookTipo, textos: textosTipo, cta: ctaTipo },
-  VENTA: {
-    hook: ventaHook,
-    textos: ventaTextos,
-    cta: ctaTipo,
-    accion: "Comprá el tuyo online.",
-    // Sin precios en el video (pedido de la marca): sólo los beneficios.
-    beneficios: [
-      "Envío gratis",
-      "3 cuotas sin interés",
-      "20% off en transferencia",
-    ],
-  },
 };
 
 const TextosTipo: React.FC<{
@@ -400,7 +357,7 @@ const CrudoA20: React.FC<{ readonly g: Guion }> = ({ g }) => (
 );
 
 export const Crudo: React.FC<{
-  readonly hook: "A" | "B" | "A20" | "VENTA";
+  readonly hook: "A" | "B" | "A20";
   readonly cta: string;
 }> = ({ hook: version, cta }) =>
   version === "A" ? (

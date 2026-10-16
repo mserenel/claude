@@ -3,6 +3,10 @@ import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
 import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
 import { Camionero, CAMIONERO_FRAMES } from "./HerenciaPatria/Camionero";
 import { Balcon, BALCON_FRAMES } from "./HerenciaPatria/Balcon";
+import {
+  TorpedoVenta,
+  TORPEDO_VENTA_FRAMES,
+} from "./HerenciaPatria/TorpedoVenta";
 import { MateNegro, MATE_NEGRO_FRAMES } from "./HerenciaPatria/MateNegro";
 import { DonPatricio, episodioFrames } from "./HerenciaPatria/DonPatricio";
 import { agua, bombilla } from "./HerenciaPatria/patricioEpisodios";
@@ -58,28 +62,20 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Torpedo-Venta entregas/torpedo-20s-venta.mp4 */}
       <Composition
         id="HP-Torpedo-Venta"
-        component={Crudo}
-        durationInFrames={CRUDO_FRAMES_20}
+        component={TorpedoVenta}
+        durationInFrames={TORPEDO_VENTA_FRAMES}
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{
-          hook: "VENTA" as const,
-          cta: "Tradición que se lleva en las manos.",
-        }}
       />
       {/* npx remotion render HP-Torpedo-Venta-4x5 entregas/torpedo-20s-venta-4x5.mp4 */}
       <Composition
         id="HP-Torpedo-Venta-4x5"
-        component={Crudo}
-        durationInFrames={CRUDO_FRAMES_20}
+        component={TorpedoVenta}
+        durationInFrames={TORPEDO_VENTA_FRAMES}
         fps={30}
         width={1080}
         height={1350}
-        defaultProps={{
-          hook: "VENTA" as const,
-          cta: "Tradición que se lleva en las manos.",
-        }}
       />
       {/* npx remotion render HP-Crudo-A-20s out/herencia-patria-crudo-A-20s.mp4 */}
       <Composition
