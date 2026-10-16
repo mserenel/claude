@@ -4,9 +4,8 @@ Video: `torpedo-venta.mp4`
 
 ## Texto de la publicación (copiar y pegar)
 
-Mate Torpedo de cuero crudo, hecho a mano. 🧉
-
-Cuerpo de calabaza, costura de tiento y virola de alpaca. Cada uno es único.
+Tu próximo compañero de mates. 🧉
+Mate Torpedo: cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca cincelada al lacre. Cada uno es único.
 
 ✔ 20% off en transferencia
 ✔ 3 cuotas sin interés
@@ -14,11 +13,11 @@ Cuerpo de calabaza, costura de tiento y virola de alpaca. Cada uno es único.
 Encontralo en nuestra tienda online (link en la bio).
 ¿Lo elegirías para vos o para regalar? Contanos 👇
 
-#mate #mateargentino #matetorpedo #cuerocrudo #mateartesanal #alpaca #hechoamano #artesaniaargentina #regaloargentino #herenciapatria
+#mate #mateargentino #matetorpedo #cuerocrudo #mateartesanal #alpaca #artesaniaargentina #regaloargentino #herenciapatria
 
 ## Versión corta (anuncio pago)
 
-Mate Torpedo hecho a mano: calabaza, cuero crudo, tiento y alpaca. 🧉
+Mate Torpedo: calabaza, cuero crudo, tiento y alpaca cincelada al lacre. 🧉
 20% off en transferencia · 3 cuotas sin interés.
 
 ---
@@ -33,8 +32,8 @@ subir `portada-reel-feed.jpg` como imagen de portada del anuncio.
 - **Botón:** Comprar (directo al Torpedo en la tienda, no al perfil).
 - **Texto principal:**
 
-  Mate Torpedo hecho a mano 🧉
-  Cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca. Cada uno es único.
+  Mate Torpedo de cuero crudo 🧉
+  Cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca cincelada al lacre. Cada uno es único.
 
   ✔ 20% off en transferencia
   ✔ 3 cuotas sin interés

@@ -52,7 +52,6 @@ const zoom20: [number, number][] = [
 
 type Toma = { partes: Parte[] };
 const tomas: Toma[] = [
-  { partes: [{ t: "Hecho a mano.", k: "grande" }] },
   {
     partes: [
       { t: "Cuerpo de", k: "chica" },
@@ -75,6 +74,12 @@ const tomas: Toma[] = [
     partes: [
       { t: "Virola de", k: "chica" },
       { t: "alpaca", k: "grande" },
+    ],
+  },
+  {
+    partes: [
+      { t: "Cincelado", k: "chica" },
+      { t: "al lacre", k: "grande" },
     ],
   },
 ];
