@@ -75,8 +75,8 @@ const tomas: Toma[] = [
 
 // La oferta aparece una sola vez (el cierre no la repite). Sin envío gratis.
 const oferta: Parte[] = [
-  { t: "20% off en transferencia", k: "grande", tam: 80 },
-  { t: "3 cuotas sin interés", k: "grande", tam: 80 },
+  { t: "20% off en transferencia", k: "chica" },
+  { t: "3 cuotas sin interés", k: "chica" },
 ];
 
 const cta: Parte[] = [
@@ -201,9 +201,8 @@ export const TorpedoVenta: React.FC<{ readonly letra?: LetraGrande }> = ({
                   partes={partes}
                   delay={2}
                   last={i === textos.length - 1}
-                  // La oferta entra entera de una vez: las dos líneas se ven
-                  // iguales desde el primer cuadro.
-                  escalonado={partes === oferta ? 0 : 7}
+                  // La oferta entra línea por línea, como los demás textos.
+                  escalonado={partes === oferta ? 12 : 7}
                 />
               </Sequence>
             );
