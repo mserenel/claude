@@ -11,8 +11,8 @@ import { colors, fonts, safe } from "./brand";
 import { Scrim } from "./Caption";
 
 // Textos centrados con mezcla de letras, como una tapa de revista: una
-// cursiva (Addington), una línea chica en mayúsculas espaciadas (Helvetica
-// Neue) y una palabra grande (Addington Bold).
+// cursiva, una línea chica en mayúsculas espaciadas y una palabra grande en
+// negrita, todo en Addington CF (la Helvetica quedaba fuera de tono).
 
 export type Parte = {
   readonly t: string;
@@ -68,9 +68,9 @@ const ParteTexto: React.FC<{
         style={{
           ...base,
           margin: "14px 0",
-          fontFamily: fonts.sans,
+          fontFamily: fonts.serif,
           fontWeight: 500,
-          fontSize: 0.28 * max,
+          fontSize: 0.3 * max,
           textTransform: "uppercase",
           letterSpacing: `${ls}em`,
           // El espaciado deja aire a la derecha: se compensa para centrar.
@@ -210,9 +210,11 @@ export const CierreTipo: React.FC<{
                 style={{
                   opacity: t,
                   transform: `translateY(${(1 - t) * 10}px)`,
-                  fontFamily: fonts.sans,
+                  fontFamily: fonts.serif,
                   fontWeight: 500,
-                  fontSize: 32,
+                  fontSize: 36,
+                  // Números a la altura de las mayúsculas ("3", "20%").
+                  fontVariantNumeric: "lining-nums",
                   textTransform: "uppercase",
                   letterSpacing: "0.12em",
                   paddingLeft: "0.12em",
