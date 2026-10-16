@@ -11,8 +11,8 @@ import { colors, fonts, safe } from "./brand";
 import { Scrim } from "./Caption";
 
 // Textos centrados con mezcla de letras, como una tapa de revista: una
-// cursiva, una línea chica en mayúsculas espaciadas y una palabra grande en
-// negrita, todo en Addington CF (la Helvetica quedaba fuera de tono).
+// cursiva, una línea chica y una palabra grande en negrita, todo en
+// Addington CF y en minúsculas normales (sin mayúsculas sostenidas).
 
 export type Parte = {
   readonly t: string;
@@ -30,7 +30,7 @@ const ease = (f: number, a: number, b: number) =>
 
 // La palabra grande se achica si es larga, para que entre en el ancho.
 const grandeSize = (t: string, max: number) =>
-  Math.min(max, Math.floor(900 / (t.length * 0.7)));
+  Math.min(max, Math.floor(900 / (t.length * 0.58)));
 
 const ParteTexto: React.FC<{
   readonly p: Parte;
@@ -61,20 +61,16 @@ const ParteTexto: React.FC<{
     );
   }
   if (p.k === "chica") {
-    // Entra con las letras abriéndose hasta su espaciado final.
-    const ls = 0.32 + (1 - t) * 0.25;
     return (
       <div
         style={{
           ...base,
-          margin: "14px 0",
+          transform: `translateY(${(1 - t) * 14}px)`,
+          margin: "4px 0 8px",
           fontFamily: fonts.serif,
-          fontWeight: 500,
-          fontSize: 0.3 * max,
-          textTransform: "uppercase",
-          letterSpacing: `${ls}em`,
-          // El espaciado deja aire a la derecha: se compensa para centrar.
-          paddingLeft: `${ls}em`,
+          fontWeight: 400,
+          fontSize: 0.42 * max,
+          lineHeight: 1.1,
         }}
       >
         {p.t}
@@ -90,8 +86,6 @@ const ParteTexto: React.FC<{
         fontWeight: 700,
         fontSize: grandeSize(p.t, max),
         lineHeight: 1,
-        letterSpacing: "0.02em",
-        textTransform: "uppercase",
       }}
     >
       {p.t}
@@ -212,12 +206,9 @@ export const CierreTipo: React.FC<{
                   transform: `translateY(${(1 - t) * 10}px)`,
                   fontFamily: fonts.serif,
                   fontWeight: 500,
-                  fontSize: 36,
+                  fontSize: 46,
                   // Números a la altura de las mayúsculas ("3", "20%").
                   fontVariantNumeric: "lining-nums",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.12em",
-                  paddingLeft: "0.12em",
                   whiteSpace: "nowrap",
                   color: colors.crema,
                   padding: "20px 0",
