@@ -1,5 +1,3 @@
-import "@fontsource/kalam/700.css";
-import "@fontsource/rye/400.css";
 import { createContext, useContext } from "react";
 import {
   AbsoluteFill,
@@ -11,7 +9,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import { colors } from "./brand";
+import { colors, fonts } from "./brand";
 
 // Don Patricio, versión historieta animada (motion comic). Usa las
 // ilustraciones oficiales sin redibujarlas, con la voz de ElevenLabs. Cada
@@ -139,8 +137,10 @@ const papel = "#E6D3A8";
 // Si el campo tarda en cargar, la viñeta queda celeste cielo.
 const fondoVineta = "#8EC3DF";
 const tinta = "#1A1A1A";
-const letra = '"Kalam", cursive';
-const cartel = '"Rye", serif';
+// Letra a mano de la marca (Sketcha Kits) para los globos; el título, en la
+// serif de la marca.
+const letra = fonts.mano;
+const cartel = fonts.serif;
 
 // Viñeta: debajo del título y hasta casi el borde (la parte de abajo la tapa
 // la interfaz de Instagram de todas formas).
@@ -334,8 +334,8 @@ const Globo: React.FC<{
         <div
           style={{
             fontFamily: letra,
-            fontWeight: 700,
-            fontSize: 50,
+            fontWeight: 400,
+            fontSize: 58,
             lineHeight: 1.1,
             color: tinta,
             textAlign: "center",
@@ -392,7 +392,7 @@ const Campo: React.FC = () => {
 };
 
 // Título de tapa de revista, arriba de la viñeta.
-// Al final, la línea de abajo pasa del número de Secreto a "Continuará…".
+// Al final, la línea de abajo pasa del número de Secreto a "Continuará...".
 const Cabecera: React.FC = () => {
   const { titulo, vozFin } = useEp();
   const f = useCurrentFrame();
@@ -406,6 +406,7 @@ const Cabecera: React.FC = () => {
       <div
         style={{
           fontFamily: cartel,
+          fontWeight: 800,
           fontSize: 104,
           lineHeight: 1,
           color: colors.azul,
@@ -423,7 +424,7 @@ const Cabecera: React.FC = () => {
           alignItems: "center",
           gap: 18,
           fontFamily: letra,
-          fontWeight: 700,
+          fontWeight: 400,
           fontSize: 38,
           color: tinta,
           textTransform: "uppercase",
@@ -436,7 +437,7 @@ const Cabecera: React.FC = () => {
           <span
             style={{ gridArea: "1 / 1", opacity: fin, textAlign: "center" }}
           >
-            Continuará…
+            Continuará...
           </span>
         </span>
         <span style={{ width: 54, height: 4, background: tinta }} />

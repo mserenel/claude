@@ -5,3 +5,6 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+# Fuentes de la marca (con licencia): no se suben al repositorio público.
+public/fonts/

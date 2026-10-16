@@ -1,5 +1,3 @@
-import "@fontsource/cormorant-garamond/500-italic.css";
-import "@fontsource/libre-caslon-text/700.css";
 import {
   AbsoluteFill,
   Easing,
@@ -13,15 +11,14 @@ import { colors, fonts, safe } from "./brand";
 import { Scrim } from "./Caption";
 
 // Textos centrados con mezcla de letras, como una tapa de revista: una
-// cursiva fina, una línea chica en mayúsculas espaciadas y una palabra grande
-// en la serif del feed (Libre Caslon).
+// cursiva (Addington), una línea chica en mayúsculas espaciadas (Helvetica
+// Neue) y una palabra grande (Addington Bold).
 
 export type Parte = {
   readonly t: string;
   readonly k: "italica" | "chica" | "grande";
 };
 
-const caslon = '"Libre Caslon Text", serif';
 const sombra = "0 2px 18px rgba(0,0,0,0.4)";
 
 const ease = (f: number, a: number, b: number) =>
@@ -54,7 +51,7 @@ const ParteTexto: React.FC<{
           transform: `translateY(${(1 - t) * 18}px)`,
           fontFamily: fonts.serif,
           fontStyle: "italic",
-          fontWeight: 500,
+          fontWeight: 400,
           fontSize: 0.66 * max,
           lineHeight: 1.05,
         }}
@@ -89,7 +86,7 @@ const ParteTexto: React.FC<{
       style={{
         ...base,
         transform: `scale(${1.06 - 0.06 * t})`,
-        fontFamily: caslon,
+        fontFamily: fonts.serif,
         fontWeight: 700,
         fontSize: grandeSize(p.t, max),
         lineHeight: 1,

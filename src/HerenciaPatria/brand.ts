@@ -1,5 +1,4 @@
-import "@fontsource/cormorant-garamond/600.css";
-import "@fontsource/inter/500.css";
+import "./fuentes";
 
 export const colors = {
   azul: "#14233B",
@@ -9,9 +8,11 @@ export const colors = {
   mostaza: "#C9A24A",
 };
 
+// Sólo las tipografías de la marca (fuentes.ts).
 export const fonts = {
-  serif: '"Cormorant Garamond", serif',
-  sans: '"Inter", sans-serif',
+  serif: '"Addington CF", serif',
+  sans: '"Helvetica Neue", sans-serif',
+  mano: '"Sketcha Kits", cursive',
 };
 
 // Zona segura para Reels/Stories (1080x1920): la interfaz de Instagram tapa

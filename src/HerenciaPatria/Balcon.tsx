@@ -1,5 +1,3 @@
-import "@fontsource/libre-caslon-text/400-italic.css";
-import "@fontsource/libre-caslon-text/400.css";
 import {
   AbsoluteFill,
   Easing,
@@ -9,7 +7,7 @@ import {
   staticFile,
   useCurrentFrame,
 } from "remotion";
-import { colors } from "./brand";
+import { colors, fonts } from "./brand";
 
 // Reel de estilo de vida, no de anuncio: el mate en el balcón con la ciudad.
 // public/balcon.mp4: IMG_6966 (1080x1920, sin sonido) a 30 fps, con una
@@ -29,7 +27,7 @@ const fade = (f: number, a: number, b: number, c: number, d: number) =>
     easing: Easing.inOut(Easing.sin),
   });
 
-const serif = '"Libre Caslon Text", serif';
+const serif = fonts.serif;
 
 export const Balcon: React.FC<{ readonly tagline: string }> = ({ tagline }) => {
   const f = useCurrentFrame();

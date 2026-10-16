@@ -1,7 +1,3 @@
-import "@fontsource/libre-caslon-text/400-italic.css";
-import "@fontsource/libre-caslon-text/700.css";
-import "@fontsource/playfair-display/600-italic.css";
-import "@fontsource/playfair-display/700.css";
 import { AbsoluteFill, Img, staticFile } from "remotion";
 import { colors, fonts } from "./brand";
 
@@ -40,10 +36,11 @@ export const PortadaFeed: React.FC<{
   zoom = 1,
   focusX = 50,
 }) => {
+  // Las dos variantes usan la serif de la marca (Addington CF).
   const f =
     family === "caslon"
-      ? { font: '"Libre Caslon Text", serif', italic: 400, bold: 700 }
-      : { font: '"Playfair Display", serif', italic: 600, bold: 700 };
+      ? { font: fonts.serif, italic: 400, bold: 700 }
+      : { font: fonts.serif, italic: 600, bold: 800 };
   const shadow = "0 2px 4px rgba(0,0,0,0.55), 0 4px 26px rgba(0,0,0,0.55)";
   return (
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
