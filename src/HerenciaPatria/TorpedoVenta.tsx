@@ -165,6 +165,9 @@ export const TorpedoVenta: React.FC<{ readonly letra?: LetraGrande }> = ({
                   partes={partes}
                   delay={2}
                   last={i === textos.length - 1}
+                  // La oferta entra entera de una vez: las dos líneas se ven
+                  // iguales desde el primer cuadro.
+                  escalonado={partes === oferta ? 0 : 7}
                 />
               </Sequence>
             );

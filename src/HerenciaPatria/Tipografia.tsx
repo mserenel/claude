@@ -139,7 +139,9 @@ export const Frase: React.FC<{
   // Completa desde el primer cuadro: es lo que se ve en la miniatura y en el
   // primer vistazo del anuncio.
   readonly instant?: boolean;
-}> = ({ partes, delay = 4, max = 140, last, instant }) => {
+  // Cuadros entre una parte y la siguiente (0: entran todas juntas).
+  readonly escalonado?: number;
+}> = ({ partes, delay = 4, max = 140, last, instant, escalonado = 7 }) => {
   const f = useCurrentFrame();
   const { durationInFrames, height } = useVideoConfig();
   const exit = interpolate(
@@ -170,7 +172,11 @@ export const Frase: React.FC<{
             key={p.t}
             p={p}
             max={max}
-            t={instant ? 1 : ease(f, delay + i * 7, delay + i * 7 + 12)}
+            t={
+              instant
+                ? 1
+                : ease(f, delay + i * escalonado, delay + i * escalonado + 12)
+            }
           />
         ))}
       </div>
