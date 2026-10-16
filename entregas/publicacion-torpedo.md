@@ -8,9 +8,8 @@ Hay piezas que llevan nuestra esencia. 🧉
 
 Mate Torpedo hecho a mano: cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca. Cada uno es único.
 
-✔ Envío gratis
+✔ 20% off en transferencia
 ✔ 3 cuotas sin interés
-✔ 20% de descuento en transferencia
 
 Encontralo en nuestra tienda online (link en la bio).
 ¿Lo elegirías para vos o para regalar? Contanos 👇
@@ -20,7 +19,7 @@ Encontralo en nuestra tienda online (link en la bio).
 ## Versión corta (anuncio pago)
 
 Mate Torpedo hecho a mano: calabaza, cuero crudo, tiento y alpaca. 🧉
-Envío gratis · 3 cuotas sin interés · 20% off en transferencia.
+20% off en transferencia · 3 cuotas sin interés.
 
 ---
 
@@ -40,12 +39,11 @@ Todos los textos están dentro de la zona que Meta no tapa (en 9:16, entre
   Mate Torpedo hecho a mano 🧉
   Cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca. Cada uno es único.
 
-  $128.750 · o $103.000 con transferencia
-  ✔ Envío gratis
+  $128.750 · o $103.000 con transferencia (20% off)
   ✔ 3 cuotas sin interés
 
 - **Título:** Mate Torpedo de cuero crudo
-- **Descripción:** $103.000 con transferencia · Envío gratis
+- **Descripción:** $103.000 con transferencia · 3 cuotas sin interés
 
 ## Cómo medirlo (primeros 3-4 días, sin tocar nada)
 
@@ -55,5 +53,5 @@ Todos los textos están dentro de la zona que Meta no tapa (en 9:16, entre
   oferta o mostrar el precio.
 - **Costo por compra**: es el número que decide. Comparar contra el margen del
   producto.
-- Si ventas no arranca, revisar también la página del producto: fotos, precio
-  visible y que el envío gratis figure ahí.
+- Si ventas no arranca, revisar también la página del producto: fotos y
+  precio visible.

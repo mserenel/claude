@@ -73,20 +73,16 @@ const tomas: Toma[] = [
   },
 ];
 
+// La oferta aparece una sola vez (el cierre no la repite). Sin envío gratis.
 const oferta: Parte[] = [
-  { t: "Envío gratis", k: "grande" },
-  { t: "3 cuotas sin interés", k: "chica" },
-  { t: "20% off en transferencia", k: "chica" },
+  { t: "20% off", k: "grande" },
+  { t: "en transferencia", k: "chica" },
+  { t: "o 3 cuotas sin interés", k: "chica" },
 ];
 
 const cta: Parte[] = [
   { t: "Tradición", k: "grande" },
   { t: "que se lleva en las manos.", k: "italica" },
-];
-const beneficios = [
-  "Envío gratis",
-  "3 cuotas sin interés",
-  "20% off en transferencia",
 ];
 
 // La portada del feed, tal cual, con un acercamiento mínimo. Está diseñada
@@ -176,7 +172,7 @@ export const TorpedoVenta: React.FC<{ readonly letra?: LetraGrande }> = ({
           <Sequence from={cierre}>
             <CierreTipo
               partes={cta}
-              benefits={beneficios}
+              benefits={[]}
               accion="Comprá el tuyo online."
             />
           </Sequence>

@@ -275,7 +275,7 @@ export const CierreTipo: React.FC<{
         ) : null}
         <div
           style={{
-            marginTop: 30,
+            marginTop: benefits.length > 0 ? 30 : 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
