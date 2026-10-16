@@ -289,7 +289,8 @@ const ventaTextos: Parte[][] = [
   ],
   [
     { t: "Envío gratis", k: "grande" },
-    { t: "y 3 cuotas sin interés.", k: "italica" },
+    { t: "3 cuotas sin interés", k: "chica" },
+    { t: "20% off en transferencia", k: "chica" },
   ],
 ];
 
@@ -308,13 +309,12 @@ const guiones: Record<"A20" | "VENTA", Guion> = {
     textos: ventaTextos,
     cta: ctaTipo,
     accion: "Comprá el tuyo online.",
-    // Precios de la tienda (herenciapatria.com.ar): $128.750 de lista y
-    // $103.000 con transferencia (20% menos). El descuento ya va en el precio.
-    precio: {
-      lista: "$128.750",
-      transferencia: "o $103.000 con transferencia",
-    },
-    beneficios: ["Envío gratis", "3 cuotas sin interés"],
+    // Sin precios en el video (pedido de la marca): sólo los beneficios.
+    beneficios: [
+      "Envío gratis",
+      "3 cuotas sin interés",
+      "20% off en transferencia",
+    ],
   },
 };
 
