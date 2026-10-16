@@ -26,24 +26,23 @@ Mate Torpedo hecho a mano: calabaza, cuero crudo, tiento y alpaca. 🧉
 # Anuncio de venta (Meta Ads)
 
 Video: `torpedo-20s-venta.mp4` (9:16), para todas las ubicaciones. En el
-Feed, Meta lo recorta solo a 4:5 y los textos quedan enteros (están dentro de
-esa franja).
-
-Todos los textos están dentro de la zona que Meta no tapa (en 9:16, entre
-330 y 1240 px) y el gancho se ve completo desde el primer cuadro.
+Feed, Meta lo recorta solo a 4:5 y los textos quedan enteros. Miniatura:
+subir `portada-reel-feed.jpg` como imagen de portada del anuncio.
 
 - **Objetivo de la campaña:** Ventas.
-- **Botón:** Comprar (lleva directo al producto en la tienda, no al perfil).
+- **Botón:** Comprar (directo al Torpedo en la tienda, no al perfil).
 - **Texto principal:**
 
   Mate Torpedo hecho a mano 🧉
   Cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca. Cada uno es único.
 
-  $128.750 · o $103.000 con transferencia (20% off)
+  ✔ 20% off en transferencia
   ✔ 3 cuotas sin interés
 
+  Tradición que se lleva en las manos.
+
 - **Título:** Mate Torpedo de cuero crudo
-- **Descripción:** $103.000 con transferencia · 3 cuotas sin interés
+- **Descripción:** 20% off en transferencia · 3 cuotas sin interés
 
 ## Cómo medirlo (primeros 3-4 días, sin tocar nada)
 
