@@ -12,6 +12,7 @@ import {
 import { BigTitle } from "./BigTitle";
 import { Caption } from "./Caption";
 import { EndCard } from "./EndCard";
+import { CierreTipo, Frase, type Parte } from "./Tipografia";
 
 // public/mate-crudo.mp4: IMG_3449.MOV (iPhone, 4K HDR, Parque Lillo,
 // Necochea) convertido a SDR, con corrección de luz (curva en S, calidez
@@ -226,6 +227,60 @@ const CrudoB: React.FC<{ readonly cta: string }> = ({ cta }) => {
   );
 };
 
+// Textos de la de 20 s: centrados y con mezcla de letras (Tipografia.tsx).
+const hookTipo: Parte[] = [
+  { t: "Hay piezas", k: "italica" },
+  { t: "que llevan nuestra", k: "chica" },
+  { t: "esencia.", k: "grande" },
+];
+const textosTipo: Parte[][] = [
+  [
+    { t: "La", k: "chica" },
+    { t: "nobleza", k: "grande" },
+    { t: "de los materiales.", k: "italica" },
+  ],
+  [
+    { t: "El oficio", k: "italica" },
+    { t: "detrás de cada", k: "chica" },
+    { t: "terminación.", k: "grande" },
+  ],
+  [
+    { t: "Ningún detalle", k: "italica" },
+    { t: "está librado al", k: "chica" },
+    { t: "azar.", k: "grande" },
+  ],
+  [
+    { t: "Una pieza con", k: "chica" },
+    { t: "identidad", k: "grande" },
+    { t: "propia.", k: "italica" },
+  ],
+];
+const ctaTipo: Parte[] = [
+  { t: "Tradición", k: "grande" },
+  { t: "que se lleva en las manos.", k: "italica" },
+];
+
+const TextosTipo: React.FC<{
+  readonly offset: number;
+  readonly cierre: number;
+}> = ({ offset, cierre }) => {
+  const { durationInFrames } = useVideoConfig();
+  const each = (durationInFrames - cierre - offset) / textosTipo.length;
+  return (
+    <>
+      {textosTipo.map((partes, i) => {
+        const from = Math.round(offset + i * each);
+        const to = Math.round(offset + (i + 1) * each);
+        return (
+          <Sequence key={from} from={from} durationInFrames={to - from}>
+            <Frase partes={partes} last={i === textosTipo.length - 1} />
+          </Sequence>
+        );
+      })}
+    </>
+  );
+};
+
 // A de 20 s: mismo gancho; el resto del video a velocidad real, ahora
 // completo (incluye el giro de frente del final), cada texto ~3,3 s y el
 // cierre con los beneficios 5 s, con movimiento real debajo hasta el final.
@@ -240,7 +295,7 @@ const zoom20: Key[] = [
   [360, 1.12],
   [390, 1.18],
 ];
-const CrudoA20: React.FC<{ readonly cta: string }> = ({ cta }) => (
+const CrudoA20: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <Audio src={staticFile("ambiente-20s.m4a")} />
     <Sequence durationInFrames={HOOK_A}>
@@ -252,7 +307,7 @@ const CrudoA20: React.FC<{ readonly cta: string }> = ({ cta }) => (
           [200, 1.42],
         ]}
       />
-      <BigTitle lines={hook} />
+      <Frase partes={hookTipo} delay={3} max={150} />
     </Sequence>
     <Sequence
       from={HOOK_A}
@@ -273,8 +328,10 @@ const CrudoA20: React.FC<{ readonly cta: string }> = ({ cta }) => (
         ]}
       />
     </Sequence>
-    <Texts offset={HOOK_A} cierre={CIERRE_20} />
-    <Cierre cta={cta} cierre={CIERRE_20} />
+    <TextosTipo offset={HOOK_A} cierre={CIERRE_20} />
+    <Sequence from={CRUDO_FRAMES_20 - CIERRE_20}>
+      <CierreTipo partes={ctaTipo} benefits={benefits} />
+    </Sequence>
   </AbsoluteFill>
 );
 
@@ -287,5 +344,5 @@ export const Crudo: React.FC<{
   ) : version === "B" ? (
     <CrudoB cta={cta} />
   ) : (
-    <CrudoA20 cta={cta} />
+    <CrudoA20 />
   );
