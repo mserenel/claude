@@ -8,7 +8,8 @@ import {
   useVideoConfig,
 } from "remotion";
 import { Camera } from "./Crudo";
-import { PortadaFeed } from "./PortadaFeed";
+import { colors, fonts } from "./brand";
+import { Scrim } from "./Caption";
 import {
   ChicaCursivaContext,
   CierreTipo,
@@ -18,19 +19,18 @@ import {
   type Parte,
 } from "./Tipografia";
 
-// Torpedo para pauta de venta (9:16 y 4:5). Abre con la portada del feed
-// medio segundo (misma foto y título, así el anuncio y el perfil se
-// reconocen) y sigue con las mismas tomas del Torpedo de 20 s (sin acercarse
-// a cada parte), con una característica por texto en el orden que pidió la
-// marca. Materiales confirmados por la marca. Sin precios en el video.
+// Torpedo para pauta de venta (9:16 y 4:5). Abre sobre el video con el
+// título de la portada del feed ("Mate / TORPEDO / Cuero Crudo"), así el
+// anuncio y el perfil se reconocen, y sigue con las mismas tomas del Torpedo
+// de 20 s, con una característica por texto en el orden que pidió la marca.
+// Materiales confirmados por la marca. Sin precios en el video.
 
 export const TORPEDO_VENTA_FRAMES = 600;
-const PORTADA = 15;
 const GANCHO = 60;
 const CIERRE = 150;
 // Las cinco características y la oferta se reparten por igual el tiempo entre
-// la portada y el cierre.
-const TEXTO = (TORPEDO_VENTA_FRAMES - CIERRE - PORTADA) / 6;
+// el gancho y el cierre.
+const TEXTO = (TORPEDO_VENTA_FRAMES - CIERRE - GANCHO) / 6;
 
 // Cámara del Torpedo de 20 s, en cuadros del video original.
 const zoom20: [number, number][] = [
@@ -85,35 +85,70 @@ const cta: Parte[] = [
   { t: "que se lleva en las manos.", k: "italica" },
 ];
 
-// La portada del feed, tal cual, con un acercamiento mínimo. Está diseñada
-// en 1080x1920: en la versión 4:5 se muestra su franja central.
-const Portada: React.FC = () => {
+// El título de la portada del feed (mismas letras, tamaños y disposición que
+// PortadaFeed), completo desde el primer cuadro y dentro de la zona visible.
+const TituloPortada: React.FC = () => {
   const f = useCurrentFrame();
   const { height } = useVideoConfig();
-  const z = interpolate(f, [0, PORTADA], [1, 1.03]);
+  const exit = interpolate(f, [GANCHO - 8, GANCHO], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const sombra = "0 2px 4px rgba(0,0,0,0.55), 0 4px 26px rgba(0,0,0,0.55)";
+  const k = 0.92;
   return (
-    <AbsoluteFill style={{ overflow: "hidden" }}>
-      <div
+    <AbsoluteFill>
+      <Scrim position="top" />
+      <AbsoluteFill
         style={{
-          position: "absolute",
-          left: 0,
-          top: (height - 1920) / 2,
-          width: 1080,
-          height: 1920,
-          transform: `scale(${z})`,
-          transformOrigin: "50% 45%",
+          alignItems: "center",
+          paddingTop: height > 1500 ? 330 : 70,
+          opacity: exit,
         }}
       >
-        <PortadaFeed
-          src="portada-raiz-feed.png"
-          kicker="Mate"
-          name="TORPEDO"
-          sub="Cuero Crudo"
-          family="caslon"
-          top={430}
-          titleScale={0.92}
-        />
-      </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            color: colors.crema,
+            textShadow: sombra,
+            fontFamily: fonts.serif,
+          }}
+        >
+          <div
+            style={{
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: 96 * k,
+              lineHeight: 1.05,
+              marginLeft: 8,
+            }}
+          >
+            Mate
+          </div>
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: 138 * k,
+              lineHeight: 1,
+              letterSpacing: 1,
+            }}
+          >
+            TORPEDO
+          </div>
+          <div
+            style={{
+              alignSelf: "flex-end",
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: 96 * k,
+              lineHeight: 1.15,
+            }}
+          >
+            Cuero Crudo
+          </div>
+        </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
@@ -132,6 +167,7 @@ export const TorpedoVenta: React.FC<{ readonly letra?: LetraGrande }> = ({
           boca, y después el video entero a velocidad real. */}
           <Sequence durationInFrames={GANCHO}>
             <Camera
+              hq
               muted
               from={140}
               zoom={[
@@ -141,10 +177,11 @@ export const TorpedoVenta: React.FC<{ readonly letra?: LetraGrande }> = ({
             />
           </Sequence>
           <Sequence from={GANCHO} durationInFrames={cierre - GANCHO}>
-            <Camera muted from={0} zoom={zoom20} />
+            <Camera hq muted from={0} zoom={zoom20} />
           </Sequence>
           <Sequence from={cierre}>
             <Camera
+              hq
               muted
               from={0}
               zoom={[
@@ -153,12 +190,12 @@ export const TorpedoVenta: React.FC<{ readonly letra?: LetraGrande }> = ({
               ]}
             />
           </Sequence>
-          <Sequence durationInFrames={PORTADA}>
-            <Portada />
+          <Sequence durationInFrames={GANCHO}>
+            <TituloPortada />
           </Sequence>
           {textos.map((partes, i) => {
-            const from = Math.round(PORTADA + i * TEXTO);
-            const to = Math.round(PORTADA + (i + 1) * TEXTO);
+            const from = Math.round(GANCHO + i * TEXTO);
+            const to = Math.round(GANCHO + (i + 1) * TEXTO);
             return (
               <Sequence key={from} from={from} durationInFrames={to - from}>
                 <Frase

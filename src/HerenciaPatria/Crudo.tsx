@@ -58,7 +58,9 @@ export const Camera: React.FC<{
   readonly focusY?: number;
   // Cuadro (del plano) desde el que el sonido baja hasta cero en 20 cuadros.
   readonly fadeOutAt?: number;
-}> = ({ muted, from, zoom, focusY, fadeOutAt }) => {
+  // Versión en 4K (más nítida en los acercamientos), ver mate_crudo_4k.sh.
+  readonly hq?: boolean;
+}> = ({ muted, from, zoom, focusY, fadeOutAt, hq }) => {
   const f = useCurrentFrame() + from;
   const scale = interpolate(
     f,
@@ -79,7 +81,7 @@ export const Camera: React.FC<{
   return (
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
       <OffthreadVideo
-        src={staticFile("mate-crudo.mp4")}
+        src={staticFile(hq ? "mate-crudo-4k.mp4" : "mate-crudo.mp4")}
         trimBefore={from}
         muted={muted}
         volume={(f) =>
