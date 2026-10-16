@@ -42,6 +42,8 @@ const ParteTexto: React.FC<{
     color: colors.crema,
     textShadow: sombra,
     textAlign: "center",
+    // Números a la altura de las mayúsculas ("3", "20%").
+    fontVariantNumeric: "lining-nums",
   };
   if (p.k === "italica") {
     return (
@@ -146,7 +148,9 @@ export const Frase: React.FC<{
 export const CierreTipo: React.FC<{
   readonly partes: Parte[];
   readonly benefits: string[];
-}> = ({ partes, benefits }) => {
+  // Llamado a la compra, como un botón (versión de venta).
+  readonly accion?: string;
+}> = ({ partes, benefits, accion }) => {
   const f = useCurrentFrame();
   const dim = ease(f, 0, 12);
   const logo = ease(f, 4, 18);
@@ -223,6 +227,24 @@ export const CierreTipo: React.FC<{
             );
           })}
         </div>
+        {accion ? (
+          <div
+            style={{
+              opacity: ease(f, 54, 66),
+              marginTop: 40,
+              padding: "20px 44px",
+              border: `2px solid ${colors.crema}`,
+              borderRadius: 6,
+              fontFamily: fonts.serif,
+              fontWeight: 600,
+              fontSize: 42,
+              color: colors.crema,
+              textShadow: sombra,
+            }}
+          >
+            {accion}
+          </div>
+        ) : null}
       </AbsoluteFill>
     </AbsoluteFill>
   );

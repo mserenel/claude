@@ -261,20 +261,67 @@ const ctaTipo: Parte[] = [
   { t: "que se lleva en las manos.", k: "italica" },
 ];
 
+// Versión de venta (para pauta): en el gancho se entiende qué es, después de
+// qué está hecho y la oferta aparece antes del cierre, para quien no llega al
+// final. Materiales confirmados por la marca.
+const ventaHook: Parte[] = [
+  { t: "Mate Torpedo", k: "italica" },
+  { t: "de cuero crudo,", k: "chica" },
+  { t: "hecho a mano.", k: "grande" },
+];
+const ventaTextos: Parte[][] = [
+  [
+    { t: "Cuerpo de", k: "chica" },
+    { t: "calabaza", k: "grande" },
+    { t: "forrado en cuero crudo.", k: "italica" },
+  ],
+  [
+    { t: "Costura de", k: "chica" },
+    { t: "tiento", k: "grande" },
+    { t: "y virola de alpaca.", k: "italica" },
+  ],
+  [
+    { t: "Cada uno es", k: "chica" },
+    { t: "único.", k: "grande" },
+    { t: "Una pieza con identidad propia.", k: "italica" },
+  ],
+  [
+    { t: "Envío gratis", k: "grande" },
+    { t: "y 3 cuotas sin interés.", k: "italica" },
+  ],
+];
+
+type Guion = {
+  readonly hook: Parte[];
+  readonly textos: Parte[][];
+  readonly cta: Parte[];
+  readonly accion?: string;
+};
+const guiones: Record<"A20" | "VENTA", Guion> = {
+  A20: { hook: hookTipo, textos: textosTipo, cta: ctaTipo },
+  VENTA: {
+    hook: ventaHook,
+    textos: ventaTextos,
+    cta: ctaTipo,
+    accion: "Comprá en nuestra tienda online",
+  },
+};
+
 const TextosTipo: React.FC<{
   readonly offset: number;
   readonly cierre: number;
-}> = ({ offset, cierre }) => {
+  readonly textos: Parte[][];
+}> = ({ offset, cierre, textos }) => {
   const { durationInFrames } = useVideoConfig();
-  const each = (durationInFrames - cierre - offset) / textosTipo.length;
+  const each = (durationInFrames - cierre - offset) / textos.length;
   return (
     <>
-      {textosTipo.map((partes, i) => {
+      {textos.map((partes, i) => {
         const from = Math.round(offset + i * each);
         const to = Math.round(offset + (i + 1) * each);
         return (
           <Sequence key={from} from={from} durationInFrames={to - from}>
-            <Frase partes={partes} last={i === textosTipo.length - 1} />
+            <Frase partes={partes} last={i === textos.length - 1} />
           </Sequence>
         );
       })}
@@ -296,7 +343,7 @@ const zoom20: Key[] = [
   [360, 1.12],
   [390, 1.18],
 ];
-const CrudoA20: React.FC = () => (
+const CrudoA20: React.FC<{ readonly g: Guion }> = ({ g }) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
     <Audio src={staticFile("ambiente-20s.m4a")} />
     <Sequence durationInFrames={HOOK_A}>
@@ -308,7 +355,7 @@ const CrudoA20: React.FC = () => (
           [200, 1.42],
         ]}
       />
-      <Frase partes={hookTipo} delay={3} max={150} />
+      <Frase partes={g.hook} delay={3} max={150} />
     </Sequence>
     <Sequence
       from={HOOK_A}
@@ -329,15 +376,15 @@ const CrudoA20: React.FC = () => (
         ]}
       />
     </Sequence>
-    <TextosTipo offset={HOOK_A} cierre={CIERRE_20} />
+    <TextosTipo offset={HOOK_A} cierre={CIERRE_20} textos={g.textos} />
     <Sequence from={CRUDO_FRAMES_20 - CIERRE_20}>
-      <CierreTipo partes={ctaTipo} benefits={benefits} />
+      <CierreTipo partes={g.cta} benefits={benefits} accion={g.accion} />
     </Sequence>
   </AbsoluteFill>
 );
 
 export const Crudo: React.FC<{
-  readonly hook: "A" | "B" | "A20";
+  readonly hook: "A" | "B" | "A20" | "VENTA";
   readonly cta: string;
 }> = ({ hook: version, cta }) =>
   version === "A" ? (
@@ -345,5 +392,5 @@ export const Crudo: React.FC<{
   ) : version === "B" ? (
     <CrudoB cta={cta} />
   ) : (
-    <CrudoA20 />
+    <CrudoA20 g={guiones[version]} />
   );

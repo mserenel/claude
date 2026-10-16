@@ -55,6 +55,19 @@ export const RemotionRoot: React.FC = () => {
           }}
         />
       ))}
+      {/* npx remotion render HP-Torpedo-Venta entregas/torpedo-20s-venta.mp4 */}
+      <Composition
+        id="HP-Torpedo-Venta"
+        component={Crudo}
+        durationInFrames={CRUDO_FRAMES_20}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          hook: "VENTA" as const,
+          cta: "Tradición que se lleva en las manos.",
+        }}
+      />
       {/* npx remotion render HP-Crudo-A-20s out/herencia-patria-crudo-A-20s.mp4 */}
       <Composition
         id="HP-Crudo-A-20s"

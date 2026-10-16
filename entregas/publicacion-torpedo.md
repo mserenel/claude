@@ -21,3 +21,23 @@ Encontralo en nuestra tienda online (link en la bio).
 
 Mate Torpedo hecho a mano: calabaza, cuero crudo, tiento y alpaca. 🧉
 Envío gratis · 3 cuotas sin interés · 20% off en transferencia.
+
+---
+
+# Anuncio de venta (Meta Ads)
+
+Video: `torpedo-20s-venta.mp4` (9:16, para Reels y Stories)
+
+- **Objetivo de la campaña:** Ventas.
+- **Botón:** Comprar (lleva directo al producto en la tienda, no al perfil).
+- **Texto principal:**
+
+  Mate Torpedo hecho a mano 🧉
+  Cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca. Cada uno es único.
+
+  ✔ Envío gratis
+  ✔ 3 cuotas sin interés
+  ✔ 20% de descuento en transferencia
+
+- **Título:** Mate Torpedo de cuero crudo
+- **Descripción:** Envío gratis · 3 cuotas sin interés
