@@ -11,3 +11,4 @@ public/fonts/
 
 # Video del Torpedo en 4K (113 MB, supera el límite de GitHub): se regenera con tools/mate_crudo_4k.sh.
 public/mate-crudo-4k.mp4
+public/mate-crudo-4k-lento.mp4

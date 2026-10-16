@@ -25,9 +25,15 @@ import {
 // de 20 s, con una característica por texto en el orden que pidió la marca.
 // Materiales confirmados por la marca. Sin precios en el video.
 
-export const TORPEDO_VENTA_FRAMES = 600;
+// Todo el video va al 80% de la velocidad real (pedido de la marca: se sentía
+// muy rápido), con los textos más tiempo en pantalla.
+const V = 0.8;
 const GANCHO = 60;
-const CIERRE = 150;
+const CIERRE = 120;
+// El video original entero (420 cuadros sin el cuadro final sostenido), en
+// cuadros de este video.
+const CUERPO = Math.round(420 / V);
+export const TORPEDO_VENTA_FRAMES = GANCHO + CUERPO + CIERRE;
 // Las cinco características y la oferta se reparten por igual el tiempo entre
 // el gancho y el cierre.
 const TEXTO = (TORPEDO_VENTA_FRAMES - CIERRE - GANCHO) / 6;
@@ -161,31 +167,34 @@ export const TorpedoVenta: React.FC<{ readonly letra?: LetraGrande }> = ({
     <LetraGrandeContext.Provider value={letra}>
       <ChicaCursivaContext.Provider value>
         <AbsoluteFill style={{ backgroundColor: "black" }}>
-          <Audio src={staticFile("ambiente-20s.m4a")} />
+          {/* Ambiente real del parque, extendido a 23,5 s con un fundido. */}
+          <Audio src={staticFile("ambiente-venta.m4a")} />
           {/* Las tomas del Torpedo de 20 s: el plano cercano de la virola y la
-          boca, y después el video entero a velocidad real. */}
+          boca, y después el video entero, al 80% de la velocidad. */}
           <Sequence durationInFrames={GANCHO}>
             <Camera
               hq
+              velocidad={V}
               muted
               from={140}
               zoom={[
                 [140, 1.55],
-                [200, 1.42],
+                [140 + GANCHO * V, 1.42],
               ]}
             />
           </Sequence>
           <Sequence from={GANCHO} durationInFrames={cierre - GANCHO}>
-            <Camera hq muted from={0} zoom={zoom20} />
+            <Camera hq velocidad={V} muted from={0} zoom={zoom20} />
           </Sequence>
           <Sequence from={cierre}>
             <Camera
               hq
+              velocidad={V}
               muted
               from={0}
               zoom={[
                 [0, 1.02],
-                [CIERRE, 1.12],
+                [CIERRE * V, 1.12],
               ]}
             />
           </Sequence>

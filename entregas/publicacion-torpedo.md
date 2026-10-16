@@ -25,7 +25,7 @@ Mate Torpedo hecho a mano: calabaza, cuero crudo, tiento y alpaca. 🧉
 
 # Anuncio de venta (Meta Ads)
 
-Video: `torpedo-20s-venta.mp4` (9:16), para todas las ubicaciones. En el
+Video: `torpedo-venta.mp4` (9:16, 23,5 s), para todas las ubicaciones. En el
 Feed, Meta lo recorta solo a 4:5 y los textos quedan enteros. Miniatura:
 subir `portada-reel-feed.jpg` como imagen de portada del anuncio.
 

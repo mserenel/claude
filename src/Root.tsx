@@ -59,7 +59,7 @@ export const RemotionRoot: React.FC = () => {
           }}
         />
       ))}
-      {/* npx remotion render HP-Torpedo-Venta entregas/torpedo-20s-venta.mp4 */}
+      {/* npx remotion render HP-Torpedo-Venta entregas/torpedo-venta.mp4 */}
       <Composition
         id="HP-Torpedo-Venta"
         component={TorpedoVenta}
@@ -68,7 +68,7 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
-      {/* npx remotion render HP-Torpedo-Venta-4x5 entregas/torpedo-20s-venta-4x5.mp4 */}
+      {/* npx remotion render HP-Torpedo-Venta-4x5 entregas/torpedo-venta-4x5.mp4 */}
       <Composition
         id="HP-Torpedo-Venta-4x5"
         component={TorpedoVenta}

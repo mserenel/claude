@@ -60,8 +60,12 @@ export const Camera: React.FC<{
   readonly fadeOutAt?: number;
   // Versión en 4K (más nítida en los acercamientos), ver mate_crudo_4k.sh.
   readonly hq?: boolean;
-}> = ({ muted, from, zoom, focusY, fadeOutAt, hq }) => {
-  const f = useCurrentFrame() + from;
+  // Velocidad (1 = real). 0.8 usa mate-crudo-4k-lento.mp4, el 4K a 80% con
+  // cuadros mezclados. `from`, las claves de zoom y la posición del mate
+  // siguen en cuadros del video original.
+  readonly velocidad?: 1 | 0.8;
+}> = ({ muted, from, zoom, focusY, fadeOutAt, hq, velocidad = 1 }) => {
+  const f = useCurrentFrame() * velocidad + from;
   const scale = interpolate(
     f,
     zoom.map((k) => k[0]),
@@ -81,8 +85,14 @@ export const Camera: React.FC<{
   return (
     <AbsoluteFill style={{ backgroundColor: "black", overflow: "hidden" }}>
       <OffthreadVideo
-        src={staticFile(hq ? "mate-crudo-4k.mp4" : "mate-crudo.mp4")}
-        trimBefore={from}
+        src={staticFile(
+          velocidad === 0.8
+            ? "mate-crudo-4k-lento.mp4"
+            : hq
+              ? "mate-crudo-4k.mp4"
+              : "mate-crudo.mp4",
+        )}
+        trimBefore={Math.round(from / velocidad)}
         muted={muted}
         volume={(f) =>
           fadeOutAt === undefined
