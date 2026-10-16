@@ -41,12 +41,12 @@ Todos los textos están dentro de la zona que Meta no tapa (en 9:16, entre
   Mate Torpedo hecho a mano 🧉
   Cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca. Cada uno es único.
 
+  $128.750 · o $103.000 con transferencia
   ✔ Envío gratis
   ✔ 3 cuotas sin interés
-  ✔ 20% de descuento en transferencia
 
 - **Título:** Mate Torpedo de cuero crudo
-- **Descripción:** Envío gratis · 3 cuotas sin interés
+- **Descripción:** $103.000 con transferencia · Envío gratis
 
 ## Cómo medirlo (primeros 3-4 días, sin tocar nada)
 

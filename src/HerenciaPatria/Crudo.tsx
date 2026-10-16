@@ -298,6 +298,8 @@ type Guion = {
   readonly textos: Parte[][];
   readonly cta: Parte[];
   readonly accion?: string;
+  readonly precio?: { readonly lista: string; readonly transferencia: string };
+  readonly beneficios?: string[];
 };
 const guiones: Record<"A20" | "VENTA", Guion> = {
   A20: { hook: hookTipo, textos: textosTipo, cta: ctaTipo },
@@ -306,6 +308,13 @@ const guiones: Record<"A20" | "VENTA", Guion> = {
     textos: ventaTextos,
     cta: ctaTipo,
     accion: "Comprá el tuyo online.",
+    // Precios de la tienda (herenciapatria.com.ar): $128.750 de lista y
+    // $103.000 con transferencia (20% menos). El descuento ya va en el precio.
+    precio: {
+      lista: "$128.750",
+      transferencia: "o $103.000 con transferencia",
+    },
+    beneficios: ["Envío gratis", "3 cuotas sin interés"],
   },
 };
 
@@ -380,7 +389,12 @@ const CrudoA20: React.FC<{ readonly g: Guion }> = ({ g }) => (
     </Sequence>
     <TextosTipo offset={HOOK_A} cierre={CIERRE_20} textos={g.textos} />
     <Sequence from={CRUDO_FRAMES_20 - CIERRE_20}>
-      <CierreTipo partes={g.cta} benefits={benefits} accion={g.accion} />
+      <CierreTipo
+        partes={g.cta}
+        benefits={g.beneficios ?? benefits}
+        accion={g.accion}
+        precio={g.precio}
+      />
     </Sequence>
   </AbsoluteFill>
 );

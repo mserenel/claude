@@ -162,7 +162,9 @@ export const CierreTipo: React.FC<{
   // Llamado a la compra (versión de venta). Es texto, no un botón dibujado:
   // en el anuncio el botón real "Comprar" lo pone Meta.
   readonly accion?: string;
-}> = ({ partes, benefits, accion }) => {
+  // Precio de lista y con transferencia, tal cual figuran en la tienda.
+  readonly precio?: { readonly lista: string; readonly transferencia: string };
+}> = ({ partes, benefits, accion, precio }) => {
   const f = useCurrentFrame();
   const { height } = useVideoConfig();
   const zona = zonaTexto(height);
@@ -189,8 +191,8 @@ export const CierreTipo: React.FC<{
         <Img
           src={staticFile("logo-herencia-patria.png")}
           style={{
-            width: 210,
-            height: 210,
+            width: precio ? 170 : 210,
+            height: precio ? 170 : 210,
             opacity: logo,
             transform: `scale(${0.96 + 0.04 * logo})`,
           }}
@@ -212,6 +214,42 @@ export const CierreTipo: React.FC<{
             t={ease(f, 14 + i * 7, 26 + i * 7)}
           />
         ))}
+        {precio ? (
+          <div
+            style={{
+              opacity: ease(f, 26, 38),
+              marginTop: 26,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              color: colors.crema,
+              textShadow: sombra,
+              fontVariantNumeric: "lining-nums",
+            }}
+          >
+            <div
+              style={{
+                fontFamily: fonts.serif,
+                fontWeight: 700,
+                fontSize: 92,
+                lineHeight: 1,
+              }}
+            >
+              {precio.lista}
+            </div>
+            <div
+              style={{
+                marginTop: 8,
+                fontFamily: fonts.serif,
+                fontStyle: "italic",
+                fontWeight: 400,
+                fontSize: 50,
+              }}
+            >
+              {precio.transferencia}
+            </div>
+          </div>
+        ) : null}
         <div
           style={{
             marginTop: 30,
