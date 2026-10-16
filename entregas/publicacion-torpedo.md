@@ -1,12 +1,12 @@
-# Reel "Hay piezas que llevan nuestra esencia" (Mate Torpedo, 20 s)
+# Reel Mate Torpedo de cuero crudo
 
-Video: `torpedo-20s-minusculas.mp4`
+Video: `torpedo-venta.mp4`
 
 ## Texto de la publicación (copiar y pegar)
 
-Hay piezas que llevan nuestra esencia. 🧉
+Mate Torpedo de cuero crudo, hecho a mano. 🧉
 
-Mate Torpedo hecho a mano: cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca. Cada uno es único.
+Cuerpo de calabaza, costura de tiento y virola de alpaca. Cada uno es único.
 
 ✔ 20% off en transferencia
 ✔ 3 cuotas sin interés
