@@ -285,7 +285,7 @@ const ventaTextos: Parte[][] = [
   [
     { t: "Cada uno es", k: "chica" },
     { t: "único.", k: "grande" },
-    { t: "Una pieza con identidad propia.", k: "italica" },
+    { t: "Una pieza con identidad.", k: "italica" },
   ],
   [
     { t: "Envío gratis", k: "grande" },
