@@ -228,6 +228,7 @@ const CrudoB: React.FC<{ readonly cta: string }> = ({ cta }) => {
 };
 
 // Textos de la de 20 s: centrados y con mezcla de letras (Tipografia.tsx).
+// La palabra grande es siempre la idea importante de la frase.
 const hookTipo: Parte[] = [
   { t: "Hay piezas", k: "italica" },
   { t: "que llevan nuestra", k: "chica" },
@@ -240,14 +241,14 @@ const textosTipo: Parte[][] = [
     { t: "de los materiales.", k: "italica" },
   ],
   [
-    { t: "El oficio", k: "italica" },
-    { t: "detrás de cada", k: "chica" },
-    { t: "terminación.", k: "grande" },
+    { t: "El", k: "chica" },
+    { t: "oficio", k: "grande" },
+    { t: "detrás de cada terminación.", k: "italica" },
   ],
   [
-    { t: "Ningún detalle", k: "italica" },
-    { t: "está librado al", k: "chica" },
-    { t: "azar.", k: "grande" },
+    { t: "Ningún", k: "chica" },
+    { t: "detalle", k: "grande" },
+    { t: "está librado al azar.", k: "italica" },
   ],
   [
     { t: "Una pieza con", k: "chica" },
