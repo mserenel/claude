@@ -7,7 +7,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { colors, fonts, safe } from "./brand";
+import { colors, fonts } from "./brand";
 import { Scrim } from "./Caption";
 
 // Textos centrados con mezcla de letras, como una tapa de revista: una
@@ -95,6 +95,13 @@ const ParteTexto: React.FC<{
   );
 };
 
+// Zona donde el texto se ve en todos los lugares del anuncio. En 9:16 (Reels
+// y Stories), Meta tapa ~14% arriba (270 px) y ~35% abajo (desde 1250 px) con
+// su interfaz, y en el Feed recorta el video a 4:5 (sólo de 285 a 1635 px):
+// el texto va entre 330 y 1240. En la versión 4:5 no hay nada superpuesto.
+const zonaTexto = (height: number) =>
+  height > 1500 ? { top: 330, bottom: 1240 } : { top: 70, bottom: height - 60 };
+
 // Frase arriba y centrada. Las partes entran una tras otra y salen juntas con
 // un fundido corto al final de su secuencia.
 export const Frase: React.FC<{
@@ -104,9 +111,12 @@ export const Frase: React.FC<{
   readonly max?: number;
   // El último texto antes del cierre también apaga su degradé.
   readonly last?: boolean;
-}> = ({ partes, delay = 4, max = 140, last }) => {
+  // Completa desde el primer cuadro: es lo que se ve en la miniatura y en el
+  // primer vistazo del anuncio.
+  readonly instant?: boolean;
+}> = ({ partes, delay = 4, max = 140, last, instant }) => {
   const f = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
+  const { durationInFrames, height } = useVideoConfig();
   const exit = interpolate(
     f,
     [durationInFrames - 8, durationInFrames],
@@ -123,7 +133,7 @@ export const Frase: React.FC<{
           position: "absolute",
           left: 70,
           right: 70,
-          top: safe.top + 10,
+          top: zonaTexto(height).top,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -135,7 +145,7 @@ export const Frase: React.FC<{
             key={p.t}
             p={p}
             max={max}
-            t={ease(f, delay + i * 7, delay + i * 7 + 12)}
+            t={instant ? 1 : ease(f, delay + i * 7, delay + i * 7 + 12)}
           />
         ))}
       </div>
@@ -144,33 +154,43 @@ export const Frase: React.FC<{
 };
 
 // Cierre: se oscurece la escena en azul de marca y aparecen el logo
-// (original), la frase con la misma mezcla de letras y los beneficios.
+// (original), la frase con la misma mezcla de letras, los beneficios y el
+// llamado a comprar, todo dentro de la zona visible del anuncio.
 export const CierreTipo: React.FC<{
   readonly partes: Parte[];
   readonly benefits: string[];
-  // Llamado a la compra, como un botón (versión de venta).
+  // Llamado a la compra (versión de venta). Es texto, no un botón dibujado:
+  // en el anuncio el botón real "Comprar" lo pone Meta.
   readonly accion?: string;
 }> = ({ partes, benefits, accion }) => {
   const f = useCurrentFrame();
+  const { height } = useVideoConfig();
+  const zona = zonaTexto(height);
   const dim = ease(f, 0, 12);
   const logo = ease(f, 4, 18);
   return (
     <AbsoluteFill>
       <AbsoluteFill
-        style={{ backgroundColor: colors.azul, opacity: 0.74 * dim }}
+        style={{ backgroundColor: colors.azul, opacity: 0.68 * dim }}
       />
-      <AbsoluteFill
+      <div
         style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: zona.top - 30,
+          height: zona.bottom - zona.top + 30,
+          display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          paddingBottom: 60,
         }}
       >
         <Img
           src={staticFile("logo-herencia-patria.png")}
           style={{
-            width: 320,
-            height: 320,
+            width: 210,
+            height: 210,
             opacity: logo,
             transform: `scale(${0.96 + 0.04 * logo})`,
           }}
@@ -180,7 +200,7 @@ export const CierreTipo: React.FC<{
             opacity: logo,
             width: 110,
             height: 3,
-            margin: "48px 0 36px",
+            margin: "30px 0 24px",
             backgroundColor: colors.crema,
           }}
         />
@@ -194,7 +214,7 @@ export const CierreTipo: React.FC<{
         ))}
         <div
           style={{
-            marginTop: 56,
+            marginTop: 30,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -215,7 +235,8 @@ export const CierreTipo: React.FC<{
                   fontVariantNumeric: "lining-nums",
                   whiteSpace: "nowrap",
                   color: colors.crema,
-                  padding: "20px 0",
+                  textShadow: sombra,
+                  padding: "14px 0",
                   width: 920,
                   textAlign: "center",
                   borderTop:
@@ -230,14 +251,12 @@ export const CierreTipo: React.FC<{
         {accion ? (
           <div
             style={{
-              opacity: ease(f, 54, 66),
-              marginTop: 40,
-              padding: "20px 44px",
-              border: `2px solid ${colors.crema}`,
-              borderRadius: 6,
+              opacity: ease(f, 52, 64),
+              marginTop: 26,
               fontFamily: fonts.serif,
+              fontStyle: "italic",
               fontWeight: 600,
-              fontSize: 42,
+              fontSize: 54,
               color: colors.crema,
               textShadow: sombra,
             }}
@@ -245,7 +264,7 @@ export const CierreTipo: React.FC<{
             {accion}
           </div>
         ) : null}
-      </AbsoluteFill>
+      </div>
     </AbsoluteFill>
   );
 };

@@ -93,6 +93,8 @@ const Camera: React.FC<{
         style={{
           width: "100%",
           height: "100%",
+          // En 9:16 no cambia nada; en la versión 4:5 recorta arriba y abajo.
+          objectFit: "cover",
           transform: `scale(${scale})`,
           transformOrigin: `${at(1)}% ${focusY ?? at(2)}%`,
         }}
@@ -303,7 +305,7 @@ const guiones: Record<"A20" | "VENTA", Guion> = {
     hook: ventaHook,
     textos: ventaTextos,
     cta: ctaTipo,
-    accion: "Comprá en nuestra tienda online",
+    accion: "Comprá el tuyo online.",
   },
 };
 
@@ -355,7 +357,7 @@ const CrudoA20: React.FC<{ readonly g: Guion }> = ({ g }) => (
           [200, 1.42],
         ]}
       />
-      <Frase partes={g.hook} delay={3} max={150} />
+      <Frase partes={g.hook} max={150} instant />
     </Sequence>
     <Sequence
       from={HOOK_A}
