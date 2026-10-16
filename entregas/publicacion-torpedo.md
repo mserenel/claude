@@ -5,7 +5,7 @@ Video: `torpedo-venta.mp4`
 ## Texto de la publicación (copiar y pegar)
 
 Tu próximo compañero de mates. 🧉
-Mate Torpedo: cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca cincelada al lacre. Cada uno es único.
+Mate Torpedo: cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca cincelada en lacre. Cada uno es único.
 
 ✔ 20% off en transferencia
 ✔ 3 cuotas sin interés
@@ -17,7 +17,7 @@ Encontralo en nuestra tienda online (link en la bio).
 
 ## Versión corta (anuncio pago)
 
-Mate Torpedo: calabaza, cuero crudo, tiento y alpaca cincelada al lacre. 🧉
+Mate Torpedo: calabaza, cuero crudo, tiento y alpaca cincelada en lacre. 🧉
 20% off en transferencia · 3 cuotas sin interés.
 
 ---
@@ -33,7 +33,7 @@ subir `portada-reel-feed.jpg` como imagen de portada del anuncio.
 - **Texto principal:**
 
   Mate Torpedo de cuero crudo 🧉
-  Cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca cincelada al lacre. Cada uno es único.
+  Cuerpo de calabaza forrado en cuero crudo, costura de tiento y virola de alpaca cincelada en lacre. Cada uno es único.
 
   ✔ 20% off en transferencia
   ✔ 3 cuotas sin interés

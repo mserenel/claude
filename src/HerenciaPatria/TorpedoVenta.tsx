@@ -79,7 +79,7 @@ const tomas: Toma[] = [
   {
     partes: [
       { t: "Cincelado", k: "chica" },
-      { t: "al lacre", k: "grande" },
+      { t: "en lacre", k: "grande" },
     ],
   },
 ];
