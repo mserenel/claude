@@ -75,9 +75,9 @@ const tomas: Toma[] = [
 
 // La oferta aparece una sola vez (el cierre no la repite). Sin envío gratis.
 const oferta: Parte[] = [
-  { t: "20% off", k: "grande" },
-  { t: "en transferencia", k: "chica" },
-  { t: "o 3 cuotas sin interés", k: "chica" },
+  { t: "20% off en transferencia", k: "grande", tam: 80 },
+  { t: "o", k: "chica" },
+  { t: "3 cuotas sin interés", k: "grande", tam: 80 },
 ];
 
 const cta: Parte[] = [

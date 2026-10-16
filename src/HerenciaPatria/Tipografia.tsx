@@ -18,6 +18,8 @@ import { Scrim } from "./Caption";
 export type Parte = {
   readonly t: string;
   readonly k: "italica" | "chica" | "grande";
+  // Tamaño fijo para la palabra grande (si no, se calcula según el largo).
+  readonly tam?: number;
 };
 
 const sombra = "0 2px 18px rgba(0,0,0,0.4)";
@@ -94,7 +96,7 @@ const ParteTexto: React.FC<{
           fontFamily: fonts.serif,
           fontStyle: chicaCursiva ? "italic" : "normal",
           fontWeight: 400,
-          fontSize: (chicaCursiva ? 0.46 : 0.42) * max,
+          fontSize: (chicaCursiva ? 0.54 : 0.42) * max,
           lineHeight: 1.1,
         }}
       >
@@ -109,7 +111,7 @@ const ParteTexto: React.FC<{
         transform: `scale(${1.06 - 0.06 * t})`,
         fontFamily: letra.family,
         fontWeight: letra.weight,
-        fontSize: grandeSize(p.t, max, letra.ancho),
+        fontSize: p.tam ?? grandeSize(p.t, max, letra.ancho),
         lineHeight: 1,
       }}
     >
