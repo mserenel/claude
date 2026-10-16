@@ -9,7 +9,14 @@ import {
 } from "remotion";
 import { Camera } from "./Crudo";
 import { PortadaFeed } from "./PortadaFeed";
-import { CierreTipo, Frase, type Parte } from "./Tipografia";
+import {
+  ChicaCursivaContext,
+  CierreTipo,
+  Frase,
+  LetraGrandeContext,
+  type LetraGrande,
+  type Parte,
+} from "./Tipografia";
 
 // Torpedo para pauta de venta (9:16 y 4:5). Abre con la portada del feed
 // medio segundo (misma foto y título, así el anuncio y el perfil se
@@ -115,56 +122,66 @@ const Portada: React.FC = () => {
   );
 };
 
-export const TorpedoVenta: React.FC = () => {
+export const TorpedoVenta: React.FC<{ readonly letra?: LetraGrande }> = ({
+  letra = "addington",
+}) => {
   const cierre = TORPEDO_VENTA_FRAMES - CIERRE;
   const textos = [...tomas.map((t) => t.partes), oferta];
   return (
-    <AbsoluteFill style={{ backgroundColor: "black" }}>
-      <Audio src={staticFile("ambiente-20s.m4a")} />
-      {/* Las tomas del Torpedo de 20 s: el plano cercano de la virola y la
+    <LetraGrandeContext.Provider value={letra}>
+      <ChicaCursivaContext.Provider value>
+        <AbsoluteFill style={{ backgroundColor: "black" }}>
+          <Audio src={staticFile("ambiente-20s.m4a")} />
+          {/* Las tomas del Torpedo de 20 s: el plano cercano de la virola y la
           boca, y después el video entero a velocidad real. */}
-      <Sequence durationInFrames={GANCHO}>
-        <Camera
-          muted
-          from={140}
-          zoom={[
-            [140, 1.55],
-            [200, 1.42],
-          ]}
-        />
-      </Sequence>
-      <Sequence from={GANCHO} durationInFrames={cierre - GANCHO}>
-        <Camera muted from={0} zoom={zoom20} />
-      </Sequence>
-      <Sequence from={cierre}>
-        <Camera
-          muted
-          from={0}
-          zoom={[
-            [0, 1.02],
-            [CIERRE, 1.12],
-          ]}
-        />
-      </Sequence>
-      <Sequence durationInFrames={PORTADA}>
-        <Portada />
-      </Sequence>
-      {textos.map((partes, i) => {
-        const from = Math.round(PORTADA + i * TEXTO);
-        const to = Math.round(PORTADA + (i + 1) * TEXTO);
-        return (
-          <Sequence key={from} from={from} durationInFrames={to - from}>
-            <Frase partes={partes} delay={2} last={i === textos.length - 1} />
+          <Sequence durationInFrames={GANCHO}>
+            <Camera
+              muted
+              from={140}
+              zoom={[
+                [140, 1.55],
+                [200, 1.42],
+              ]}
+            />
           </Sequence>
-        );
-      })}
-      <Sequence from={cierre}>
-        <CierreTipo
-          partes={cta}
-          benefits={beneficios}
-          accion="Comprá el tuyo online."
-        />
-      </Sequence>
-    </AbsoluteFill>
+          <Sequence from={GANCHO} durationInFrames={cierre - GANCHO}>
+            <Camera muted from={0} zoom={zoom20} />
+          </Sequence>
+          <Sequence from={cierre}>
+            <Camera
+              muted
+              from={0}
+              zoom={[
+                [0, 1.02],
+                [CIERRE, 1.12],
+              ]}
+            />
+          </Sequence>
+          <Sequence durationInFrames={PORTADA}>
+            <Portada />
+          </Sequence>
+          {textos.map((partes, i) => {
+            const from = Math.round(PORTADA + i * TEXTO);
+            const to = Math.round(PORTADA + (i + 1) * TEXTO);
+            return (
+              <Sequence key={from} from={from} durationInFrames={to - from}>
+                <Frase
+                  partes={partes}
+                  delay={2}
+                  last={i === textos.length - 1}
+                />
+              </Sequence>
+            );
+          })}
+          <Sequence from={cierre}>
+            <CierreTipo
+              partes={cta}
+              benefits={beneficios}
+              accion="Comprá el tuyo online."
+            />
+          </Sequence>
+        </AbsoluteFill>
+      </ChicaCursivaContext.Provider>
+    </LetraGrandeContext.Provider>
   );
 };

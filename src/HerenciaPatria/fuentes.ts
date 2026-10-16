@@ -6,8 +6,8 @@ import {
 } from "remotion";
 
 // Tipografías de la marca, enviadas por Herencia Patria: Addington CF
-// (serif), Helvetica Neue LT Std (sans) y Sketcha Kits (a mano, para Don
-// Patricio). Tienen licencia: van en public/fonts/, que no se sube al
+// (serif), Helvetica Neue LT Std (sans), Acumin (sans variable) y Sketcha
+// Kits (a mano, para Don Patricio). Tienen licencia: van en public/fonts/, que no se sube al
 // repositorio. Si faltan, el render falla en vez de usar otra letra.
 
 const lista: [family: string, file: string, weight: string, style: string][] = [
@@ -24,6 +24,8 @@ const lista: [family: string, file: string, weight: string, style: string][] = [
   ["Helvetica Neue", "HelveticaNeueLTStd-Md.otf", "500", "normal"],
   ["Helvetica Neue", "HelveticaNeueLTStd-Bd.otf", "700", "normal"],
   ["Sketcha Kits", "SketchaKits.otf", "400", "normal"],
+  // Variable: todos los pesos en un archivo.
+  ["Acumin", "AcuminVariableConcept.otf", "100 900", "normal"],
 ];
 
 const espera = delayRender("Tipografías de la marca");

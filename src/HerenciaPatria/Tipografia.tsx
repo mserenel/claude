@@ -1,3 +1,4 @@
+import { createContext, useContext } from "react";
 import {
   AbsoluteFill,
   Easing,
@@ -21,6 +22,25 @@ export type Parte = {
 
 const sombra = "0 2px 18px rgba(0,0,0,0.4)";
 
+// Letra de la palabra grande (siempre una de las tipografías de la marca).
+// Por defecto Addington; los videos pueden probar otra con el Provider.
+export type LetraGrande = "addington" | "helvetica" | "acumin";
+const letrasGrande: Record<
+  LetraGrande,
+  { family: string; weight: number; ancho: number }
+> = {
+  addington: { family: '"Addington CF", serif', weight: 800, ancho: 0.6 },
+  helvetica: {
+    family: '"Helvetica Neue", sans-serif',
+    weight: 700,
+    ancho: 0.58,
+  },
+  acumin: { family: '"Acumin", sans-serif', weight: 800, ancho: 0.55 },
+};
+export const LetraGrandeContext = createContext<LetraGrande>("addington");
+// La línea chica en cursiva (más contraste con la grande) o derecha.
+export const ChicaCursivaContext = createContext(false);
+
 const ease = (f: number, a: number, b: number) =>
   interpolate(f, [a, b], [0, 1], {
     extrapolateLeft: "clamp",
@@ -29,14 +49,16 @@ const ease = (f: number, a: number, b: number) =>
   });
 
 // La palabra grande se achica si es larga, para que entre en el ancho.
-const grandeSize = (t: string, max: number) =>
-  Math.min(max, Math.floor(900 / (t.length * 0.58)));
+const grandeSize = (t: string, max: number, ancho: number) =>
+  Math.min(max, Math.floor(900 / (t.length * ancho)));
 
 const ParteTexto: React.FC<{
   readonly p: Parte;
   readonly t: number;
   readonly max: number;
 }> = ({ p, t, max }) => {
+  const letra = letrasGrande[useContext(LetraGrandeContext)];
+  const chicaCursiva = useContext(ChicaCursivaContext);
   const base: React.CSSProperties = {
     opacity: t,
     color: colors.crema,
@@ -70,8 +92,9 @@ const ParteTexto: React.FC<{
           transform: `translateY(${(1 - t) * 14}px)`,
           margin: "4px 0 8px",
           fontFamily: fonts.serif,
+          fontStyle: chicaCursiva ? "italic" : "normal",
           fontWeight: 400,
-          fontSize: 0.42 * max,
+          fontSize: (chicaCursiva ? 0.46 : 0.42) * max,
           lineHeight: 1.1,
         }}
       >
@@ -84,9 +107,9 @@ const ParteTexto: React.FC<{
       style={{
         ...base,
         transform: `scale(${1.06 - 0.06 * t})`,
-        fontFamily: fonts.serif,
-        fontWeight: 700,
-        fontSize: grandeSize(p.t, max),
+        fontFamily: letra.family,
+        fontWeight: letra.weight,
+        fontSize: grandeSize(p.t, max, letra.ancho),
         lineHeight: 1,
       }}
     >
