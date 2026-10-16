@@ -25,9 +25,9 @@ import {
 // de 20 s, con una característica por texto en el orden que pidió la marca.
 // Materiales confirmados por la marca. Sin precios en el video.
 
-// Todo el video va al 80% de la velocidad real (pedido de la marca: se sentía
-// muy rápido), con los textos más tiempo en pantalla.
-const V = 0.8;
+// Velocidad del video: real (1). Con 0.8 va al 80% (mate-crudo-4k-lento.mp4)
+// y dura 23,5 s; la marca lo prefirió a velocidad real.
+const V: 1 | 0.8 = 1;
 const GANCHO = 60;
 const CIERRE = 120;
 // El video original entero (420 cuadros sin el cuadro final sostenido), en
@@ -172,10 +172,15 @@ export const TorpedoVenta: React.FC<{ readonly letra?: LetraGrande }> = ({
     <LetraGrandeContext.Provider value={letra}>
       <ChicaCursivaContext.Provider value>
         <AbsoluteFill style={{ backgroundColor: "black" }}>
-          {/* Ambiente real del parque, extendido a 23,5 s con un fundido. */}
-          <Audio src={staticFile("ambiente-venta.m4a")} />
+          {/* Ambiente real del parque (extendido a 20 s o, para la versión
+              lenta, a 23,5 s). */}
+          <Audio
+            src={staticFile(
+              V === 1 ? "ambiente-20s.m4a" : "ambiente-venta.m4a",
+            )}
+          />
           {/* Las tomas del Torpedo de 20 s: el plano cercano de la virola y la
-          boca, y después el video entero, al 80% de la velocidad. */}
+          boca, y después el video entero. */}
           <Sequence durationInFrames={GANCHO}>
             <Camera
               hq
