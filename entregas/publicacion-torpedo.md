@@ -26,10 +26,9 @@ Envío gratis · 3 cuotas sin interés · 20% off en transferencia.
 
 # Anuncio de venta (Meta Ads)
 
-Videos:
-- `torpedo-20s-venta.mp4` (9:16): ubicaciones Reels y Stories.
-- `torpedo-20s-venta-4x5.mp4` (4:5): ubicación Feed. En el anuncio, usar
-  "Personalizar contenido por ubicación" y asignar cada video a la suya.
+Video: `torpedo-20s-venta.mp4` (9:16), para todas las ubicaciones. En el
+Feed, Meta lo recorta solo a 4:5 y los textos quedan enteros (están dentro de
+esa franja).
 
 Todos los textos están dentro de la zona que Meta no tapa (en 9:16, entre
 330 y 1240 px) y el gancho se ve completo desde el primer cuadro.
