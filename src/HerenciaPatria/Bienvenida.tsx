@@ -194,81 +194,84 @@ export const BienvenidaHorizontal: React.FC<Bienvenida> = (p) => (
 );
 
 // Imagen del pop-up promocional de Tiendanube (345x190, se exporta al triple
-// para que se vea nítida). El título, la descripción y el botón los pone la
-// tienda con sus campos; la imagen lleva la foto, el logo y el descuento.
+// para que se vea nítida). Sin foto: sólo marca (azul, crema, logo original y
+// Addington), con un marco fino como el de una etiqueta.
 export const BienvenidaPopup: React.FC<Bienvenida> = ({
   descuento,
   detalle,
+  codigo,
 }) => (
-  <AbsoluteFill style={{ backgroundColor: colors.azul }}>
+  <AbsoluteFill
+    style={{
+      backgroundColor: colors.azul,
+      color: colors.crema,
+      fontFamily: fonts.serif,
+      fontVariantNumeric: "lining-nums",
+    }}
+  >
     <div
       style={{
         position: "absolute",
-        left: 0,
-        top: 0,
-        width: 470,
-        height: 570,
-        overflow: "hidden",
+        inset: 26,
+        border: `2px solid rgba(243,235,221,0.55)`,
       }}
-    >
-      <Img
-        src={staticFile("portada-raiz-feed.png")}
-        style={{
-          position: "absolute",
-          left: -40,
-          top: -420,
-          width: 560,
-          height: (560 * 2576) / 1450,
-        }}
-      />
-    </div>
+    />
     <div
       style={{
         position: "absolute",
-        left: 370,
-        top: 0,
-        width: 100,
-        height: 570,
-        background: `linear-gradient(to right, rgba(20,35,59,0), ${colors.azul})`,
+        inset: 36,
+        border: `1px solid rgba(243,235,221,0.3)`,
       }}
     />
     <AbsoluteFill
       style={{
-        left: 470,
-        width: 565,
+        flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        color: colors.crema,
-        fontFamily: fonts.serif,
-        textAlign: "center",
-        fontVariantNumeric: "lining-nums",
+        gap: 56,
       }}
     >
       <Img
         src={staticFile("logo-herencia-patria.png")}
-        style={{ width: 120, height: 120 }}
+        style={{ width: 250, height: 250 }}
+      />
+      <div
+        style={{ width: 2, height: 300, background: "rgba(243,235,221,0.5)" }}
       />
       <div
         style={{
-          marginTop: 18,
-          fontStyle: "italic",
-          fontSize: 54,
-          lineHeight: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
         }}
       >
-        Bienvenido
+        <div style={{ fontStyle: "italic", fontSize: 52, lineHeight: 1 }}>
+          Bienvenido
+        </div>
+        <div
+          style={{
+            marginTop: 8,
+            fontWeight: 800,
+            fontSize: 118,
+            lineHeight: 1.02,
+          }}
+        >
+          {descuento}
+        </div>
+        <div style={{ fontStyle: "italic", fontSize: 40 }}>{detalle}</div>
+        <div
+          style={{
+            marginTop: 20,
+            padding: "10px 26px",
+            border: `2px dashed ${colors.crema}`,
+            fontSize: 30,
+          }}
+        >
+          Código{" "}
+          <span style={{ fontWeight: 800, letterSpacing: 1 }}>{codigo}</span>
+        </div>
       </div>
-      <div
-        style={{
-          marginTop: 10,
-          fontWeight: 800,
-          fontSize: 104,
-          lineHeight: 1.05,
-        }}
-      >
-        {descuento}
-      </div>
-      <div style={{ fontStyle: "italic", fontSize: 42 }}>{detalle}</div>
     </AbsoluteFill>
   </AbsoluteFill>
 );

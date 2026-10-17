@@ -30,7 +30,7 @@ const tituloPortada = { top: 430, titleScale: 0.92 };
 const bienvenida = {
   descuento: "15% OFF",
   detalle: "en tu primera compra",
-  codigo: "BIENVENIDO15",
+  codigo: "MIPRIMERACOMPRA",
 };
 
 export const RemotionRoot: React.FC = () => {
