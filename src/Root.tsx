@@ -10,6 +10,7 @@ import {
 import { MateNegro, MATE_NEGRO_FRAMES } from "./HerenciaPatria/MateNegro";
 import {
   BienvenidaHorizontal,
+  BienvenidaPopup,
   BienvenidaVertical,
 } from "./HerenciaPatria/Bienvenida";
 import { DonPatricio, episodioFrames } from "./HerenciaPatria/DonPatricio";
@@ -27,9 +28,9 @@ const tituloPortada = { top: 430, titleScale: 0.92 };
 // Descuento de bienvenida: a confirmar por la marca (porcentaje y código del
 // cupón creado en la tienda).
 const bienvenida = {
-  descuento: "10% OFF",
+  descuento: "15% OFF",
   detalle: "en tu primera compra",
-  codigo: "BIENVENIDO10",
+  codigo: "BIENVENIDO15",
 };
 
 export const RemotionRoot: React.FC = () => {
@@ -173,6 +174,14 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ ep: agua }}
+      />
+      {/* npx remotion still HP-Bienvenida-Popup entregas/popup-tiendanube.png */}
+      <Still
+        id="HP-Bienvenida-Popup"
+        component={BienvenidaPopup}
+        width={1035}
+        height={570}
+        defaultProps={bienvenida}
       />
       {/* npx remotion still HP-Bienvenida-Vertical entregas/bienvenida-celular.png */}
       <Still

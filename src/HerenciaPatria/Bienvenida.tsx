@@ -192,3 +192,83 @@ export const BienvenidaHorizontal: React.FC<Bienvenida> = (p) => (
     </AbsoluteFill>
   </AbsoluteFill>
 );
+
+// Imagen del pop-up promocional de Tiendanube (345x190, se exporta al triple
+// para que se vea nítida). El título, la descripción y el botón los pone la
+// tienda con sus campos; la imagen lleva la foto, el logo y el descuento.
+export const BienvenidaPopup: React.FC<Bienvenida> = ({
+  descuento,
+  detalle,
+}) => (
+  <AbsoluteFill style={{ backgroundColor: colors.azul }}>
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        top: 0,
+        width: 470,
+        height: 570,
+        overflow: "hidden",
+      }}
+    >
+      <Img
+        src={staticFile("portada-raiz-feed.png")}
+        style={{
+          position: "absolute",
+          left: -40,
+          top: -420,
+          width: 560,
+          height: (560 * 2576) / 1450,
+        }}
+      />
+    </div>
+    <div
+      style={{
+        position: "absolute",
+        left: 370,
+        top: 0,
+        width: 100,
+        height: 570,
+        background: `linear-gradient(to right, rgba(20,35,59,0), ${colors.azul})`,
+      }}
+    />
+    <AbsoluteFill
+      style={{
+        left: 470,
+        width: 565,
+        alignItems: "center",
+        justifyContent: "center",
+        color: colors.crema,
+        fontFamily: fonts.serif,
+        textAlign: "center",
+        fontVariantNumeric: "lining-nums",
+      }}
+    >
+      <Img
+        src={staticFile("logo-herencia-patria.png")}
+        style={{ width: 120, height: 120 }}
+      />
+      <div
+        style={{
+          marginTop: 18,
+          fontStyle: "italic",
+          fontSize: 54,
+          lineHeight: 1,
+        }}
+      >
+        Bienvenido
+      </div>
+      <div
+        style={{
+          marginTop: 10,
+          fontWeight: 800,
+          fontSize: 104,
+          lineHeight: 1.05,
+        }}
+      >
+        {descuento}
+      </div>
+      <div style={{ fontStyle: "italic", fontSize: 42 }}>{detalle}</div>
+    </AbsoluteFill>
+  </AbsoluteFill>
+);
