@@ -8,6 +8,10 @@ import {
   TORPEDO_VENTA_FRAMES,
 } from "./HerenciaPatria/TorpedoVenta";
 import { MateNegro, MATE_NEGRO_FRAMES } from "./HerenciaPatria/MateNegro";
+import {
+  BienvenidaHorizontal,
+  BienvenidaVertical,
+} from "./HerenciaPatria/Bienvenida";
 import { DonPatricio, episodioFrames } from "./HerenciaPatria/DonPatricio";
 import { agua, bombilla } from "./HerenciaPatria/patricioEpisodios";
 import { Portada } from "./HerenciaPatria/Portada";
@@ -20,6 +24,13 @@ const cta = "Diseñá el tuyo en nuestra tienda online";
 // Mismo tamaño y altura de título en todas las portadas de la serie. Arranca
 // más abajo que el ícono de Reels, que en la grilla va arriba a la derecha.
 const tituloPortada = { top: 430, titleScale: 0.92 };
+// Descuento de bienvenida: a confirmar por la marca (porcentaje y código del
+// cupón creado en la tienda).
+const bienvenida = {
+  descuento: "10% OFF",
+  detalle: "en tu primera compra",
+  codigo: "BIENVENIDO10",
+};
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -162,6 +173,22 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ ep: agua }}
+      />
+      {/* npx remotion still HP-Bienvenida-Vertical entregas/bienvenida-celular.png */}
+      <Still
+        id="HP-Bienvenida-Vertical"
+        component={BienvenidaVertical}
+        width={1080}
+        height={1350}
+        defaultProps={bienvenida}
+      />
+      {/* npx remotion still HP-Bienvenida-Horizontal entregas/bienvenida-compu.png */}
+      <Still
+        id="HP-Bienvenida-Horizontal"
+        component={BienvenidaHorizontal}
+        width={1536}
+        height={1024}
+        defaultProps={bienvenida}
       />
       {/* npx remotion still HP-Portada-Feed entregas/portada-reel-feed.jpg */}
       <Still
