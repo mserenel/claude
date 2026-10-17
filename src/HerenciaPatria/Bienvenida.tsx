@@ -80,6 +80,16 @@ const Texto: React.FC<
     </div>
     <div
       style={{
+        marginTop: 16 * k,
+        fontStyle: "italic",
+        fontWeight: 400,
+        fontSize: 36 * k,
+      }}
+    >
+      Combinalo con 20% off en transferencia
+    </div>
+    <div
+      style={{
         marginTop: 26 * k,
         fontStyle: "italic",
         fontWeight: 400,
@@ -253,7 +263,7 @@ export const BienvenidaPopup: React.FC<Bienvenida> = ({
           style={{
             marginTop: 8,
             fontWeight: 800,
-            fontSize: 118,
+            fontSize: 108,
             lineHeight: 1.02,
           }}
         >
@@ -270,6 +280,9 @@ export const BienvenidaPopup: React.FC<Bienvenida> = ({
         >
           Código{" "}
           <span style={{ fontWeight: 800, letterSpacing: 1 }}>{codigo}</span>
+        </div>
+        <div style={{ marginTop: 14, fontStyle: "italic", fontSize: 30 }}>
+          Combinalo con 20% off en transferencia
         </div>
       </div>
     </AbsoluteFill>
