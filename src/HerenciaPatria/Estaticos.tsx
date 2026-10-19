@@ -41,14 +41,16 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
   const alto = height > 1500;
   // Zona visible: en Stories la interfaz tapa ~270 px arriba y ~330 abajo.
   const top = alto ? 290 : 46;
-  // Dónde va el mate: debajo del título (si hay) o cerca de arriba.
-  // En 9:16 sobra alto: la foto se agranda para que el mate luzca más.
-  const k = alto ? 1.15 : 1;
-  // Con título, el mate va debajo de él; sin título (retargeting), la foto
-  // llena el cuadro y el mate termina justo encima de la franja de texto.
-  const mateEn = nombre
-    ? top + (alto ? 290 : 285)
-    : height - (alto ? 600 : 330) - mateAlto * k;
+  // Con título: el mate va debajo del título y el texto en una franja azul
+  // abajo. Sin título (retargeting): la foto llena todo el cuadro, sin franja,
+  // con el texto arriba sobre el fondo y el mate debajo.
+  const sinFranja = !nombre;
+  const mateEn = nombre ? top + (alto ? 290 : 285) : top + 400;
+  // En 9:16 la foto se agranda; sin franja, además, hasta cubrir el cuadro.
+  const k = Math.max(
+    alto ? 1.15 : 1,
+    sinFranja ? (height - mateEn) / (altoFoto - mateY) : 0,
+  );
   const fotoTop = Math.min(0, mateEn - mateY * k);
   const finMate = fotoTop + (mateY + mateAlto) * k;
   return (
@@ -71,40 +73,47 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
           height: altoFoto * k,
         }}
       />
-      {/* Arriba, un oscurecido suave para el título; abajo, la foto se funde
-          con el azul de la marca justo debajo del mate. */}
+      {/* Arriba, un oscurecido suave para el título (o el texto, sin
+          franja); con franja, la foto se funde con el azul debajo del mate. */}
       <AbsoluteFill
         style={{
-          background:
-            "linear-gradient(to bottom, rgba(18,12,8,0.55) 0%, rgba(18,12,8,0) 22%)",
+          background: sinFranja
+            ? `linear-gradient(to bottom, rgba(18,12,8,0.7) 0%, rgba(18,12,8,0.45) ${((top + 330) / height) * 100}%, rgba(18,12,8,0) ${((top + 470) / height) * 100}%)`
+            : "linear-gradient(to bottom, rgba(18,12,8,0.55) 0%, rgba(18,12,8,0) 22%)",
         }}
       />
-      <div
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          top: finMate - 60,
-          height: 120,
-          background: `linear-gradient(to bottom, rgba(20,35,59,0), ${colors.azul})`,
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          top: finMate + 40,
-          bottom: 0,
-          background: colors.azul,
-        }}
-      />
+      {sinFranja ? null : (
+        <>
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: finMate - 60,
+              height: 120,
+              background: `linear-gradient(to bottom, rgba(20,35,59,0), ${colors.azul})`,
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: finMate + 40,
+              bottom: 0,
+              background: colors.azul,
+            }}
+          />
+        </>
+      )}
       <Img
         src={staticFile("logo-herencia-patria.png")}
         style={{
           position: "absolute",
           right: 40,
-          top: top - (alto ? 0 : 6),
+          ...(sinFranja
+            ? { bottom: alto ? 330 : 40 }
+            : { top: top - (alto ? 0 : 6) }),
           width: 110,
           height: 110,
           filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.6))",
@@ -141,7 +150,7 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
       ) : null}
       <AbsoluteFill
         style={{
-          top: finMate + 50,
+          top: sinFranja ? top + 40 : finMate + 50,
           height: "auto",
           bottom: undefined,
           alignItems: "center",
