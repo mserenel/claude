@@ -8,6 +8,8 @@ import {
   TORPEDO_VENTA_FRAMES,
 } from "./HerenciaPatria/TorpedoVenta";
 import { MateNegro, MATE_NEGRO_FRAMES } from "./HerenciaPatria/MateNegro";
+import { AnuncioEstatico, estaticos } from "./HerenciaPatria/Estaticos";
+import { Retargeting, RETARGETING_FRAMES } from "./HerenciaPatria/Retargeting";
 import {
   BienvenidaHorizontal,
   BienvenidaPopup,
@@ -71,6 +73,15 @@ export const RemotionRoot: React.FC = () => {
           }}
         />
       ))}
+      {/* npx remotion render HP-Torpedo-Retargeting entregas/torpedo-retargeting.mp4 */}
+      <Composition
+        id="HP-Torpedo-Retargeting"
+        component={Retargeting}
+        durationInFrames={RETARGETING_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
       {/* npx remotion render HP-Torpedo-Venta entregas/torpedo-venta.mp4 */}
       <Composition
         id="HP-Torpedo-Venta"
@@ -175,6 +186,24 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         defaultProps={{ ep: agua }}
       />
+      {/* npx remotion still HP-Estatico-Materiales-4x5 entregas/estatico-materiales-4x5.jpg */}
+      {Object.entries(estaticos).flatMap(([nombre, props]) =>
+        (
+          [
+            ["4x5", 1350],
+            ["9x16", 1920],
+          ] as const
+        ).map(([formato, alto]) => (
+          <Still
+            key={`${nombre}-${formato}`}
+            id={`HP-Estatico-${nombre}-${formato}`}
+            component={AnuncioEstatico}
+            width={1080}
+            height={alto}
+            defaultProps={props}
+          />
+        )),
+      )}
       {/* npx remotion still HP-Bienvenida-Popup entregas/popup-tiendanube.png */}
       <Still
         id="HP-Bienvenida-Popup"
