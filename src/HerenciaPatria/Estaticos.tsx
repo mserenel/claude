@@ -42,9 +42,13 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
   // Zona visible: en Stories la interfaz tapa ~270 px arriba y ~330 abajo.
   const top = alto ? 290 : 46;
   // Dónde va el mate: debajo del título (si hay) o cerca de arriba.
-  const mateEn = nombre ? top + (alto ? 290 : 285) : top + 40;
   // En 9:16 sobra alto: la foto se agranda para que el mate luzca más.
   const k = alto ? 1.15 : 1;
+  // Con título, el mate va debajo de él; sin título (retargeting), la foto
+  // llena el cuadro y el mate termina justo encima de la franja de texto.
+  const mateEn = nombre
+    ? top + (alto ? 290 : 285)
+    : height - (alto ? 600 : 330) - mateAlto * k;
   const fotoTop = Math.min(0, mateEn - mateY * k);
   const finMate = fotoTop + (mateY + mateAlto) * k;
   return (
@@ -80,8 +84,8 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
           position: "absolute",
           left: 0,
           right: 0,
-          top: finMate - 120,
-          height: 160,
+          top: finMate - 60,
+          height: 120,
           background: `linear-gradient(to bottom, rgba(20,35,59,0), ${colors.azul})`,
         }}
       />
@@ -222,6 +226,26 @@ export const estaticos: Record<string, Estatico> = {
     altoFoto: 1919,
     mateY: 895,
     mateAlto: 625,
+    frase: "15% OFF en tu primera compra",
+    codigo: "HERENCIA15",
+    detalle: ["Combinalo con 20% off en transferencia."],
+  },
+  // Retargeting con las fotos nuevas del Torpedo (1724x2576): en la mano,
+  // con el cielo, y sobre la mesa con la bombilla.
+  RetargetingMano: {
+    foto: "torpedo-mano.jpg",
+    altoFoto: 1614,
+    mateY: 645,
+    mateAlto: 570,
+    frase: "15% OFF en tu primera compra",
+    codigo: "HERENCIA15",
+    detalle: ["Combinalo con 20% off en transferencia."],
+  },
+  RetargetingMesa: {
+    foto: "torpedo-mesa.jpg",
+    altoFoto: 1614,
+    mateY: 460,
+    mateAlto: 720,
     frase: "15% OFF en tu primera compra",
     codigo: "HERENCIA15",
     detalle: ["Combinalo con 20% off en transferencia."],
