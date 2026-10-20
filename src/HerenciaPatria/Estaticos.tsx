@@ -21,9 +21,133 @@ export type Estatico = {
   readonly detalle: string[];
   // Recuadro con el código del cupón (retargeting).
   readonly codigo?: string;
+  // Tamaño del texto del retargeting (1 = normal); más chico cuando el mate
+  // ocupa mucho de la foto.
+  readonly escala?: number;
 };
 
+const oscuro = "rgb(18,12,8)";
 const sombra = "0 2px 4px rgba(0,0,0,0.5), 0 4px 26px rgba(0,0,0,0.55)";
+
+// Diseño del retargeting: marco fino de etiqueta, "15% OFF" grande, el
+// código en una pastilla crema y la firma de la marca abajo. La foto no se
+// retoca: sólo se encuadra.
+const Retargeting: React.FC<{
+  readonly top: number;
+  readonly bottom: number;
+  readonly frase: string;
+  readonly codigo?: string;
+  readonly detalle: string[];
+  readonly escala: number;
+}> = ({ top, bottom, frase, codigo, detalle, escala: e }) => {
+  // "15% OFF en tu primera compra" -> "15% OFF" + "en tu primera compra".
+  const [, oferta = frase, resto = ""] =
+    /^(\S+\s+OFF)\s*(.*)$/.exec(frase) ?? [];
+  const linea = (
+    <span style={{ width: 70, height: 2, background: colors.crema }} />
+  );
+  return (
+    <AbsoluteFill>
+      <div
+        style={{
+          position: "absolute",
+          inset: 24,
+          border: "2px solid rgba(243,235,221,0.7)",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          inset: 34,
+          border: "1px solid rgba(243,235,221,0.4)",
+        }}
+      />
+      <Img
+        src={staticFile("logo-herencia-patria.png")}
+        style={{
+          position: "absolute",
+          left: 52,
+          top: Math.max(52, top - 6),
+          width: 92,
+          height: 92,
+          filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.6))",
+        }}
+      />
+      <AbsoluteFill
+        style={{
+          alignItems: "center",
+          paddingTop: top + 40,
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 20,
+            fontStyle: "italic",
+            fontSize: 44 * e,
+          }}
+        >
+          {linea}
+          Especial para vos
+          {linea}
+        </div>
+        <div
+          style={{
+            marginTop: 6,
+            fontWeight: 800,
+            fontSize: 170 * e,
+            lineHeight: 1,
+          }}
+        >
+          {oferta}
+        </div>
+        <div style={{ fontStyle: "italic", fontSize: 54 * e, lineHeight: 1.1 }}>
+          {resto}
+        </div>
+        {codigo ? (
+          <div
+            style={{
+              marginTop: 24,
+              padding: "12px 40px",
+              background: colors.crema,
+              color: colors.azul,
+              textShadow: "none",
+              borderRadius: 4,
+              fontSize: 44 * e,
+              boxShadow: "0 4px 18px rgba(0,0,0,0.35)",
+            }}
+          >
+            Código{" "}
+            <span style={{ fontWeight: 800, letterSpacing: 1 }}>{codigo}</span>
+          </div>
+        ) : null}
+        {detalle.map((d) => (
+          <div
+            key={d}
+            style={{ marginTop: 16, fontStyle: "italic", fontSize: 40 * e }}
+          >
+            {d}
+          </div>
+        ))}
+      </AbsoluteFill>
+      {
+        <AbsoluteFill
+          style={{
+            justifyContent: "flex-end",
+            alignItems: "center",
+            paddingBottom: bottom + 24,
+          }}
+        >
+          <div style={{ fontStyle: "italic", fontSize: 34 }}>
+            Tradición que se lleva en las manos.
+          </div>
+        </AbsoluteFill>
+      }
+    </AbsoluteFill>
+  );
+};
 
 export const AnuncioEstatico: React.FC<Estatico> = ({
   foto,
@@ -36,6 +160,7 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
   frase,
   detalle,
   codigo,
+  escala = 1,
 }) => {
   const { height } = useVideoConfig();
   const alto = height > 1500;
@@ -45,13 +170,18 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
   // abajo. Sin título (retargeting): la foto llena todo el cuadro, sin franja,
   // con el texto arriba sobre el fondo y el mate debajo.
   const sinFranja = !nombre;
-  const mateEn = nombre ? top + (alto ? 290 : 285) : top + 400;
-  // En 9:16 la foto se agranda; sin franja, además, hasta cubrir el cuadro.
-  const k = Math.max(
-    alto ? 1.15 : 1,
-    sinFranja ? (height - mateEn) / (altoFoto - mateY) : 0,
-  );
-  const fotoTop = Math.min(0, mateEn - mateY * k);
+  // Sin franja (retargeting): el texto arriba ocupa ~480 px y el mate va
+  // justo debajo. La foto no se retoca, sólo se encuadra; si hace falta
+  // bajarla, arriba queda un fondo oscuro que se funde con ella.
+  const mateEn = nombre ? top + (alto ? 290 : 285) : top + 480 * escala;
+  let k = alto ? (sinFranja ? 1.1 : 1.15) : 1;
+  let fotoTop = Math.min(0, mateEn - mateY * k);
+  if (sinFranja) {
+    // El mate queda donde va; la foto se agranda sólo si no llega abajo.
+    const necesario = (height - mateEn) / (altoFoto - mateY);
+    k = Math.max(k, necesario);
+    fotoTop = mateEn - mateY * k;
+  }
   const finMate = fotoTop + (mateY + mateAlto) * k;
   return (
     <AbsoluteFill
@@ -73,12 +203,24 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
           height: altoFoto * k,
         }}
       />
+      {sinFranja && fotoTop > 0 ? (
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 0,
+            height: fotoTop + 160,
+            background: `linear-gradient(to bottom, ${oscuro} 0%, ${oscuro} ${(fotoTop / (fotoTop + 160)) * 100}%, rgba(18,12,8,0) 100%)`,
+          }}
+        />
+      ) : null}
       {/* Arriba, un oscurecido suave para el título (o el texto, sin
           franja); con franja, la foto se funde con el azul debajo del mate. */}
       <AbsoluteFill
         style={{
           background: sinFranja
-            ? `linear-gradient(to bottom, rgba(18,12,8,0.7) 0%, rgba(18,12,8,0.45) ${((top + 330) / height) * 100}%, rgba(18,12,8,0) ${((top + 470) / height) * 100}%)`
+            ? `linear-gradient(to bottom, rgba(18,12,8,0.72) 0%, rgba(18,12,8,0.5) ${((top + 420) / height) * 100}%, rgba(18,12,8,0) ${((top + 560) / height) * 100}%, rgba(18,12,8,0) ${((height - (alto ? 330 : 40) - 300) / height) * 100}%, rgba(18,12,8,0.65) 100%)`
             : "linear-gradient(to bottom, rgba(18,12,8,0.55) 0%, rgba(18,12,8,0) 22%)",
         }}
       />
@@ -106,14 +248,23 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
           />
         </>
       )}
+      {sinFranja ? (
+        <Retargeting
+          top={top}
+          bottom={alto ? 330 : 40}
+          escala={escala}
+          frase={frase}
+          codigo={codigo}
+          detalle={detalle}
+        />
+      ) : null}
       <Img
         src={staticFile("logo-herencia-patria.png")}
         style={{
           position: "absolute",
           right: 40,
-          ...(sinFranja
-            ? { bottom: alto ? 330 : 40 }
-            : { top: top - (alto ? 0 : 6) }),
+          display: sinFranja ? "none" : undefined,
+          top: top - (alto ? 0 : 6),
           width: 110,
           height: 110,
           filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.6))",
@@ -150,7 +301,8 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
       ) : null}
       <AbsoluteFill
         style={{
-          top: sinFranja ? top + 40 : finMate + 50,
+          display: sinFranja ? "none" : "flex",
+          top: finMate + 50,
           height: "auto",
           bottom: undefined,
           alignItems: "center",
@@ -237,26 +389,27 @@ export const estaticos: Record<string, Estatico> = {
     mateAlto: 625,
     frase: "15% OFF en tu primera compra",
     codigo: "HERENCIA15",
-    detalle: ["Combinalo con 20% off en transferencia."],
+    detalle: ["+ 20% off en transferencia"],
   },
   // Retargeting con las fotos nuevas del Torpedo (1724x2576): en la mano,
   // con el cielo, y sobre la mesa con la bombilla.
   RetargetingMano: {
     foto: "torpedo-mano.jpg",
     altoFoto: 1614,
-    mateY: 645,
-    mateAlto: 570,
+    mateY: 650,
+    mateAlto: 590,
     frase: "15% OFF en tu primera compra",
     codigo: "HERENCIA15",
-    detalle: ["Combinalo con 20% off en transferencia."],
+    detalle: ["+ 20% off en transferencia"],
   },
   RetargetingMesa: {
     foto: "torpedo-mesa.jpg",
     altoFoto: 1614,
-    mateY: 460,
-    mateAlto: 720,
+    mateY: 413,
+    mateAlto: 740,
+    escala: 0.85,
     frase: "15% OFF en tu primera compra",
     codigo: "HERENCIA15",
-    detalle: ["Combinalo con 20% off en transferencia."],
+    detalle: ["+ 20% off en transferencia"],
   },
 };
