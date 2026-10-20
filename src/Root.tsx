@@ -370,7 +370,10 @@ export const RemotionRoot: React.FC = () => {
           }}
         />
       ))}
-      {/* Mate por encargo para Lucas Ronier (foto real de la marca).
+      {/* Mate personalizado para Lucas Ronier. Foto real; sólo se retocó la
+          mano: tools/sacar_pelos.py y después tools/retocar_mano.py sobre
+          mate-lucas-ronier-original.jpg, los dos con la virola afuera
+          (caja 0,0,1110,1425).
           npx remotion still HP-Historia-Lucas-Ronier entregas/historia-lucas-ronier.jpg */}
       <Still
         id="HP-Historia-Lucas-Ronier"

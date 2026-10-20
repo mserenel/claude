@@ -1,7 +1,10 @@
 """Saca los pelos de una mano en una foto, sin tocar nada más.
 
 Uso:
-  python sacar_pelos.py ENTRADA SALIDA
+  python sacar_pelos.py ENTRADA SALIDA [X0,Y0,X1,Y1 ...]
+
+Las cajas opcionales (px de la foto) no se tocan: por ejemplo la virola del
+mate, cuyo grabado dorado tiene un tono parecido al de la piel.
 
 - Marca la piel (tonos cálidos con algo de saturación; la pared gris y el
   mate quedan afuera) y se queda con la mancha más grande: la mano.
@@ -20,6 +23,7 @@ import numpy as np
 
 def main():
     src, out_path = sys.argv[1:3]
+    excluir = [tuple(int(v) for v in caja.split(",")) for caja in sys.argv[3:]]
     im = cv2.imread(src)
     hsv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
     h, s, v = [hsv[..., i].astype(np.int32) for i in range(3)]
@@ -42,6 +46,8 @@ def main():
         if 12 <= area < 4000 and largo >= 8:
             mascara[lab == i] = 255
     mascara = cv2.dilate(mascara, np.ones((3, 3), np.uint8))
+    for x0, y0, x1, y1 in excluir:
+        mascara[y0:y1, x0:x1] = 0
 
     out = cv2.inpaint(im, mascara, 4, cv2.INPAINT_TELEA).astype(np.float32)
     m = (cv2.GaussianBlur(mascara, (0, 0), 1.5) / 255.0)[..., None]
