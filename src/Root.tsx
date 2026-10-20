@@ -314,6 +314,26 @@ export const RemotionRoot: React.FC = () => {
           vence: "Hasta el 25 de octubre",
         }}
       />
+      {/* Foto: python tools/compose_paisaje.py (escena de campo de la historia
+          "Combo Herencia" de julio + foto de estudio 47-DSC02375).
+          npx remotion still HP-Historia-Paisaje entregas/historia-paisaje-20-octubre.jpg */}
+      <Still
+        id="HP-Historia-Paisaje"
+        component={Historia}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          src: "historia-paisaje.jpg",
+          subir: 0,
+          frase: ["quedan 5 días", "para estrenar el tuyo."],
+          oferta: bienvenida.descuento,
+          detalle: bienvenida.detalle,
+          codigo: bienvenida.codigo,
+          extra: "+ 20% off en transferencia",
+          vence: "Hasta el 25 de octubre",
+          cuponArriba: true,
+        }}
+      />
     </>
   );
 };

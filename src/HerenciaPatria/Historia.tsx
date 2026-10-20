@@ -3,9 +3,10 @@ import { colors, fonts } from "./brand";
 
 // Historia de Instagram (1080x1920) con el estilo de las historias de la
 // marca: foto a sangre con trama de puntos, una frase en la letra a mano
-// (Sketcha Kits) y, abajo, el cupón de bienvenida recortable. Instagram tapa
-// ~200 px arriba (nombre del perfil) y ~180 px abajo (responder): el texto
-// va entre 240 y 1720.
+// (Sketcha Kits) y el cupón de bienvenida recortable, abajo o (si el mate
+// ocupa el centro y abajo de la foto) arriba, con la frase abajo. Instagram
+// tapa ~200 px arriba (nombre del perfil) y ~180 px abajo (responder): el
+// texto va entre 240 y 1750.
 
 export const Historia: React.FC<{
   readonly src: string;
@@ -17,11 +18,26 @@ export const Historia: React.FC<{
   readonly codigo: string;
   readonly extra: string;
   readonly vence: string;
-}> = ({ src, subir, frase, oferta, detalle, codigo, extra, vence }) => {
+  readonly cuponArriba?: boolean;
+}> = ({
+  src,
+  subir,
+  frase,
+  oferta,
+  detalle,
+  codigo,
+  extra,
+  vence,
+  cuponArriba = false,
+}) => {
   const [porcentaje, off] = oferta.split(" ");
   const altoCupon = 250;
   const abajo = 200;
+  const arriba = 260;
   const sello = 112;
+  const cupon: React.CSSProperties = cuponArriba
+    ? { top: arriba }
+    : { bottom: abajo };
   return (
     <AbsoluteFill style={{ backgroundColor: "rgb(18,12,8)" }}>
       <Img
@@ -43,8 +59,10 @@ export const Historia: React.FC<{
           right: 0,
           bottom: 0,
           height: 700,
-          background:
-            "linear-gradient(to bottom, rgba(18,12,8,0) 0%, rgba(18,12,8,0.55) 45%, rgb(18,12,8) 80%)",
+          // Con el cupón arriba, la mesa se sigue viendo detrás de la frase.
+          background: cuponArriba
+            ? "linear-gradient(to bottom, rgba(18,12,8,0) 0%, rgba(18,12,8,0.35) 55%, rgba(18,12,8,0.7) 100%)"
+            : "linear-gradient(to bottom, rgba(18,12,8,0) 0%, rgba(18,12,8,0.55) 45%, rgb(18,12,8) 80%)",
         }}
       />
       {/* Trama de puntos, más marcada en los bordes, como en las historias
@@ -61,7 +79,7 @@ export const Historia: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 250,
+          ...(cuponArriba ? { bottom: 170 } : { top: 250 }),
           left: 70,
           right: 70,
           textAlign: "center",
@@ -81,7 +99,7 @@ export const Historia: React.FC<{
           position: "absolute",
           left: 56,
           right: 56,
-          bottom: abajo,
+          ...cupon,
           height: altoCupon,
           background: colors.crema,
           color: colors.madera,
@@ -104,7 +122,7 @@ export const Historia: React.FC<{
               width: 36,
               height: 36,
               borderRadius: "50%",
-              background: "rgb(18,12,8)",
+              background: "rgba(18,12,8,0.55)",
             }}
           />
         ))}
@@ -145,14 +163,16 @@ export const Historia: React.FC<{
           </div>
         </div>
       </div>
-      {/* El logo es blanco: va sobre un disco azul que rompe el borde de
-          arriba del cupón, como en la etiqueta de oferta, del lado libre a
-          la derecha del texto. */}
+      {/* El logo es blanco: va sobre un disco azul que rompe el borde del
+          cupón (el de arriba, o el de abajo si el cupón va arriba), como en
+          la etiqueta de oferta, del lado libre a la derecha del texto. */}
       <div
         style={{
           position: "absolute",
           left: 930 - sello / 2,
-          bottom: abajo + altoCupon - sello / 2,
+          ...(cuponArriba
+            ? { top: arriba + altoCupon - sello / 2 }
+            : { bottom: abajo + altoCupon - sello / 2 }),
           width: sello,
           height: sello,
           borderRadius: "50%",
