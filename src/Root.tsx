@@ -75,6 +75,13 @@ const campanaCupon = [
     frase: ["último día", "para usar tu cupón."],
     fraseArriba: true,
   },
+  // Variante del 20 con la foto del balcón, sin contar los días.
+  {
+    dia: "20-balcon",
+    src: "balcon-ciudad.jpg",
+    frase: ["quedan pocos días", "para usar tu cupón."],
+    fraseArriba: true,
+  },
 ];
 
 export const RemotionRoot: React.FC = () => {
