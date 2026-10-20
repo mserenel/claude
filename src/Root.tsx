@@ -383,7 +383,8 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           src: "mate-lucas-ronier.jpg",
           estilo: "azul" as const,
-          bandera: "🇧🇷",
+          frase: ["mate personalizado", "para Lucas Ronier 🇧🇷"],
+          grabado: "LR11 · Mãe · Pai · Irmãos",
         }}
       />
       {/* Variante con el sello y la dedicatoria escrita.

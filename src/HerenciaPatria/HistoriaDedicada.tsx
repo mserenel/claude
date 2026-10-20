@@ -87,9 +87,10 @@ export const HistoriaDedicada: React.FC<{
         {frase.length > 0 ? (
           <div
             style={{
-              marginTop: 34,
+              marginTop: estilo === "azul" ? 56 : 34,
               fontFamily: `${fonts.mano}, "Noto Color Emoji"`,
-              fontSize: 80,
+              // Con el logo azul, más chica: el logo es el protagonista.
+              fontSize: estilo === "azul" ? 60 : 80,
               lineHeight: 1.12,
               color: colors.azul,
             }}
@@ -102,10 +103,10 @@ export const HistoriaDedicada: React.FC<{
         {grabado ? (
           <div
             style={{
-              marginTop: 22,
+              marginTop: estilo === "azul" ? 16 : 22,
               fontFamily: fonts.serif,
               fontStyle: "italic",
-              fontSize: 40,
+              fontSize: estilo === "azul" ? 32 : 40,
               // "LR11" con números a la altura de las mayúsculas.
               fontVariantNumeric: "lining-nums",
               color: colors.madera,
