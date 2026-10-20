@@ -30,7 +30,7 @@ const oscuro = "rgb(18,12,8)";
 const sombra = "0 2px 4px rgba(0,0,0,0.5), 0 4px 26px rgba(0,0,0,0.55)";
 
 // Diseño del retargeting: marco fino de etiqueta, "15% OFF" grande, el
-// código en una pastilla crema y la firma de la marca abajo. La foto no se
+// código en una pastilla crema y la fecha límite de la promo. La foto no se
 // retoca: sólo se encuadra.
 const Retargeting: React.FC<{
   readonly top: number;
@@ -132,19 +132,6 @@ const Retargeting: React.FC<{
           </div>
         ))}
       </AbsoluteFill>
-      {
-        <AbsoluteFill
-          style={{
-            justifyContent: "flex-end",
-            alignItems: "center",
-            paddingBottom: bottom + 24,
-          }}
-        >
-          <div style={{ fontStyle: "italic", fontSize: 34 }}>
-            Tradición que se lleva en las manos.
-          </div>
-        </AbsoluteFill>
-      }
     </AbsoluteFill>
   );
 };
@@ -173,7 +160,7 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
   // Sin franja (retargeting): el texto arriba ocupa ~480 px y el mate va
   // justo debajo. La foto no se retoca, sólo se encuadra; si hace falta
   // bajarla, arriba queda un fondo oscuro que se funde con ella.
-  const mateEn = nombre ? top + (alto ? 290 : 285) : top + 480 * escala;
+  const mateEn = nombre ? top + (alto ? 290 : 285) : top + 600 * escala;
   let k = alto ? (sinFranja ? 1.1 : 1.15) : 1;
   let fotoTop = Math.min(0, mateEn - mateY * k);
   if (sinFranja) {
@@ -389,7 +376,10 @@ export const estaticos: Record<string, Estatico> = {
     mateAlto: 625,
     frase: "15% OFF en tu primera compra",
     codigo: "HERENCIA15",
-    detalle: ["+ 20% off en transferencia"],
+    detalle: [
+      "+ 20% off en transferencia",
+      "Disponible hasta el 25 de octubre",
+    ],
   },
   // Retargeting con las fotos nuevas del Torpedo (1724x2576): en la mano,
   // con el cielo, y sobre la mesa con la bombilla.
@@ -400,7 +390,10 @@ export const estaticos: Record<string, Estatico> = {
     mateAlto: 590,
     frase: "15% OFF en tu primera compra",
     codigo: "HERENCIA15",
-    detalle: ["+ 20% off en transferencia"],
+    detalle: [
+      "+ 20% off en transferencia",
+      "Disponible hasta el 25 de octubre",
+    ],
   },
   RetargetingMesa: {
     foto: "torpedo-mesa.jpg",
@@ -410,6 +403,9 @@ export const estaticos: Record<string, Estatico> = {
     escala: 0.85,
     frase: "15% OFF en tu primera compra",
     codigo: "HERENCIA15",
-    detalle: ["+ 20% off en transferencia"],
+    detalle: [
+      "+ 20% off en transferencia",
+      "Disponible hasta el 25 de octubre",
+    ],
   },
 };
