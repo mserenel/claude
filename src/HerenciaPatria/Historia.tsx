@@ -44,7 +44,7 @@ export const Historia: React.FC<{
           bottom: 0,
           height: 700,
           background:
-            "linear-gradient(to bottom, rgba(18,12,8,0) 0%, rgba(18,12,8,0.55) 45%, rgb(18,12,8) 100%)",
+            "linear-gradient(to bottom, rgba(18,12,8,0) 0%, rgba(18,12,8,0.55) 45%, rgb(18,12,8) 80%)",
         }}
       />
       {/* Trama de puntos, más marcada en los bordes, como en las historias
@@ -146,11 +146,12 @@ export const Historia: React.FC<{
         </div>
       </div>
       {/* El logo es blanco: va sobre un disco azul que rompe el borde de
-          arriba del cupón, como en la etiqueta de oferta. */}
+          arriba del cupón, como en la etiqueta de oferta, del lado libre a
+          la derecha del texto. */}
       <div
         style={{
           position: "absolute",
-          left: 540 - sello / 2,
+          left: 930 - sello / 2,
           bottom: abajo + altoCupon - sello / 2,
           width: sello,
           height: sello,
