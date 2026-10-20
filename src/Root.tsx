@@ -382,9 +382,22 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         defaultProps={{
           src: "mate-lucas-ronier.jpg",
+          estilo: "azul" as const,
+          bandera: "🇧🇷",
+        }}
+      />
+      {/* Variante con el sello y la dedicatoria escrita.
+          npx remotion still HP-Historia-Lucas-Ronier-Sello entregas/historia-lucas-ronier-sello.jpg */}
+      <Still
+        id="HP-Historia-Lucas-Ronier-Sello"
+        component={HistoriaDedicada}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          src: "mate-lucas-ronier.jpg",
+          estilo: "sello" as const,
           frase: ["mate personalizado", "para Lucas Ronier 🇧🇷"],
           grabado: "LR11 · Mãe · Pai · Irmãos",
-          bajar: 0,
         }}
       />
     </>
