@@ -42,7 +42,14 @@ export const Historia: React.FC<{
     <AbsoluteFill style={{ backgroundColor: "rgb(18,12,8)" }}>
       <Img
         src={staticFile(src)}
-        style={{ position: "absolute", top: -subir, width: 1080, height: 1920 }}
+        // Fotos de otra proporción se recortan al centro, sin deformarlas.
+        style={{
+          position: "absolute",
+          top: -subir,
+          width: 1080,
+          height: 1920,
+          objectFit: "cover",
+        }}
       />
       {/* Degradés cálidos: arriba para la frase, abajo para el cupón y el
           hueco que deja la foto al subir. */}
