@@ -9,6 +9,7 @@ import {
 } from "./HerenciaPatria/TorpedoVenta";
 import { MateNegro, MATE_NEGRO_FRAMES } from "./HerenciaPatria/MateNegro";
 import { AnuncioEstatico, estaticos } from "./HerenciaPatria/Estaticos";
+import { RetargetingOpcion } from "./HerenciaPatria/RetargetingOpciones";
 import { Retargeting, RETARGETING_FRAMES } from "./HerenciaPatria/Retargeting";
 import {
   BienvenidaHorizontal,
@@ -204,6 +205,18 @@ export const RemotionRoot: React.FC = () => {
           />
         )),
       )}
+      {(
+        ["minimal", "portada", "verde", "madera", "sello", "cupon"] as const
+      ).map((estilo) => (
+        <Still
+          key={estilo}
+          id={`HP-RT-Opcion-${estilo}`}
+          component={RetargetingOpcion}
+          width={1080}
+          height={1350}
+          defaultProps={{ estilo }}
+        />
+      ))}
       {/* npx remotion still HP-Bienvenida-Popup entregas/popup-tiendanube.png */}
       <Still
         id="HP-Bienvenida-Popup"
