@@ -33,7 +33,8 @@ export const HistoriaDedicada: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 250,
+          // Lo más arriba posible sin meterse bajo el nombre del perfil.
+          top: 180,
           left: 70,
           right: 70,
           display: "flex",
