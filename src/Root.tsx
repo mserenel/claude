@@ -20,6 +20,7 @@ import { DonPatricio, episodioFrames } from "./HerenciaPatria/DonPatricio";
 import { agua, bombilla } from "./HerenciaPatria/patricioEpisodios";
 import { Portada } from "./HerenciaPatria/Portada";
 import { PortadaFeed } from "./HerenciaPatria/PortadaFeed";
+import { Historia } from "./HerenciaPatria/Historia";
 
 // Cada <Composition> aparece en la barra lateral del Studio.
 
@@ -294,6 +295,23 @@ export const RemotionRoot: React.FC = () => {
           ...tituloPortada,
           zoom: 1.3,
           focusX: 40,
+        }}
+      />
+      {/* npx remotion still HP-Historia-Cupon entregas/historia-cupon-20-octubre.jpg */}
+      <Still
+        id="HP-Historia-Cupon"
+        component={Historia}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          src: "lado-escudo.jpg",
+          subir: 110,
+          frase: ["quedan 5 días", "para estrenar el tuyo."],
+          oferta: bienvenida.descuento,
+          detalle: bienvenida.detalle,
+          codigo: bienvenida.codigo,
+          extra: "+ 20% off en transferencia",
+          vence: "Hasta el 25 de octubre",
         }}
       />
     </>
