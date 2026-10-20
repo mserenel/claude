@@ -35,22 +35,37 @@ const FotoRT: React.FC<{ readonly foto: Foto; readonly finEn: number }> = ({
   finEn,
 }) => {
   const { height } = useVideoConfig();
-  const k = Math.max(1, height / foto.alto);
-  const top = Math.min(
-    0,
-    Math.max(height - foto.alto * k, finEn - foto.mateFin * k),
-  );
+  // Sin agrandar más de lo justo; si al subir la foto queda un hueco abajo
+  // (detrás del cupón y la zona de la interfaz), se rellena con un oscuro
+  // que se funde con ella. La foto en sí no se toca.
+  const k = Math.max(1, Math.min(height / foto.alto, finEn / foto.mateFin));
+  const top = Math.min(0, finEn - foto.mateFin * k);
+  const fin = top + foto.alto * k;
   return (
-    <Img
-      src={staticFile(foto.src)}
-      style={{
-        position: "absolute",
-        left: (1080 - 1080 * k) / 2,
-        top,
-        width: 1080 * k,
-        height: foto.alto * k,
-      }}
-    />
+    <>
+      <Img
+        src={staticFile(foto.src)}
+        style={{
+          position: "absolute",
+          left: (1080 - 1080 * k) / 2,
+          top,
+          width: 1080 * k,
+          height: foto.alto * k,
+        }}
+      />
+      {fin < height ? (
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: fin - 200,
+            bottom: 0,
+            background: `linear-gradient(to bottom, rgba(18,12,8,0) 0px, rgb(18,12,8) 200px)`,
+          }}
+        />
+      ) : null}
+    </>
   );
 };
 
@@ -115,7 +130,7 @@ const Cupon: React.FC<{ readonly foto: Foto }> = ({ foto }) => {
   const { height } = useVideoConfig();
   const alto = height > 1500;
   const abajo = alto ? 360 : 60;
-  const altoCupon = 260;
+  const altoCupon = 290;
   return (
     <AbsoluteFill style={base}>
       <FotoRT foto={foto} finEn={height - abajo - altoCupon - 30} />
@@ -161,31 +176,32 @@ const Cupon: React.FC<{ readonly foto: Foto }> = ({ foto }) => {
             justifyContent: "center",
           }}
         >
-          <div style={{ fontWeight: 800, fontSize: 120, lineHeight: 1 }}>
+          <div style={{ fontWeight: 800, fontSize: 130, lineHeight: 1 }}>
             15%
           </div>
           <div style={{ fontWeight: 800, fontSize: 48, letterSpacing: 2 }}>
             OFF
           </div>
         </div>
-        <div style={{ flex: 1, padding: "0 34px" }}>
-          <div style={{ fontStyle: "italic", fontSize: 36 }}>
+        <div style={{ flex: 1, padding: "0 30px" }}>
+          <div style={{ fontStyle: "italic", fontSize: 40 }}>
             en tu primera compra
           </div>
           <div
             style={{
               fontWeight: 800,
-              fontSize: 60,
+              fontSize: 66,
+              lineHeight: 1.1,
               letterSpacing: 1,
               color: colors.azul,
             }}
           >
             HERENCIA15
           </div>
-          <div style={{ fontSize: 32, fontWeight: 600 }}>
+          <div style={{ fontSize: 38, fontWeight: 700 }}>
             + 20% off en transferencia
           </div>
-          <div style={{ fontStyle: "italic", fontSize: 28 }}>
+          <div style={{ fontStyle: "italic", fontSize: 34, marginTop: 2 }}>
             Hasta el 25 de octubre
           </div>
         </div>
