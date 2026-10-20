@@ -69,34 +69,67 @@ const FotoRT: React.FC<{ readonly foto: Foto; readonly finEn: number }> = ({
   );
 };
 
-// El logo es blanco: va sobre un círculo azul de la marca con filete crema,
-// así no se pierde sobre cielos o fondos claros.
-const Logo: React.FC<{ readonly top: number }> = ({ top }) => (
-  <div
-    style={{
-      position: "absolute",
-      left: 50,
-      top,
-      width: 130,
-      height: 130,
-      borderRadius: "50%",
-      background: colors.azul,
-      border: `3px solid ${colors.crema}`,
-      boxShadow: "0 4px 18px rgba(0,0,0,0.4)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    }}
-  >
+// El logo original (blanco), sin fondo ni recuadro. Para que no se pierda
+// sobre el cielo claro, la foto se oscurece suave detrás de él: un degradé de
+// arriba a todo el ancho, o un halo difuso sólo alrededor del logo.
+export type ModoLogo = "degrade" | "halo";
+
+const Logo: React.FC<{ readonly top: number; readonly modo: ModoLogo }> = ({
+  top,
+  modo,
+}) => {
+  const lado = 150;
+  const logo = (
     <Img
       src={staticFile("logo-herencia-patria.png")}
-      style={{ width: 112, height: 112 }}
+      style={{
+        position: "absolute",
+        width: lado,
+        height: lado,
+        top,
+        filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.55))",
+        ...(modo === "degrade" ? { left: (1080 - lado) / 2 } : { left: 54 }),
+      }}
     />
-  </div>
-);
+  );
+  return modo === "degrade" ? (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          height: top + lado + 140,
+          background:
+            "linear-gradient(to bottom, rgba(18,12,8,0.6) 0%, rgba(18,12,8,0.4) 55%, rgba(18,12,8,0) 100%)",
+        }}
+      />
+      {logo}
+    </>
+  ) : (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          left: 54 + lado / 2 - 220,
+          top: top + lado / 2 - 220,
+          width: 440,
+          height: 440,
+          background:
+            "radial-gradient(circle, rgba(18,12,8,0.6) 0%, rgba(18,12,8,0.4) 35%, rgba(18,12,8,0) 70%)",
+        }}
+      />
+      {logo}
+    </>
+  );
+};
 
 // 1. Minimalista: la foto manda; el texto, abajo a la izquierda.
-const Minimal: React.FC<{ readonly foto: Foto }> = ({ foto }) => {
+const Minimal: React.FC<{ readonly foto: Foto; readonly modo: ModoLogo }> = ({
+  foto,
+  modo,
+}) => {
   const { height } = useVideoConfig();
   const alto = height > 1500;
   const abajo = alto ? 360 : 56;
@@ -112,7 +145,7 @@ const Minimal: React.FC<{ readonly foto: Foto }> = ({ foto }) => {
           ).toFixed(1)}%, rgba(18,12,8,0.8) 100%)`,
         }}
       />
-      <Logo top={alto ? 290 : 50} />
+      <Logo top={alto ? 290 : 50} modo={modo} />
       <div
         style={{
           position: "absolute",
@@ -138,7 +171,10 @@ const Minimal: React.FC<{ readonly foto: Foto }> = ({ foto }) => {
 };
 
 // 6. Cupón: un vale recortable abajo, como uno de verdad.
-const Cupon: React.FC<{ readonly foto: Foto }> = ({ foto }) => {
+const Cupon: React.FC<{ readonly foto: Foto; readonly modo: ModoLogo }> = ({
+  foto,
+  modo,
+}) => {
   const { height } = useVideoConfig();
   const alto = height > 1500;
   const abajo = alto ? 360 : 60;
@@ -146,7 +182,7 @@ const Cupon: React.FC<{ readonly foto: Foto }> = ({ foto }) => {
   return (
     <AbsoluteFill style={base}>
       <FotoRT foto={foto} finEn={height - abajo - altoCupon - 30} />
-      <Logo top={alto ? 290 : 50} />
+      <Logo top={alto ? 290 : 50} modo={modo} />
       <div
         style={{
           position: "absolute",
@@ -225,9 +261,10 @@ const Cupon: React.FC<{ readonly foto: Foto }> = ({ foto }) => {
 export const RetargetingOpcion: React.FC<{
   readonly estilo: Estilo;
   readonly foto: string;
-}> = ({ estilo, foto }) =>
+  readonly logo?: ModoLogo;
+}> = ({ estilo, foto, logo = "degrade" }) =>
   estilo === "minimal" ? (
-    <Minimal foto={fotosRT[foto]} />
+    <Minimal foto={fotosRT[foto]} modo={logo} />
   ) : (
-    <Cupon foto={fotosRT[foto]} />
+    <Cupon foto={fotosRT[foto]} modo={logo} />
   );
