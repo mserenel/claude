@@ -379,7 +379,7 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         defaultProps={{
           src: "mate-lucas-ronier.jpg",
-          frase: ["un mate hecho a mano", "para Lucas Ronier 🇧🇷"],
+          frase: ["mate personalizado", "para Lucas Ronier 🇧🇷"],
           grabado: "LR11 · Mãe · Pai · Irmãos",
           bajar: 0,
         }}
