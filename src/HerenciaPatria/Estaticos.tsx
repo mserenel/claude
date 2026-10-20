@@ -29,109 +29,112 @@ export type Estatico = {
 const oscuro = "rgb(18,12,8)";
 const sombra = "0 2px 4px rgba(0,0,0,0.5), 0 4px 26px rgba(0,0,0,0.55)";
 
-// Diseño del retargeting: marco fino de etiqueta, "15% OFF" grande, el
-// código en una pastilla crema y la fecha límite de la promo. La foto no se
-// retoca: sólo se encuadra.
+// Diseño del retargeting: el texto va en una tarjeta crema con letras azules
+// (como una etiqueta de la marca), así se lee igual sobre cualquier foto. El
+// logo va en un sello azul sobre el borde de la tarjeta. La foto no se retoca:
+// sólo se encuadra.
 const Retargeting: React.FC<{
   readonly top: number;
-  readonly bottom: number;
   readonly frase: string;
   readonly codigo?: string;
   readonly detalle: string[];
   readonly escala: number;
-}> = ({ top, bottom, frase, codigo, detalle, escala: e }) => {
+}> = ({ top, frase, codigo, detalle, escala: e }) => {
   // "15% OFF en tu primera compra" -> "15% OFF" + "en tu primera compra".
   const [, oferta = frase, resto = ""] =
     /^(\S+\s+OFF)\s*(.*)$/.exec(frase) ?? [];
-  const linea = (
-    <span style={{ width: 70, height: 2, background: colors.crema }} />
-  );
+  const [extra, vence] = detalle;
+  const sello = 116 * e;
   return (
-    <AbsoluteFill>
+    <AbsoluteFill style={{ alignItems: "center", textShadow: "none" }}>
       <div
         style={{
-          position: "absolute",
-          inset: 24,
-          border: "2px solid rgba(243,235,221,0.7)",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          inset: 34,
-          border: "1px solid rgba(243,235,221,0.4)",
-        }}
-      />
-      <Img
-        src={staticFile("logo-herencia-patria.png")}
-        style={{
-          position: "absolute",
-          left: 52,
-          top: Math.max(52, top - 6),
-          width: 92,
-          height: 92,
-          filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.6))",
-        }}
-      />
-      <AbsoluteFill
-        style={{
+          position: "relative",
+          marginTop: top + sello / 2,
+          width: 900 * e,
+          padding: `${sello / 2 + 14 * e}px ${40 * e}px ${30 * e}px`,
+          background: colors.crema,
+          color: colors.azul,
+          borderRadius: 10,
+          boxShadow: "0 10px 40px rgba(0,0,0,0.45)",
+          display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          paddingTop: top + 40,
           textAlign: "center",
         }}
       >
+        {/* Filete interior, como el de una etiqueta. */}
         <div
           style={{
+            position: "absolute",
+            inset: 12 * e,
+            border: `1.5px solid rgba(20,35,59,0.35)`,
+            borderRadius: 6,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: -sello / 2,
+            width: sello,
+            height: sello,
+            borderRadius: "50%",
+            background: colors.azul,
+            border: `4px solid ${colors.crema}`,
             display: "flex",
             alignItems: "center",
-            gap: 20,
-            fontStyle: "italic",
-            fontSize: 44 * e,
+            justifyContent: "center",
           }}
         >
-          {linea}
-          Especial para vos
-          {linea}
+          <Img
+            src={staticFile("logo-herencia-patria.png")}
+            style={{ width: sello * 0.86, height: sello * 0.86 }}
+          />
         </div>
-        <div
-          style={{
-            marginTop: 6,
-            fontWeight: 800,
-            fontSize: 170 * e,
-            lineHeight: 1,
-          }}
-        >
+        <div style={{ fontStyle: "italic", fontSize: 40 * e }}>
+          Especial para vos
+        </div>
+        <div style={{ fontWeight: 800, fontSize: 150 * e, lineHeight: 1 }}>
           {oferta}
         </div>
-        <div style={{ fontStyle: "italic", fontSize: 54 * e, lineHeight: 1.1 }}>
+        <div
+          style={{ fontStyle: "italic", fontSize: 50 * e, lineHeight: 1.15 }}
+        >
           {resto}
         </div>
         {codigo ? (
           <div
             style={{
-              marginTop: 24,
-              padding: "12px 40px",
-              background: colors.crema,
-              color: colors.azul,
-              textShadow: "none",
-              borderRadius: 4,
-              fontSize: 44 * e,
-              boxShadow: "0 4px 18px rgba(0,0,0,0.35)",
+              marginTop: 18 * e,
+              padding: `${12 * e}px ${40 * e}px`,
+              background: colors.azul,
+              color: colors.crema,
+              borderRadius: 6,
+              fontSize: 46 * e,
             }}
           >
             Código{" "}
             <span style={{ fontWeight: 800, letterSpacing: 1 }}>{codigo}</span>
           </div>
         ) : null}
-        {detalle.map((d) => (
-          <div
-            key={d}
-            style={{ marginTop: 16, fontStyle: "italic", fontSize: 40 * e }}
-          >
-            {d}
+        {extra ? (
+          <div style={{ marginTop: 16 * e, fontWeight: 700, fontSize: 44 * e }}>
+            {extra}
           </div>
-        ))}
-      </AbsoluteFill>
+        ) : null}
+        {vence ? (
+          <div
+            style={{
+              marginTop: 6 * e,
+              fontStyle: "italic",
+              fontSize: 38 * e,
+              color: colors.madera,
+            }}
+          >
+            {vence}
+          </div>
+        ) : null}
+      </div>
     </AbsoluteFill>
   );
 };
@@ -157,10 +160,10 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
   // abajo. Sin título (retargeting): la foto llena todo el cuadro, sin franja,
   // con el texto arriba sobre el fondo y el mate debajo.
   const sinFranja = !nombre;
-  // Sin franja (retargeting): el texto arriba ocupa ~480 px y el mate va
-  // justo debajo. La foto no se retoca, sólo se encuadra; si hace falta
+  // Sin franja (retargeting): la tarjeta de texto arriba ocupa ~600 px y el
+  // mate va justo debajo. La foto no se retoca, sólo se encuadra; si hace falta
   // bajarla, arriba queda un fondo oscuro que se funde con ella.
-  const mateEn = nombre ? top + (alto ? 290 : 285) : top + 600 * escala;
+  const mateEn = nombre ? top + (alto ? 290 : 285) : top + 660 * escala;
   let k = alto ? (sinFranja ? 1.1 : 1.15) : 1;
   let fotoTop = Math.min(0, mateEn - mateY * k);
   if (sinFranja) {
@@ -207,7 +210,7 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
       <AbsoluteFill
         style={{
           background: sinFranja
-            ? `linear-gradient(to bottom, rgba(18,12,8,0.72) 0%, rgba(18,12,8,0.5) ${((top + 420) / height) * 100}%, rgba(18,12,8,0) ${((top + 560) / height) * 100}%, rgba(18,12,8,0) ${((height - (alto ? 330 : 40) - 300) / height) * 100}%, rgba(18,12,8,0.65) 100%)`
+            ? "none"
             : "linear-gradient(to bottom, rgba(18,12,8,0.55) 0%, rgba(18,12,8,0) 22%)",
         }}
       />
@@ -238,7 +241,6 @@ export const AnuncioEstatico: React.FC<Estatico> = ({
       {sinFranja ? (
         <Retargeting
           top={top}
-          bottom={alto ? 330 : 40}
           escala={escala}
           frase={frase}
           codigo={codigo}
@@ -400,7 +402,7 @@ export const estaticos: Record<string, Estatico> = {
     altoFoto: 1614,
     mateY: 413,
     mateAlto: 740,
-    escala: 0.85,
+    escala: 0.78,
     frase: "15% OFF en tu primera compra",
     codigo: "HERENCIA15",
     detalle: [
