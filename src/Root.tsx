@@ -205,18 +205,25 @@ export const RemotionRoot: React.FC = () => {
           />
         )),
       )}
-      {(
-        ["minimal", "portada", "verde", "madera", "sello", "cupon"] as const
-      ).map((estilo) => (
-        <Still
-          key={estilo}
-          id={`HP-RT-Opcion-${estilo}`}
-          component={RetargetingOpcion}
-          width={1080}
-          height={1350}
-          defaultProps={{ estilo }}
-        />
-      ))}
+      {(["minimal", "cupon"] as const).flatMap((estilo) =>
+        ["mano", "mesa", "tronco"].flatMap((foto) =>
+          (
+            [
+              ["4x5", 1350],
+              ["9x16", 1920],
+            ] as const
+          ).map(([formato, alto]) => (
+            <Still
+              key={`${estilo}-${foto}-${formato}`}
+              id={`HP-RT-${estilo}-${foto}-${formato}`}
+              component={RetargetingOpcion}
+              width={1080}
+              height={alto}
+              defaultProps={{ estilo, foto }}
+            />
+          )),
+        ),
+      )}
       {/* npx remotion still HP-Bienvenida-Popup entregas/popup-tiendanube.png */}
       <Still
         id="HP-Bienvenida-Popup"
