@@ -25,9 +25,9 @@ export const HistoriaDedicada: React.FC<{
           width: 1080,
           height: 1920,
           objectFit: "cover",
-          // Luz algo más cálida y con un poco más de contraste: la foto es de
-          // celular contra una pared gris. No se toca la forma.
-          filter: "brightness(1.03) contrast(1.06) saturate(1.04) sepia(0.06)",
+          // Apenas más luz y contraste: la foto es de celular contra una
+          // pared gris. Sin virar el color, para que la piel se vea natural.
+          filter: "brightness(1.02) contrast(1.04)",
         }}
       />
       <div
