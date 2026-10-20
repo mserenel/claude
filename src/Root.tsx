@@ -37,6 +37,46 @@ const bienvenida = {
   codigo: "HERENCIA15",
 };
 
+// Una historia por día, con la foto (cuadro real de un video) y la frase.
+const campanaCupon = [
+  {
+    dia: 20,
+    src: "mate-crudo-mano.jpg",
+    frase: ["quedan 5 días", "para estrenar el tuyo."],
+    fraseArriba: false,
+  },
+  {
+    dia: 21,
+    src: "camionero-borde.jpg",
+    frase: ["quedan 4 días", "para elegir el tuyo."],
+    fraseArriba: false,
+  },
+  {
+    dia: 22,
+    src: "camionero-mano.jpg",
+    frase: ["quedan 3 días.", "cada mate es único."],
+    fraseArriba: false,
+  },
+  {
+    dia: 23,
+    src: "balcon-ciudad.jpg",
+    frase: ["quedan 2 días", "para regalar tradición."],
+    fraseArriba: true,
+  },
+  {
+    dia: 24,
+    src: "mate-crudo-borde.jpg",
+    frase: ["mañana termina", "tu 15% de bienvenida."],
+    fraseArriba: false,
+  },
+  {
+    dia: 25,
+    src: "balcon-cerca.jpg",
+    frase: ["último día", "para usar tu cupón."],
+    fraseArriba: true,
+  },
+];
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
@@ -207,7 +247,7 @@ export const RemotionRoot: React.FC = () => {
         )),
       )}
       {(["minimal", "cupon"] as const).flatMap((estilo) =>
-        ["mano", "mesa", "tronco"].flatMap((foto) =>
+        ["mano", "mesa", "tronco", "crudo"].flatMap((foto) =>
           (
             [
               ["4x5", 1350],
@@ -297,43 +337,31 @@ export const RemotionRoot: React.FC = () => {
           focusX: 40,
         }}
       />
-      {/* npx remotion still HP-Historia-Cupon entregas/historia-cupon-20-octubre.jpg */}
-      <Still
-        id="HP-Historia-Cupon"
-        component={Historia}
-        width={1080}
-        height={1920}
-        defaultProps={{
-          src: "lado-escudo.jpg",
-          subir: 110,
-          frase: ["quedan 5 días", "para estrenar el tuyo."],
-          oferta: bienvenida.descuento,
-          detalle: bienvenida.detalle,
-          codigo: bienvenida.codigo,
-          extra: "+ 20% off en transferencia",
-          vence: "Hasta el 25 de octubre",
-        }}
-      />
-      {/* Foto real sin retocar: cuadro de mate-crudo.mp4 (13,6 s), sólo
-          escalado a 1080x1920.
-          npx remotion still HP-Historia-Mano entregas/historia-mano-20-octubre.jpg */}
-      <Still
-        id="HP-Historia-Mano"
-        component={Historia}
-        width={1080}
-        height={1920}
-        defaultProps={{
-          src: "mate-crudo-mano.jpg",
-          subir: 0,
-          frase: ["quedan 5 días", "para estrenar el tuyo."],
-          oferta: bienvenida.descuento,
-          detalle: bienvenida.detalle,
-          codigo: bienvenida.codigo,
-          extra: "+ 20% off en transferencia",
-          vence: "Hasta el 25 de octubre",
-          cuponArriba: true,
-        }}
-      />
+      {/* Campaña del cupón de bienvenida (20 al 25 de octubre): una historia
+          por día con la cuenta regresiva. Fotos reales sin retocar: cuadros
+          de los videos de la marca, sólo escalados a 1080x1920.
+          npx remotion still HP-Campana-20 entregas/campana-cupon-octubre/historia-20.jpg */}
+      {campanaCupon.map(({ dia, src, frase, fraseArriba }) => (
+        <Still
+          key={dia}
+          id={`HP-Campana-${dia}`}
+          component={Historia}
+          width={1080}
+          height={1920}
+          defaultProps={{
+            src,
+            subir: 0,
+            frase,
+            oferta: bienvenida.descuento,
+            detalle: bienvenida.detalle,
+            codigo: bienvenida.codigo,
+            extra: "+ 20% off en transferencia",
+            vence: "Hasta el 25 de octubre",
+            cuponArriba: true,
+            fraseArriba,
+          }}
+        />
+      ))}
     </>
   );
 };

@@ -4,7 +4,8 @@ import { colors, fonts } from "./brand";
 // Historia de Instagram (1080x1920) con el estilo de las historias de la
 // marca: foto a sangre con trama de puntos, una frase en la letra a mano
 // (Sketcha Kits) y el cupón de bienvenida recortable, abajo o (si el mate
-// ocupa el centro y abajo de la foto) arriba, con la frase abajo. Instagram
+// ocupa el centro y abajo de la foto) arriba, con la frase abajo o, si el
+// mate llega hasta abajo, también arriba, debajo del cupón. Instagram
 // tapa ~200 px arriba (nombre del perfil) y ~180 px abajo (responder): el
 // texto va entre 240 y 1750.
 
@@ -19,6 +20,8 @@ export const Historia: React.FC<{
   readonly extra: string;
   readonly vence: string;
   readonly cuponArriba?: boolean;
+  // Sólo con el cupón arriba: la frase va debajo del cupón y no abajo.
+  readonly fraseArriba?: boolean;
 }> = ({
   src,
   subir,
@@ -29,6 +32,7 @@ export const Historia: React.FC<{
   extra,
   vence,
   cuponArriba = false,
+  fraseArriba = false,
 }) => {
   const [porcentaje, off] = oferta.split(" ");
   const altoCupon = 250;
@@ -38,6 +42,11 @@ export const Historia: React.FC<{
   const cupon: React.CSSProperties = cuponArriba
     ? { top: arriba }
     : { bottom: abajo };
+  const frasePos: React.CSSProperties = !cuponArriba
+    ? { top: 250 }
+    : fraseArriba
+      ? { top: arriba + altoCupon + 60 }
+      : { bottom: 170 };
   return (
     <AbsoluteFill style={{ backgroundColor: "rgb(18,12,8)" }}>
       <Img
@@ -52,11 +61,13 @@ export const Historia: React.FC<{
         }}
       />
       {/* Degradés cálidos: arriba para la frase, abajo para el cupón y el
-          hueco que deja la foto al subir. */}
+          hueco que deja la foto al subir. Con la frase debajo del cupón, el
+          de arriba baja más, para que se lea sobre un cielo claro. */}
       <AbsoluteFill
         style={{
-          background:
-            "linear-gradient(to bottom, rgba(18,12,8,0.75) 0%, rgba(18,12,8,0.5) 14%, rgba(18,12,8,0) 30%)",
+          background: fraseArriba
+            ? "linear-gradient(to bottom, rgba(18,12,8,0.75) 0%, rgba(18,12,8,0.6) 30%, rgba(18,12,8,0) 48%)"
+            : "linear-gradient(to bottom, rgba(18,12,8,0.75) 0%, rgba(18,12,8,0.5) 14%, rgba(18,12,8,0) 30%)",
         }}
       />
       <div
@@ -86,7 +97,7 @@ export const Historia: React.FC<{
       <div
         style={{
           position: "absolute",
-          ...(cuponArriba ? { bottom: 170 } : { top: 250 }),
+          ...frasePos,
           left: 70,
           right: 70,
           textAlign: "center",

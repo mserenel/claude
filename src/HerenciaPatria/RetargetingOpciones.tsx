@@ -18,6 +18,8 @@ export const fotosRT: Record<string, Foto> = {
   mano: { src: "torpedo-mano.jpg", alto: 1614, mateFin: 1240 },
   mesa: { src: "torpedo-mesa.jpg", alto: 1614, mateFin: 1160 },
   tronco: { src: "portada-raiz-feed.png", alto: 1919, mateFin: 1525 },
+  // Cuadro de mate-crudo.mp4 (13,6 s), el Torpedo en la mano: foto real.
+  crudo: { src: "mate-crudo-mano.jpg", alto: 1920, mateFin: 1420 },
 };
 
 const sombra = "0 2px 4px rgba(0,0,0,0.55), 0 4px 24px rgba(0,0,0,0.55)";
