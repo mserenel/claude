@@ -69,18 +69,30 @@ const FotoRT: React.FC<{ readonly foto: Foto; readonly finEn: number }> = ({
   );
 };
 
+// El logo es blanco: va sobre un círculo azul de la marca con filete crema,
+// así no se pierde sobre cielos o fondos claros.
 const Logo: React.FC<{ readonly top: number }> = ({ top }) => (
-  <Img
-    src={staticFile("logo-herencia-patria.png")}
+  <div
     style={{
       position: "absolute",
       left: 50,
       top,
-      width: 110,
-      height: 110,
-      filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.6))",
+      width: 130,
+      height: 130,
+      borderRadius: "50%",
+      background: colors.azul,
+      border: `3px solid ${colors.crema}`,
+      boxShadow: "0 4px 18px rgba(0,0,0,0.4)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     }}
-  />
+  >
+    <Img
+      src={staticFile("logo-herencia-patria.png")}
+      style={{ width: 112, height: 112 }}
+    />
+  </div>
 );
 
 // 1. Minimalista: la foto manda; el texto, abajo a la izquierda.
