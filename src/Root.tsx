@@ -122,7 +122,7 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{
-          src: "portada-raiz.jpg",
+          src: "mate-crudo-mano.jpg",
           lines: ["Hay piezas", "que llevan", "nuestra esencia."],
         }}
       />
@@ -314,15 +314,16 @@ export const RemotionRoot: React.FC = () => {
           vence: "Hasta el 25 de octubre",
         }}
       />
-      {/* Foto real sin retocar (portada-raiz.jpg), sólo encuadrada a 9:16.
-          npx remotion still HP-Historia-Bosque entregas/historia-bosque-20-octubre.jpg */}
+      {/* Foto real sin retocar: cuadro de mate-crudo.mp4 (13,6 s), sólo
+          escalado a 1080x1920.
+          npx remotion still HP-Historia-Mano entregas/historia-mano-20-octubre.jpg */}
       <Still
-        id="HP-Historia-Bosque"
+        id="HP-Historia-Mano"
         component={Historia}
         width={1080}
         height={1920}
         defaultProps={{
-          src: "portada-raiz.jpg",
+          src: "mate-crudo-mano.jpg",
           subir: 0,
           frase: ["quedan 5 días", "para estrenar el tuyo."],
           oferta: bienvenida.descuento,
