@@ -14,7 +14,7 @@ export const HistoriaDedicada: React.FC<{
   // Desplazamiento vertical de la foto (px del cuadro), para dar aire arriba.
   readonly bajar?: number;
 }> = ({ src, frase, grabado, bajar = 0 }) => {
-  const sello = 120;
+  const sello = 190;
   return (
     <AbsoluteFill style={{ backgroundColor: colors.crema }}>
       <Img
