@@ -8,9 +8,8 @@ del mate tiene letras doradas de un tono parecido al de la piel.
 
 Se aplica después de sacar_pelos.py. Sobre la piel (máscara con borde
 suave), separando frecuencias:
-- tono (frecuencias bajas): se empareja, se sacan las manchas rojas
-  acercando el rojo de cada zona al de toda la mano, y se le da un poco más
-  de luz y calidez;
+- tono (frecuencias bajas): se conserva el color y la luz de la mano; sólo
+  se emparejan las manchas, acercando cada zona al tono de su alrededor;
 - textura (frecuencias altas): se conserva, apenas suavizada, para que las
   arrugas no marquen tanto pero la piel siga siendo piel.
 Además se borran los pelitos finos que asoman en el borde de la mano contra
@@ -74,14 +73,14 @@ def main():
     bajo = cv2.GaussianBlur(lab, (0, 0), 10)
     alto = lab - bajo
 
-    sel = piel > 0
-    # Tono: el promedio de toda la mano, y cada zona acercada a él.
-    media = bajo[sel].mean(axis=0)
+    # Tono: se conserva el color y la luz de la mano. Sólo se emparejan las
+    # manchas: cada zona se acerca al tono de su alrededor (no a un promedio
+    # de toda la mano, que la dejaba pálida y pareja como de plástico).
     parejo = cv2.GaussianBlur(bajo, (0, 0), 28)
     nuevo_bajo = bajo.copy()
-    nuevo_bajo[..., 0] = bajo[..., 0] * 0.55 + parejo[..., 0] * 0.45 + 5  # luz
-    nuevo_bajo[..., 1] = bajo[..., 1] * 0.35 + media[1] * 0.65 - 1.5  # menos rojo
-    nuevo_bajo[..., 2] = bajo[..., 2] * 0.6 + media[2] * 0.4 + 2  # algo más cálido
+    nuevo_bajo[..., 0] = bajo[..., 0] * 0.6 + parejo[..., 0] * 0.4
+    nuevo_bajo[..., 1] = bajo[..., 1] * 0.45 + parejo[..., 1] * 0.55  # manchas rojas
+    nuevo_bajo[..., 2] = bajo[..., 2] * 0.6 + parejo[..., 2] * 0.4
     # Textura: apenas más suave.
     nuevo = nuevo_bajo + alto * 0.72
 
