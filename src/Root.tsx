@@ -21,6 +21,7 @@ import { agua, bombilla } from "./HerenciaPatria/patricioEpisodios";
 import { Portada } from "./HerenciaPatria/Portada";
 import { PortadaFeed } from "./HerenciaPatria/PortadaFeed";
 import { Historia } from "./HerenciaPatria/Historia";
+import { HistoriaDedicada } from "./HerenciaPatria/HistoriaDedicada";
 
 // Cada <Composition> aparece en la barra lateral del Studio.
 
@@ -369,6 +370,20 @@ export const RemotionRoot: React.FC = () => {
           }}
         />
       ))}
+      {/* Mate por encargo para Lucas Ronier (foto real de la marca).
+          npx remotion still HP-Historia-Lucas-Ronier entregas/historia-lucas-ronier.jpg */}
+      <Still
+        id="HP-Historia-Lucas-Ronier"
+        component={HistoriaDedicada}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          src: "mate-lucas-ronier.jpg",
+          frase: ["un mate hecho a mano", "para Lucas Ronier 🇧🇷"],
+          grabado: "LR11 · Mãe · Pai · Irmãos",
+          bajar: 0,
+        }}
+      />
     </>
   );
 };
