@@ -57,25 +57,53 @@ def main():
     cx = (x0 + x1) / 2
 
     # --- Piso blanco, con el mate apoyado ---------------------------------
-    # La sombra sale de dónde toca la mesa en la foto: justo bajo la base o
-    # cada pata una sombra de contacto oscura y ceñida (empieza debajo del
-    # mate, así no queda luz entre el mate y el piso), y bajo el cuerpo una
-    # sombra amplia y suave, que es la que se ve entre las patas.
-    # El contacto va al pie de cada columna del mate (no sólo en el punto más
-    # bajo): las patas de atrás están más arriba en la foto y apoyan igual.
-    alto_c = max(3, int(0.03 * ph))
+    # Dónde toca la mesa: el perfil de abajo del mate (la fila más baja de
+    # cada columna) y su envolvente convexa por debajo. Lo que cae sobre la
+    # envolvente apoya (cada pata, o todo el borde de una base plana); lo que
+    # queda por encima (las chapas de las esquinas, la panza entre las patas)
+    # está en el aire.
+    alto_pie = int(0.25 * ph)
+    perfil = {}
+    for x in range(x0, x1 + 1):
+        col = np.where(lleno[:, x] > 0)[0]
+        if col.size and col.max() > y1 - alto_pie:
+            perfil[x] = col.max()
+    xs_p = sorted(perfil)
+    casco = []
+    for x in xs_p:
+        while len(casco) >= 2:
+            (ax, ay), (bx, by) = casco[-2], casco[-1]
+            # En coordenadas de imagen (y hacia abajo): sacar b si queda por
+            # encima de la recta a-x.
+            if (bx - ax) * (perfil[x] - ay) - (by - ay) * (x - ax) >= 0:
+                casco.pop()
+            else:
+                break
+        casco.append((x, perfil[x]))
+    cx_c, cy_c = zip(*casco)
+    piso_y = np.interp(xs_p, cx_c, cy_c)
+    tol = max(2, 0.005 * ph)
+    apoya = [x for x, py in zip(xs_p, piso_y) if py - perfil[x] <= tol]
+
+    # Sombra de contacto: ceñida y oscura justo donde apoya; una segunda,
+    # algo más abierta, para que no quede una línea dura.
     contacto = np.zeros((h, w), np.float32)
-    franja_pies = lleno[int(y1 - 0.15 * ph) : y1 + 1] > 0
-    for x in np.where(franja_pies.any(axis=0))[0]:
-        yb = int(y1 - 0.15 * ph) + np.where(franja_pies[:, x])[0].max()
-        contacto[yb - alto_c : yb + 1, x] = 1
-    contacto = cv2.GaussianBlur(contacto, (0, 0), sigmaX=0.012 * pw, sigmaY=0.01 * ph)
-    contacto = np.clip(contacto * 2.6, 0, 1)
-    columnas = (lleno[int(y1 - 0.3 * ph) : y1 + 1] > 0).any(axis=0).astype(np.float32)
-    ambiente = np.zeros((h, w), np.float32)
-    ambiente[int(y1 - 0.04 * ph) : int(y1 + 0.03 * ph)] = columnas[None, :]
-    ambiente = cv2.GaussianBlur(ambiente, (0, 0), sigmaX=0.06 * pw, sigmaY=0.03 * ph)
-    piso = 1 - np.clip(0.68 * contacto + 0.3 * ambiente, 0, 0.72)
+    for x in apoya:
+        contacto[perfil[x] - 2 : perfil[x] + max(2, int(0.004 * ph)), x] = 1
+    ceñida = np.clip(cv2.GaussianBlur(contacto, (0, 0), 0.004 * ph) * 3, 0, 1)
+    abierta = np.clip(cv2.GaussianBlur(contacto, (0, 0), 0.012 * ph) * 2, 0, 1)
+
+    # Bajo el cuerpo: el piso entre las patas (entre la panza y la línea de
+    # apoyo) está a la sombra, y la sombra apenas se asoma hacia adelante.
+    bajo = np.zeros((h, w), np.float32)
+    a0, a1 = min(apoya), max(apoya)
+    for x, py in zip(xs_p, piso_y):
+        if a0 <= x <= a1:
+            bajo[perfil[x] : int(py) + 1, x] = 1
+            n_caida = int(0.04 * ph)
+            bajo[int(py) + 1 : int(py) + 1 + n_caida, x] = np.linspace(1, 0, n_caida)
+    bajo = cv2.GaussianBlur(bajo, (0, 0), sigmaX=0.012 * ph, sigmaY=0.008 * ph)
+    piso = 1 - np.clip(0.55 * ceñida + 0.22 * abierta + 0.3 * bajo, 0, 0.75)
 
     comp = 255 * piso[..., None] * (1 - alfa[..., None]) + limpio.astype(np.float32) * alfa[..., None]
 
