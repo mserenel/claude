@@ -1,7 +1,8 @@
 # Fotos de producto sobre fondo blanco
 
 2000×2000, blanco puro, cada mate centrado y al mismo alto (70% del cuadro),
-con una sombra suave que sale de su propia base o patas. Los mates no se
+apoyado sobre un piso blanco: sombra de contacto donde la base o cada pata
+tocaban la mesa en la foto y una sombra suave bajo el cuerpo. Los mates no se
 retocaron: forma y color son los de la foto (`originales/`).
 
 Para hacer una nueva:
