@@ -109,19 +109,22 @@ export const HistoriaEmpresasLogo: React.FC<{
         }}
       >
         <defs>
-          <path id="arcoGrabado" d="M 98.2 368.6 A 388 388 0 0 1 847.8 368.6" />
+          <path
+            id="arcoGrabado"
+            d="M 107.0 430.5 A 368 368 0 0 1 839.0 430.5"
+          />
         </defs>
         {[
-          { dy: 3, fill: "rgba(255,255,255,0.75)" },
-          { dy: 0, fill: "rgba(28,26,25,0.92)" },
+          { dy: 3.5, fill: "rgba(255,255,255,0.85)" },
+          { dy: 0, fill: "#16120f" },
         ].map(({ dy, fill }) => (
           <text
             key={fill}
             transform={`translate(0 ${dy})`}
             fill={fill}
             fontFamily={fonts.serif}
-            fontSize={66}
-            letterSpacing={9}
+            fontSize={80}
+            letterSpacing={3}
             textAnchor="middle"
           >
             <textPath href="#arcoGrabado" startOffset="50%">
