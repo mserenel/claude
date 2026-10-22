@@ -2,79 +2,69 @@ import { AbsoluteFill, Img, staticFile } from "remotion";
 import { colors, fonts } from "./brand";
 
 // Historia de Instagram (1080x1920) para los pedidos empresariales de fin
-// de año, sólo con letras de Herencia (Addington y Acumin; la Sketcha es la
-// de Don Patricio): el sello azul arriba, el título, una fila de mates reales (las
-// fotos de producto sobre blanco, que con "multiply" se funden con el
-// crema) y abajo qué incluye y cómo pedir. Va a publicitarse: en los
-// anuncios de historias Meta tapa ~250 px arriba y ~380 px abajo (el botón
-// del anuncio), así que todo va entre 250 y 1540.
+// de año, pensada como anuncio: un solo mensaje (el título), los mates reales
+// como protagonistas, un beneficio bien visible en una franja (el grabado
+// gratis) y un llamado corto, con la letra chica al pie. Una sola familia de
+// letra (Addington) para que no se vea recargada. En los anuncios de
+// historias Meta tapa ~250 px arriba y ~380 px abajo (su botón), así que todo
+// va entre 250 y 1540; el llamado es texto, no botón, porque el anuncio ya
+// trae el suyo.
 
 export const HistoriaEmpresas: React.FC<{
   readonly mates: string[][];
+  readonly antetitulo: string;
   readonly titulo: string[];
-  readonly bajada: string;
-  readonly frase: string[];
-  readonly destacado: string;
-  readonly detalle: string;
+  readonly beneficio: string;
   readonly accion: string;
-  readonly nota: string;
   readonly letraChica: string;
-}> = ({
-  mates,
-  titulo,
-  bajada,
-  frase,
-  destacado,
-  detalle,
-  accion,
-  nota,
-  letraChica,
-}) => {
+}> = ({ mates, antetitulo, titulo, beneficio, accion, letraChica }) => {
   return (
     <AbsoluteFill
       style={{
         backgroundColor: colors.crema,
         alignItems: "center",
         textAlign: "center",
+        fontFamily: fonts.serif,
+        color: colors.azul,
       }}
     >
       <Img
         src={staticFile("logos/herencia-patria-sello-azul.png")}
-        style={{ position: "absolute", top: 250, width: 160 }}
+        style={{ position: "absolute", top: 258, width: 120 }}
       />
       <div
         style={{
           position: "absolute",
-          top: 430,
-          left: 70,
-          right: 70,
-          fontFamily: fonts.serif,
+          top: 410,
+          fontSize: 28,
+          letterSpacing: 5,
+          textTransform: "uppercase",
+          color: colors.madera,
+        }}
+      >
+        {antetitulo}
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          top: 462,
+          left: 60,
+          right: 60,
           fontSize: 80,
-          lineHeight: 1.02,
-          color: colors.azul,
+          lineHeight: 1.05,
         }}
       >
         {titulo.map((l) => (
           <div key={l}>{l}</div>
         ))}
-        <div
-          style={{
-            marginTop: 18,
-            fontStyle: "italic",
-            fontSize: 52,
-            color: colors.madera,
-          }}
-        >
-          {bajada}
-        </div>
       </div>
-      {/* Dos filas, la de atrás un poco más chica, sin que se pisen. */}
+      {/* Dos filas de mates, la de atrás un poco más chica. */}
       {mates.map((fila, i) => (
         <div
           key={fila.join()}
           style={{
             position: "absolute",
-            top: i === 0 ? 685 : 885,
+            top: i === 0 ? 650 : 930,
             left: 0,
             right: 0,
             display: "flex",
@@ -83,7 +73,7 @@ export const HistoriaEmpresas: React.FC<{
           }}
         >
           {fila.map((src) => {
-            const lado = i === 0 ? 250 : 280;
+            const lado = i === 0 ? 320 : 350;
             return (
               <Img
                 key={src}
@@ -100,83 +90,29 @@ export const HistoriaEmpresas: React.FC<{
           })}
         </div>
       ))}
-      {/* Abajo, de corrido: la frase, el grabado gratis como sello de
-          texto (no botón: va a publicitarse), cómo pedir y la letra chica. */}
+      {/* El beneficio: una franja de lado a lado, no un botón. */}
       <div
         style={{
           position: "absolute",
-          top: 1165,
-          left: 80,
-          right: 80,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          color: colors.azul,
+          top: 1252,
+          left: 0,
+          right: 0,
+          padding: "26px 0 30px",
+          background: colors.azul,
+          color: colors.crema,
+          fontSize: 58,
+          fontWeight: 600,
         }}
       >
-        <div
-          style={{ fontFamily: fonts.acumin, fontSize: 34, lineHeight: 1.35 }}
-        >
-          {frase.map((l) => (
-            <div key={l}>{l}</div>
-          ))}
-        </div>
-        <div
-          style={{
-            marginTop: 20,
-            fontFamily: fonts.acumin,
-            fontWeight: 600,
-            fontSize: 34,
-            letterSpacing: 6,
-            textTransform: "uppercase",
-            color: colors.madera,
-          }}
-        >
-          {destacado}
-        </div>
-        <div
-          style={{
-            marginTop: 4,
-            fontFamily: fonts.serif,
-            fontStyle: "italic",
-            fontSize: 34,
-            color: colors.madera,
-          }}
-        >
-          {detalle}
-        </div>
-        <div
-          style={{
-            marginTop: 22,
-            width: 90,
-            height: 2,
-            background: colors.mostaza,
-          }}
-        />
-        <div style={{ marginTop: 14, fontFamily: fonts.serif, fontSize: 46 }}>
-          {accion}
-        </div>
-        <div
-          style={{
-            marginTop: 6,
-            fontFamily: fonts.serif,
-            fontStyle: "italic",
-            fontSize: 34,
-            color: colors.madera,
-          }}
-        >
-          {nota}
-        </div>
-        <div
-          style={{
-            marginTop: 8,
-            fontFamily: fonts.acumin,
-            fontSize: 24,
-            opacity: 0.7,
-          }}
-        >
-          {letraChica}
-        </div>
+        {beneficio}
+      </div>
+      <div style={{ position: "absolute", top: 1402, fontSize: 46 }}>
+        {accion}
+      </div>
+      <div
+        style={{ position: "absolute", top: 1472, fontSize: 28, opacity: 0.6 }}
+      >
+        {letraChica}
       </div>
     </AbsoluteFill>
   );
