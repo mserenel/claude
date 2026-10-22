@@ -17,9 +17,9 @@ export const HistoriaEmpresasLogo: React.FC<{
   readonly bajada: string;
   // El mate grande, visto desde arriba y recortado en círculo justo en el
   // borde del aro (la foto real, sin el fondo), y lo que va grabado en el
-  // aro, en curva por arriba.
+  // aro: una palabra arriba y otra abajo.
   readonly heroe: string;
-  readonly grabado: string;
+  readonly grabado: [arriba: string, abajo: string];
   readonly otros: string[];
   readonly confianza: string;
   readonly logos: [archivo: string, alto: number][];
@@ -95,9 +95,10 @@ export const HistoriaEmpresasLogo: React.FC<{
           filter: "drop-shadow(0 18px 24px rgba(20,35,59,0.28))",
         }}
       />
-      {/* El grabado, en curva por arriba del aro: letras oscuras con un
-          brillo apenas corrido hacia abajo, como talladas en el metal. Las
-          coordenadas son las de la foto (948 px). */}
+      {/* El grabado en el aro, una palabra arriba y otra abajo (las dos
+          derechas), grandes y en negrita para que se lean en el teléfono:
+          letras oscuras con un brillo apenas corrido hacia abajo, como
+          talladas en el metal. Coordenadas de la foto (948 px). */}
       <svg
         viewBox="0 0 948 948"
         style={{
@@ -110,28 +111,35 @@ export const HistoriaEmpresasLogo: React.FC<{
       >
         <defs>
           <path
-            id="arcoGrabado"
-            d="M 107.0 430.5 A 368 368 0 0 1 839.0 430.5"
+            id="grabadoArriba"
+            d="M 129.1 344.8 A 366 366 0 0 1 816.9 344.8"
+          />
+          <path
+            id="grabadoAbajo"
+            d="M 70.8 616.4 A 428 428 0 0 0 875.2 616.4"
           />
         </defs>
-        {[
-          { dy: 3.5, fill: "rgba(255,255,255,0.85)" },
-          { dy: 0, fill: "#16120f" },
-        ].map(({ dy, fill }) => (
-          <text
-            key={fill}
-            transform={`translate(0 ${dy})`}
-            fill={fill}
-            fontFamily={fonts.serif}
-            fontSize={80}
-            letterSpacing={3}
-            textAnchor="middle"
-          >
-            <textPath href="#arcoGrabado" startOffset="50%">
-              {grabado.toUpperCase()}
-            </textPath>
-          </text>
-        ))}
+        {(["grabadoArriba", "grabadoAbajo"] as const).map((arco, k) =>
+          [
+            { dy: 4, fill: "rgba(255,255,255,0.85)" },
+            { dy: 0, fill: "#14110e" },
+          ].map(({ dy, fill }) => (
+            <text
+              key={arco + fill}
+              transform={`translate(0 ${dy})`}
+              fill={fill}
+              fontFamily={fonts.serif}
+              fontWeight={700}
+              fontSize={98}
+              letterSpacing={8}
+              textAnchor="middle"
+            >
+              <textPath href={`#${arco}`} startOffset="50%">
+                {grabado[k].toUpperCase()}
+              </textPath>
+            </text>
+          )),
+        )}
       </svg>
       {/* Los otros modelos: dos filas de tres. */}
       {[otros.slice(0, 3), otros.slice(3)].map((fila, i) => (
