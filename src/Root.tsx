@@ -404,6 +404,7 @@ export const RemotionRoot: React.FC = () => {
             ],
             [
               "producto/mate-bordo-cuero-cincelado.jpg",
+              "producto/mate-algarrobo-imperial.jpg",
               "producto/mate-negro-guarda-pampa.jpg",
             ],
           ],
