@@ -52,14 +52,14 @@ export const HistoriaEmpresasLogo: React.FC<{
     opacity: 0.25,
   };
   // El mate grande, a la izquierda.
-  const lado = 540;
-  const x0 = 70;
-  const y0 = 590;
+  const lado = 450;
+  const x0 = 60;
+  const y0 = 600;
   const px = x0 + punto[0] * lado;
   const py = y0 + punto[1] * lado;
-  const xTexto = 670;
+  const xTexto = 560;
   // Los otros modelos: una grilla chica a la derecha, bajo la anotación.
-  const chico = 175;
+  const chico = 215;
   return (
     <AbsoluteFill
       style={{
@@ -132,38 +132,40 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: py - 64,
+          top: py - 36,
           left: xTexto,
           right: 60,
         }}
       >
         <div style={{ fontSize: 64, lineHeight: 1 }}>{anotacion}</div>
       </div>
-      <div
-        style={{
-          position: "absolute",
-          top: py + 110,
-          left: xTexto - 60,
-          width: 3 * chico * 0.78,
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          rowGap: 0,
-        }}
-      >
-        {otros.map((src) => (
-          <Img
-            key={src}
-            src={staticFile(src)}
-            style={{
-              width: chico,
-              height: chico,
-              margin: `0 -${chico * 0.11}px`,
-              mixBlendMode: "multiply",
-            }}
-          />
-        ))}
-      </div>
+      {/* Los otros modelos: dos filas de tres. */}
+      {[otros.slice(0, 3), otros.slice(3)].map((fila, i) => (
+        <div
+          key={fila.join()}
+          style={{
+            position: "absolute",
+            top: py + 60 + i * chico * 0.86,
+            left: xTexto - 60,
+            right: 40,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          {fila.map((src) => (
+            <Img
+              key={src}
+              src={staticFile(src)}
+              style={{
+                width: chico,
+                height: chico,
+                margin: `0 -${chico * 0.11}px`,
+                mixBlendMode: "multiply",
+              }}
+            />
+          ))}
+        </div>
+      ))}
       <div style={{ ...filete, top: 1250 }} />
       {/* Quiénes ya los eligieron: los logos en el azul de la marca. */}
       <div
