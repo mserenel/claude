@@ -413,7 +413,7 @@ export const RemotionRoot: React.FC = () => {
           puntos: [
             "Mates hechos a mano en Argentina",
             "Grabados con el logo o el nombre de tu empresa",
-            "Pedidos por cantidad",
+            "Pedido mínimo: 25 unidades",
           ],
           accion: "Escribinos y cotizá tu pedido",
           nota: "reservá con tiempo para las fiestas",
