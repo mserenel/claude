@@ -12,8 +12,11 @@ Uso:
     sobresale de la luz de alrededor se acerca a ella, sin aplanar la forma;
   * se empareja la luz: la diferencia grande de un costado al otro (la
     ventana de un lado) se reduce a la mitad.
-- Borde sin halo, recortado al mate y llevado a 700 px de alto, con la base
-  justo en el borde de abajo (para apoyarlo exacto).
+- Borde sin halo, recortado al mate y llevado a 700 px de alto (el mate), con
+  la base a 700 px del borde de arriba. Debajo quedan PIE px para la sombra de
+  contacto, que sale de los puntos reales de apoyo (cada pata, el borde de la
+  base: la envolvente del perfil de abajo, como en fondo_blanco.py) y va
+  semitransparente, para que caiga sobre lo que haya debajo.
 """
 
 import sys
@@ -22,6 +25,7 @@ import cv2
 import numpy as np
 
 ALTO = 700
+PIE = 24
 
 
 def suave(img, m, sigma):
@@ -83,11 +87,64 @@ def main():
     relleno = cv2.inpaint(out, franja.astype(np.uint8) * 255, 3, cv2.INPAINT_TELEA)
     out[franja] = (out[franja] * 0.4 + relleno[franja] * 0.6).astype(np.uint8)
 
+    # --- Sombra de contacto, en las coordenadas de la foto ---------------
     ys, xs = np.where(alfa > 0.05)
-    c0, c1, r0, r1 = xs.min(), xs.max() + 1, ys.min(), ys.max() + 1
-    rgba = np.dstack([out, (alfa * 255).astype(np.uint8)])[r0:r1, c0:c1]
-    esc = ALTO / rgba.shape[0]
-    rgba = cv2.resize(rgba, (round(rgba.shape[1] * esc), ALTO), interpolation=cv2.INTER_AREA)
+    by0, by1, bx0, bx1 = ys.min(), ys.max(), xs.min(), xs.max()
+    ph = by1 - by0 + 1
+    perfil = {}
+    for x in range(bx0, bx1 + 1):
+        col = np.where(lleno[:, x] > 0)[0]
+        if col.size and col.max() > by1 - 0.25 * ph:
+            perfil[x] = col.max()
+    xs_p = sorted(perfil)
+    casco = []
+    for x in xs_p:
+        while len(casco) >= 2:
+            (ax, ay), (bx, by) = casco[-2], casco[-1]
+            if (bx - ax) * (perfil[x] - ay) - (by - ay) * (x - ax) >= 0:
+                casco.pop()
+            else:
+                break
+        casco.append((x, perfil[x]))
+    cx_c, cy_c = zip(*casco)
+    piso_y = np.interp(xs_p, cx_c, cy_c)
+    tol = max(2, 0.005 * ph)
+    apoya = [x for x, py in zip(xs_p, piso_y) if py - perfil[x] <= tol]
+    pie = int(PIE * ph / ALTO)
+    hh = h + pie + 4
+    contacto = np.zeros((hh, w), np.float32)
+    for x in apoya:
+        contacto[perfil[x] - 2 : perfil[x] + max(2, int(0.004 * ph)), x] = 1
+    ceñida = np.clip(cv2.GaussianBlur(contacto, (0, 0), 0.005 * ph) * 3, 0, 1)
+    abierta = np.clip(cv2.GaussianBlur(contacto, (0, 0), 0.014 * ph) * 2, 0, 1)
+    bajo = np.zeros((hh, w), np.float32)
+    a0, a1 = min(apoya), max(apoya)
+    for x, py in zip(xs_p, piso_y):
+        if a0 <= x <= a1:
+            bajo[perfil[x] : int(py) + 1, x] = 1
+            n_caida = int(0.03 * ph)
+            bajo[int(py) + 1 : int(py) + 1 + n_caida, x] = np.linspace(1, 0, n_caida)
+    bajo = cv2.GaussianBlur(bajo, (0, 0), sigmaX=0.012 * ph, sigmaY=0.008 * ph)
+    sombra = np.clip(0.75 * ceñida + 0.3 * abierta + 0.35 * bajo, 0, 0.85)
+
+    # El mate sobre su sombra (sombra azul muy oscuro, casi negro).
+    tono = np.array([14, 20, 28], np.float32)
+    al = np.zeros((hh, w), np.float32)
+    al[:h] = alfa
+    rgb = np.zeros((hh, w, 3), np.float32)
+    rgb[:] = tono
+    rgb[:h] = out
+    a_tot = al + sombra * (1 - al)
+    mezcla = (rgb * al[..., None] + tono * (sombra * (1 - al))[..., None]) / np.maximum(
+        a_tot, 1e-4
+    )[..., None]
+
+    c0, c1 = bx0 - pie, bx1 + 1 + pie
+    c0, c1 = max(c0, 0), min(c1, w)
+    r0, r1 = by0, by1 + 1 + pie
+    rgba = np.dstack([np.clip(mezcla, 0, 255), a_tot * 255]).astype(np.uint8)[r0:r1, c0:c1]
+    esc = ALTO / ph
+    rgba = cv2.resize(rgba, (round(rgba.shape[1] * esc), ALTO + PIE), interpolation=cv2.INTER_AREA)
     cv2.imwrite(out_path, rgba)
 
 

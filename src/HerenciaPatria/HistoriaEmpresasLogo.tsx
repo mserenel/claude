@@ -46,6 +46,9 @@ export const HistoriaEmpresasLogo: React.FC<{
   const y0 = 620;
   // Los otros modelos: una grilla chica a la derecha del aro.
   const altoChico = 150;
+  // Los recortes traen debajo de la base su sombra de contacto: 24 px más
+  // cada 700 de mate (ver tools/recorte_mate.py).
+  const conPie = 724 / 700;
   const xGrilla = 570;
   return (
     <AbsoluteFill
@@ -147,8 +150,8 @@ export const HistoriaEmpresasLogo: React.FC<{
       {/* Los otros modelos: dos filas de tres, cada una sobre una tabla de
           madera fina (la madera real del ranchero, con la veta acostada y el
           color apagado). Los mates van recortados (fondo transparente, la
-          base justo en el borde de abajo) y apoyados sobre la cara de arriba
-          de la tabla, cada uno con una sombra de contacto sobre la madera. */}
+          base a una altura fija, con su sombra de contacto debajo) y apoyados
+          sobre la cara de arriba de la tabla. */}
       {[otros.slice(0, 3), otros.slice(3)].map((fila, i) => {
         const apoyo = y0 + lado / 2 - 30 + i * 205;
         const madera = (alto: number, desde: number, luz: number) => (
@@ -168,14 +171,14 @@ export const HistoriaEmpresasLogo: React.FC<{
             <div
               style={{
                 position: "absolute",
-                top: apoyo - 6,
+                top: apoyo - 22,
                 left: xGrilla + 14,
                 right: 34,
                 boxShadow: "0 10px 14px -6px rgba(20,35,59,0.35)",
               }}
             >
-              {madera(12, 0, 1.12)}
-              {madera(15, 40, 0.72)}
+              {madera(30, 0, 1.08)}
+              {madera(14, 60, 0.7)}
             </div>
             <div
               style={{
@@ -184,35 +187,18 @@ export const HistoriaEmpresasLogo: React.FC<{
                 top: apoyo + 4 - altoChico,
                 left: xGrilla + 14,
                 right: 34,
-                height: altoChico,
+                height: altoChico * conPie,
                 display: "flex",
                 justifyContent: "space-evenly",
                 alignItems: "flex-end",
               }}
             >
               {fila.map((src) => (
-                <div key={src} style={{ position: "relative" }}>
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: "8%",
-                      right: "8%",
-                      bottom: -4,
-                      height: 12,
-                      borderRadius: "50%",
-                      background: "rgba(25,18,12,0.55)",
-                      filter: "blur(5px)",
-                    }}
-                  />
-                  <Img
-                    src={staticFile(src)}
-                    style={{
-                      position: "relative",
-                      display: "block",
-                      height: altoChico,
-                    }}
-                  />
-                </div>
+                <Img
+                  key={src}
+                  src={staticFile(src)}
+                  style={{ display: "block", height: altoChico * conPie }}
+                />
               ))}
             </div>
           </div>
