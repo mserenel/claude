@@ -440,12 +440,12 @@ export const RemotionRoot: React.FC = () => {
           // Arriba los de calabaza (simple, repujado y base bolita); abajo
           // los de algarrobo (ranchero, imperial e imperial con base).
           otros: [
-            "producto/mate-calabaza-simple.jpg",
-            "producto/mate-calabaza-repujado.jpg",
-            "producto/mate-calabaza-base-bolita.jpg",
-            "producto/mate-algarrobo-ranchero.jpg",
-            "producto/mate-algarrobo-imperial.jpg",
-            "producto/mate-algarrobo-blanco.jpg",
+            "recortes/calabaza-simple.png",
+            "recortes/calabaza-repujado.png",
+            "recortes/calabaza-base-bolita.png",
+            "recortes/algarrobo-ranchero.png",
+            "recortes/algarrobo-imperial.png",
+            "recortes/algarrobo-imperial-con-base.png",
           ],
           confianza: "Ya nos eligieron",
           logos: [

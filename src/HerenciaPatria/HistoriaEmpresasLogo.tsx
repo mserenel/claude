@@ -45,7 +45,7 @@ export const HistoriaEmpresasLogo: React.FC<{
   const x0 = 40;
   const y0 = 620;
   // Los otros modelos: una grilla chica a la derecha del aro.
-  const chico = 200;
+  const altoChico = 150;
   const xGrilla = 570;
   return (
     <AbsoluteFill
@@ -146,13 +146,11 @@ export const HistoriaEmpresasLogo: React.FC<{
       </svg>
       {/* Los otros modelos: dos filas de tres, cada una sobre una tabla de
           madera fina (la madera real del ranchero, con la veta acostada y el
-          color apagado). La tabla va antes que los mates: con "multiply" la
-          sombra de cada mate cae sobre la madera. */}
+          color apagado). Los mates van recortados (fondo transparente, la
+          base justo en el borde de abajo) y apoyados sobre la cara de arriba
+          de la tabla, cada uno con una sombra de contacto sobre la madera. */}
       {[otros.slice(0, 3), otros.slice(3)].map((fila, i) => {
-        const top = y0 + lado / 2 - chico * 0.98 + i * chico * 0.96;
-        // Donde apoyan los mates: el pie de la foto de producto.
-        const apoyo = top + chico * 0.83;
-        // Una franja de la foto de la madera, recortada a la altura de la cara.
+        const apoyo = y0 + lado / 2 - 30 + i * 205;
         const madera = (alto: number, desde: number, luz: number) => (
           <div style={{ height: alto, overflow: "hidden" }}>
             <Img
@@ -170,7 +168,7 @@ export const HistoriaEmpresasLogo: React.FC<{
             <div
               style={{
                 position: "absolute",
-                top: apoyo - 4,
+                top: apoyo - 5,
                 left: xGrilla + 14,
                 right: 34,
                 boxShadow: "0 10px 14px -6px rgba(20,35,59,0.35)",
@@ -182,24 +180,34 @@ export const HistoriaEmpresasLogo: React.FC<{
             <div
               style={{
                 position: "absolute",
-                top,
-                left: xGrilla,
-                right: 30,
+                top: apoyo - altoChico,
+                left: xGrilla + 14,
+                right: 34,
+                height: altoChico,
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: "space-evenly",
+                alignItems: "flex-end",
               }}
             >
               {fila.map((src) => (
-                <Img
-                  key={src}
-                  src={staticFile(src)}
-                  style={{
-                    width: chico,
-                    height: chico,
-                    margin: `0 -${chico * 0.11}px`,
-                    mixBlendMode: "multiply",
-                  }}
-                />
+                <div key={src} style={{ position: "relative" }}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: "8%",
+                      right: "8%",
+                      bottom: -5,
+                      height: 12,
+                      borderRadius: "50%",
+                      background: "rgba(25,18,12,0.55)",
+                      filter: "blur(5px)",
+                    }}
+                  />
+                  <Img
+                    src={staticFile(src)}
+                    style={{ position: "relative", height: altoChico }}
+                  />
+                </div>
               ))}
             </div>
           </div>
