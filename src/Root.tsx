@@ -398,9 +398,8 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           mates: [
             [
-              "producto/mate-madera-liso.jpg",
-              "producto/mate-negro-dorado-flor-de-lis.jpg",
               "producto/mate-algarrobo-blanco.jpg",
+              "producto/mate-negro-dorado-flor-de-lis.jpg",
             ],
             [
               "producto/mate-negro-cincelado-patas.jpg",
