@@ -5,11 +5,11 @@ import { colors, fonts } from "./brand";
 // de año, pensada como anuncio. Fondo crema y todo en azul (sólo los dos
 // colores de la marca, más el de los mates), con las letras de la marca:
 // Addington para el título y el llamado, Helvetica Neue para el resto.
-// Arriba el título grande a la izquierda y el sello; el beneficio (el grabado
-// gratis) es una etiqueta azul redonda; al medio los mates reales, grandes
-// (fotos de producto sobre blanco, que con "multiply" se funden con el
-// crema); abajo quiénes ya los eligieron, el llamado y la letra chica, entre
-// filetes finos. Lo que hay que leer va entre 230 y 1600: Instagram tapa
+// Arriba el título grande a la izquierda y, a su lado, el beneficio (el
+// grabado gratis) como un sello tipo lacre; al medio los mates reales,
+// grandes (fotos de producto sobre blanco, que con "multiply" se funden con
+// el crema); abajo, entre filetes finos, quiénes ya los eligieron, y el
+// llamado con una flecha y el sello de la marca. Lo que hay que leer va entre 230 y 1600: Instagram tapa
 // arriba el perfil y abajo la respuesta o el botón del anuncio.
 
 const margen = 80;
@@ -18,7 +18,8 @@ export const HistoriaEmpresas: React.FC<{
   readonly mates: string[][];
   readonly titulo: string[];
   readonly bajada: string;
-  // La etiqueta: arriba, grande y abajo.
+  // El sello del beneficio: la leyenda del anillo, grande al centro y arriba
+  // de lo grande.
   readonly etiqueta: [string, string, string];
   // Prueba social: clientes que ya regalaron Herencia, con su logo (el
   // archivo oficial, con permiso del cliente). Sin archivo, un recuadro marca
@@ -26,17 +27,7 @@ export const HistoriaEmpresas: React.FC<{
   readonly confianza: string;
   readonly logos: string[];
   readonly accion: string;
-  readonly letraChica: string;
-}> = ({
-  mates,
-  titulo,
-  bajada,
-  etiqueta,
-  confianza,
-  logos,
-  accion,
-  letraChica,
-}) => {
+}> = ({ mates, titulo, bajada, etiqueta, confianza, logos, accion }) => {
   const rotulo: React.CSSProperties = {
     fontFamily: fonts.sans,
     fontWeight: 500,
@@ -63,9 +54,9 @@ export const HistoriaEmpresas: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 235,
+          top: 240,
           left: margen,
-          fontSize: 124,
+          fontSize: 108,
           lineHeight: 0.96,
         }}
       >
@@ -73,14 +64,10 @@ export const HistoriaEmpresas: React.FC<{
           <div key={l}>{l}</div>
         ))}
       </div>
-      <Img
-        src={staticFile("logos/herencia-patria-sello-azul.png")}
-        style={{ position: "absolute", top: 240, right: margen, width: 120 }}
-      />
       <div
         style={{
           position: "absolute",
-          top: 490,
+          top: 478,
           left: margen,
           fontFamily: fonts.sans,
           fontWeight: 300,
@@ -89,41 +76,78 @@ export const HistoriaEmpresas: React.FC<{
       >
         {bajada}
       </div>
-      {/* El beneficio: una etiqueta redonda, inclinada, sobre los mates. */}
-      <div
+      {/* El beneficio: un sello azul al lado del título, como un lacre, con
+          la leyenda en el anillo y "gratis" grande al centro. Lejos de los
+          mates, para que no los tape. */}
+      <svg
+        viewBox="0 0 260 260"
         style={{
           position: "absolute",
-          top: 440,
-          right: 60,
-          width: 230,
-          height: 230,
-          borderRadius: "50%",
-          background: colors.azul,
-          color: colors.crema,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          transform: "rotate(-8deg)",
-          zIndex: 1,
+          top: 250,
+          right: 56,
+          width: 260,
+          height: 260,
+          transform: "rotate(-10deg)",
         }}
       >
-        <div style={rotulo}>{etiqueta[0]}</div>
-        <div style={{ fontSize: 72, lineHeight: 1, margin: "2px 0 6px" }}>
-          {etiqueta[1]}
-        </div>
-        <div style={{ fontFamily: fonts.sans, fontWeight: 300, fontSize: 26 }}>
+        <defs>
+          <path
+            id="anillo"
+            d="M 130,130 m -100,0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0"
+          />
+        </defs>
+        <circle cx={130} cy={130} r={128} fill={colors.azul} />
+        <circle
+          cx={130}
+          cy={130}
+          r={78}
+          fill="none"
+          stroke={colors.crema}
+          strokeWidth={1.5}
+          strokeDasharray="3 5"
+        />
+        <text
+          fill={colors.crema}
+          fontFamily={fonts.sans}
+          fontWeight={500}
+          fontSize={17}
+          style={{ textTransform: "uppercase" }}
+        >
+          <textPath href="#anillo" textLength={622} lengthAdjust="spacing">
+            {etiqueta[0]}
+          </textPath>
+        </text>
+        <text
+          x={130}
+          y={112}
+          textAnchor="middle"
+          fill={colors.crema}
+          fontFamily={fonts.sans}
+          fontWeight={500}
+          fontSize={18}
+          letterSpacing={3}
+          style={{ textTransform: "uppercase" }}
+        >
           {etiqueta[2]}
-        </div>
-      </div>
+        </text>
+        <text
+          x={130}
+          y={158}
+          textAnchor="middle"
+          fill={colors.crema}
+          fontFamily={fonts.serif}
+          fontSize={54}
+        >
+          {etiqueta[1]}
+        </text>
+      </svg>
       {/* Los mates, grandes: dos filas, la de atrás un poco más chica. */}
       {mates.map((fila, i) => (
         <div
           key={fila.join()}
           style={{
             position: "absolute",
-            top: i === 0 ? 615 : 915,
+            top: i === 0 ? 590 : 900,
             left: 0,
             right: 0,
             display: "flex",
@@ -187,28 +211,32 @@ export const HistoriaEmpresas: React.FC<{
         )}
       </div>
       <div style={{ ...filete, top: 1430 }} />
-      {/* El llamado: texto, no botón (el anuncio trae el suyo). */}
+      {/* El llamado: texto con una flecha fina, no botón (el anuncio trae
+          el suyo), y el sello de la marca al lado. */}
       <div
         style={{
           position: "absolute",
-          top: 1462,
+          top: 1458,
           left: margen,
-          fontSize: 58,
+          right: margen,
+          display: "flex",
+          alignItems: "center",
+          gap: 26,
         }}
       >
-        {accion}
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          top: 1545,
-          left: margen,
-          fontFamily: fonts.sans,
-          fontWeight: 300,
-          fontSize: 26,
-        }}
-      >
-        {letraChica}
+        <div style={{ fontSize: 72 }}>{accion}</div>
+        <svg width={110} height={24} viewBox="0 0 110 24">
+          <path
+            d="M 0 12 H 106 M 94 2 L 106 12 L 94 22"
+            fill="none"
+            stroke={colors.azul}
+            strokeWidth={2}
+          />
+        </svg>
+        <Img
+          src={staticFile("logos/herencia-patria-sello-azul.png")}
+          style={{ marginLeft: "auto", width: 110 }}
+        />
       </div>
     </AbsoluteFill>
   );

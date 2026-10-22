@@ -410,11 +410,14 @@ export const RemotionRoot: React.FC = () => {
           ],
           titulo: ["Regalos", "empresariales"],
           bajada: "Algo que se usa todos los días",
-          etiqueta: ["Grabado", "gratis", "con tu logo"],
+          etiqueta: [
+            "Con el logo de tu empresa · con el logo de tu empresa ·",
+            "gratis",
+            "Grabado",
+          ],
           confianza: "Ya nos eligieron",
           logos: [],
-          accion: "Cotizá tu pedido por mensaje",
-          letraChica: "Pedido mínimo: 25 unidades",
+          accion: "Cotizá tu pedido",
         }}
       />
       {/* Variante con el sello y la dedicatoria escrita.
