@@ -105,22 +105,32 @@ export const HistoriaEmpresas: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1580,
-          padding: "26px 54px",
-          borderRadius: 999,
-          background: colors.azul,
-          color: colors.crema,
-          fontFamily: fonts.acumin,
-          fontSize: 38,
-          letterSpacing: 1,
+          // Texto, no botón: va a publicitarse y un botón falso confunde.
+          top: 1590,
+          left: 0,
+          right: 0,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          fontFamily: fonts.serif,
+          fontSize: 50,
+          color: colors.azul,
         }}
       >
+        <div
+          style={{
+            width: 90,
+            height: 2,
+            background: colors.mostaza,
+            marginBottom: 22,
+          }}
+        />
         {accion}
       </div>
       <div
         style={{
           position: "absolute",
-          top: 1690,
+          top: 1700,
           fontFamily: fonts.serif,
           fontStyle: "italic",
           fontSize: 40,
