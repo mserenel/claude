@@ -410,7 +410,7 @@ export const RemotionRoot: React.FC = () => {
             ],
           ],
           titulo: ["Regalos", "empresariales"],
-          bajada: "Algo que se usa todos los días",
+          bajada: "Acompañá a tu cliente en cada momento del día",
           beneficio: "Grabado gratis",
           confianza: "Ya nos eligieron",
           logos: [
@@ -431,7 +431,7 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         defaultProps={{
           titulo: ["Regalos", "empresariales"],
-          bajada: "Algo que se usa todos los días",
+          bajada: "Acompañá a tu cliente en cada momento del día",
           heroe: "mate-boca-arriba.png",
           punto: [0.9, 0.36] as [number, number],
           anotacion: ["Acá va tu logo", "Grabado gratis"] as [string, string],
