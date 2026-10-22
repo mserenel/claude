@@ -112,16 +112,16 @@ export const HistoriaEmpresas: React.FC<{
           key={fila.join()}
           style={{
             position: "absolute",
-            top: i === 0 ? 590 : 900,
+            top: i === 0 ? 650 : 915,
             left: 0,
             right: 0,
             display: "flex",
             justifyContent: "center",
-            gap: i === 0 ? 20 : 0,
+            gap: i === 0 ? 50 : 30,
           }}
         >
           {fila.map((src) => {
-            const lado = i === 0 ? 390 : 420;
+            const lado = i === 0 ? 330 : 360;
             return (
               <Img
                 key={src}
