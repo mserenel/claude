@@ -23,6 +23,7 @@ import { PortadaFeed } from "./HerenciaPatria/PortadaFeed";
 import { Historia } from "./HerenciaPatria/Historia";
 import { HistoriaDedicada } from "./HerenciaPatria/HistoriaDedicada";
 import { HistoriaEmpresas } from "./HerenciaPatria/HistoriaEmpresas";
+import { HistoriaEmpresasLogo } from "./HerenciaPatria/HistoriaEmpresasLogo";
 
 // Cada <Composition> aparece en la barra lateral del Studio.
 
@@ -418,6 +419,36 @@ export const RemotionRoot: React.FC = () => {
             ["clientes/simplicity.png", 30],
             ["clientes/get-the-look.png", 58],
           ],
+          accion: "Cotizá tu pedido",
+        }}
+      />
+      {/* Pedidos empresariales, con el lugar del logo señalado en el mate.
+          npx remotion still HP-Historia-Empresas-Logo entregas/historia-empresas-fin-de-ano-b.jpg */}
+      <Still
+        id="HP-Historia-Empresas-Logo"
+        component={HistoriaEmpresasLogo}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          titulo: ["Regalos", "empresariales"],
+          bajada: "Algo que se usa todos los días",
+          heroe: "producto/mate-algarrobo-blanco.jpg",
+          punto: [0.38, 0.24] as [number, number],
+          anotacion: ["Acá va tu logo", "Grabado gratis"] as [string, string],
+          otros: [
+            "producto/mate-negro-dorado-flor-de-lis.jpg",
+            "producto/mate-madera-pintado-blanco.jpg",
+            "producto/mate-bordo-cuero-cincelado.jpg",
+            "producto/mate-algarrobo-imperial.jpg",
+            "producto/mate-negro-guarda-pampa.jpg",
+          ],
+          confianza: "Ya nos eligieron",
+          logos: [
+            ["clientes/farmacity.png", 46],
+            ["clientes/the-food-market.png", 76],
+            ["clientes/simplicity.png", 30],
+            ["clientes/get-the-look.png", 58],
+          ] as [string, number][],
           accion: "Cotizá tu pedido",
         }}
       />
