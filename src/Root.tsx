@@ -443,7 +443,7 @@ export const RemotionRoot: React.FC = () => {
             "producto/mate-calabaza-simple.jpg",
             "producto/mate-calabaza-repujado.jpg",
             "producto/mate-negro-dorado-flor-de-lis.jpg",
-            "producto/mate-madera-pintado-blanco.jpg",
+            "producto/mate-algarrobo-ranchero.jpg",
             "producto/mate-algarrobo-imperial.jpg",
             "producto/mate-algarrobo-blanco.jpg",
           ],
