@@ -432,10 +432,11 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           titulo: ["Regalos", "empresariales"],
           bajada: "Algo que se usa todos los días",
-          heroe: "producto/mate-algarrobo-blanco.jpg",
-          punto: [0.38, 0.24] as [number, number],
+          heroe: "mate-boca-arriba.png",
+          punto: [0.9, 0.36] as [number, number],
           anotacion: ["Acá va tu logo", "Grabado gratis"] as [string, string],
           otros: [
+            "producto/mate-algarrobo-blanco.jpg",
             "producto/mate-negro-dorado-flor-de-lis.jpg",
             "producto/mate-madera-pintado-blanco.jpg",
             "producto/mate-bordo-cuero-cincelado.jpg",

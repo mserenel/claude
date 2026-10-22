@@ -3,7 +3,7 @@ import { colors, fonts } from "./brand";
 
 // Historia de Instagram (1080x1920) para los pedidos empresariales de fin
 // de año que muestra el beneficio en el producto: un mate grande y una línea
-// que señala el lugar de la virola donde va el logo de la empresa ("acá va
+// que señala el lugar donde va el logo de la empresa, el aro de la boca ("acá va
 // tu logo, grabado gratis"). Al lado, más chicos, otros modelos; abajo
 // quiénes ya los eligieron y el llamado con una flecha hacia abajo.
 // Crema y azul, Addington y Helvetica Neue, como el resto de la marca. Lo que
@@ -15,8 +15,9 @@ const margen = 80;
 export const HistoriaEmpresasLogo: React.FC<{
   readonly titulo: string[];
   readonly bajada: string;
-  // El mate grande (foto de producto cuadrada sobre blanco) y el punto de la
-  // virola donde va el logo, en fracción del ancho y del alto de la foto.
+  // El mate grande, visto desde arriba y recortado en círculo justo en el
+  // borde del aro (la foto real, sin el fondo), y el punto del aro donde va
+  // el logo, en fracción del ancho y del alto de la foto.
   readonly heroe: string;
   readonly punto: [x: number, y: number];
   readonly anotacion: [string, string];
@@ -51,12 +52,12 @@ export const HistoriaEmpresasLogo: React.FC<{
     opacity: 0.25,
   };
   // El mate grande, a la izquierda.
-  const lado = 760;
-  const x0 = -70;
-  const y0 = 530;
+  const lado = 540;
+  const x0 = 70;
+  const y0 = 590;
   const px = x0 + punto[0] * lado;
   const py = y0 + punto[1] * lado;
-  const xTexto = 610;
+  const xTexto = 670;
   // Los otros modelos: una grilla chica a la derecha, bajo la anotación.
   const chico = 175;
   return (
@@ -104,7 +105,7 @@ export const HistoriaEmpresasLogo: React.FC<{
           left: x0,
           width: lado,
           height: lado,
-          mixBlendMode: "multiply",
+          filter: "drop-shadow(0 18px 24px rgba(20,35,59,0.28))",
         }}
       />
       {/* La anotación: un punto sobre la virola, una línea fina y el texto. */}
@@ -146,8 +147,8 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: py + 120,
-          left: xTexto - 30,
+          top: py + 110,
+          left: xTexto - 60,
           width: 3 * chico * 0.78,
           display: "flex",
           flexWrap: "wrap",
