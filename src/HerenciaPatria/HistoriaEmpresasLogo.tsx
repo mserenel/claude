@@ -14,7 +14,7 @@ const margen = 80;
 
 export const HistoriaEmpresasLogo: React.FC<{
   readonly titulo: string[];
-  readonly bajada: string;
+  readonly bajada: string[];
   // El mate grande, visto desde arriba y recortado en círculo justo en el
   // borde del aro (la foto real, sin el fondo), y lo que va grabado en el
   // aro: una palabra arriba y otra abajo.
@@ -43,7 +43,7 @@ export const HistoriaEmpresasLogo: React.FC<{
   // El mate grande, a la izquierda.
   const lado = 520;
   const x0 = 40;
-  const y0 = 590;
+  const y0 = 620;
   // Los otros modelos: una grilla chica a la derecha del aro.
   const chico = 200;
   const xGrilla = 570;
@@ -75,14 +75,17 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 478,
+          top: 472,
           left: margen,
           fontFamily: fonts.sans,
           fontWeight: 300,
-          fontSize: 40,
+          fontSize: 38,
+          lineHeight: 1.25,
         }}
       >
-        {bajada}
+        {bajada.map((l) => (
+          <div key={l}>{l}</div>
+        ))}
       </div>
       <Img
         src={staticFile(heroe)}
