@@ -47,7 +47,7 @@ export const HistoriaEmpresasLogo: React.FC<{
   // Los otros modelos: una grilla chica a la derecha del aro.
   // Alto de los mates chicos por fila: los de calabaza (arriba) son apenas
   // más grandes que los de algarrobo (abajo), como en la realidad.
-  const altoFila = [162, 148];
+  const altoFila = [182, 148];
   // Los recortes traen debajo de la base su sombra de contacto: 24 px más
   // cada 700 de mate (ver tools/recorte_mate.py).
   const conPie = 724 / 700;
