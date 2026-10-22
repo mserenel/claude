@@ -3,7 +3,7 @@ import { colors, fonts } from "./brand";
 
 // Historia de Instagram (1080x1920) para los pedidos empresariales de fin
 // de año, pensada como anuncio: qué es (el título), los mates reales como
-// protagonistas, un beneficio bien visible en una franja (el grabado gratis),
+// protagonistas, el beneficio (el grabado gratis) en un bloque azul hasta abajo,
 // quiénes ya los eligieron y un llamado corto, con la letra chica al pie. Una sola familia de
 // letra (Addington) para que no se vea recargada. En los anuncios de
 // historias Meta tapa ~250 px arriba y ~380 px abajo (su botón), así que todo
@@ -44,15 +44,15 @@ export const HistoriaEmpresas: React.FC<{
     >
       <Img
         src={staticFile("logos/herencia-patria-sello-azul.png")}
-        style={{ position: "absolute", top: 258, width: 120 }}
+        style={{ position: "absolute", top: 268, width: 130 }}
       />
-      <div style={{ position: "absolute", top: 398, fontSize: 84 }}>
+      <div style={{ position: "absolute", top: 425, fontSize: 86 }}>
         {titulo}
       </div>
       <div
         style={{
           position: "absolute",
-          top: 500,
+          top: 528,
           fontSize: 42,
           color: colors.madera,
         }}
@@ -65,7 +65,7 @@ export const HistoriaEmpresas: React.FC<{
           key={fila.join()}
           style={{
             position: "absolute",
-            top: i === 0 ? 580 : 835,
+            top: i === 0 ? 600 : 850,
             left: 0,
             right: 0,
             display: "flex",
@@ -74,7 +74,7 @@ export const HistoriaEmpresas: React.FC<{
           }}
         >
           {fila.map((src) => {
-            const lado = i === 0 ? 300 : 330;
+            const lado = i === 0 ? 310 : 340;
             return (
               <Img
                 key={src}
@@ -91,27 +91,11 @@ export const HistoriaEmpresas: React.FC<{
           })}
         </div>
       ))}
-      {/* El beneficio: una franja de lado a lado, no un botón. */}
       <div
         style={{
           position: "absolute",
-          top: 1132,
-          left: 0,
-          right: 0,
-          padding: "26px 0 30px",
-          background: colors.azul,
-          color: colors.crema,
-          fontSize: 58,
-          fontWeight: 600,
-        }}
-      >
-        {beneficio}
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          top: 1278,
-          fontSize: 26,
+          top: 1188,
+          fontSize: 24,
           letterSpacing: 4,
           textTransform: "uppercase",
           color: colors.madera,
@@ -122,8 +106,8 @@ export const HistoriaEmpresas: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1322,
-          height: 76,
+          top: 1230,
+          height: 70,
           display: "flex",
           gap: 50,
           alignItems: "center",
@@ -131,18 +115,18 @@ export const HistoriaEmpresas: React.FC<{
       >
         {logos.length > 0 ? (
           logos.map((l) => (
-            <Img key={l} src={staticFile(l)} style={{ height: 64 }} />
+            <Img key={l} src={staticFile(l)} style={{ height: 60 }} />
           ))
         ) : (
           <div
             style={{
-              width: 300,
-              height: 76,
+              width: 280,
+              height: 70,
               border: `2px dashed ${colors.madera}`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 26,
+              fontSize: 24,
               color: colors.madera,
             }}
           >
@@ -150,13 +134,37 @@ export const HistoriaEmpresas: React.FC<{
           </div>
         )}
       </div>
-      <div style={{ position: "absolute", top: 1424, fontSize: 46 }}>
-        {accion}
-      </div>
+      {/* Bloque azul hasta abajo: el beneficio, el llamado y la letra chica.
+          Llena el pie (donde en el anuncio va el botón de Meta) y no parece
+          un botón. */}
       <div
-        style={{ position: "absolute", top: 1490, fontSize: 28, opacity: 0.6 }}
+        style={{
+          position: "absolute",
+          top: 1335,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: colors.azul,
+          color: colors.crema,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          paddingTop: 26,
+        }}
       >
-        {letraChica}
+        <div style={{ fontSize: 64, fontWeight: 600 }}>{beneficio}</div>
+        <div
+          style={{
+            marginTop: 14,
+            width: 80,
+            height: 2,
+            background: colors.mostaza,
+          }}
+        />
+        <div style={{ marginTop: 14, fontSize: 40 }}>{accion}</div>
+        <div style={{ marginTop: 6, fontSize: 24, opacity: 0.7 }}>
+          {letraChica}
+        </div>
       </div>
     </AbsoluteFill>
   );
