@@ -168,19 +168,20 @@ export const HistoriaEmpresasLogo: React.FC<{
             <div
               style={{
                 position: "absolute",
-                top: apoyo - 5,
+                top: apoyo - 6,
                 left: xGrilla + 14,
                 right: 34,
                 boxShadow: "0 10px 14px -6px rgba(20,35,59,0.35)",
               }}
             >
-              {madera(10, 0, 1.12)}
+              {madera(12, 0, 1.12)}
               {madera(15, 40, 0.72)}
             </div>
             <div
               style={{
                 position: "absolute",
-                top: apoyo - altoChico,
+                // La base apenas metida en la cara de arriba de la tabla.
+                top: apoyo + 4 - altoChico,
                 left: xGrilla + 14,
                 right: 34,
                 height: altoChico,
@@ -196,7 +197,7 @@ export const HistoriaEmpresasLogo: React.FC<{
                       position: "absolute",
                       left: "8%",
                       right: "8%",
-                      bottom: -5,
+                      bottom: -4,
                       height: 12,
                       borderRadius: "50%",
                       background: "rgba(25,18,12,0.55)",
@@ -205,7 +206,11 @@ export const HistoriaEmpresasLogo: React.FC<{
                   />
                   <Img
                     src={staticFile(src)}
-                    style={{ position: "relative", height: altoChico }}
+                    style={{
+                      position: "relative",
+                      display: "block",
+                      height: altoChico,
+                    }}
                   />
                 </div>
               ))}
