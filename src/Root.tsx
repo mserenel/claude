@@ -441,7 +441,7 @@ export const RemotionRoot: React.FC = () => {
           // los de algarrobo (ranchero, imperial e imperial con base).
           otros: [
             "producto/mate-calabaza-simple.jpg",
-            "producto/mate-bordo-cuero-cincelado.jpg",
+            "producto/mate-calabaza-repujado.jpg",
             "producto/mate-negro-dorado-flor-de-lis.jpg",
             "producto/mate-madera-pintado-blanco.jpg",
             "producto/mate-algarrobo-imperial.jpg",
