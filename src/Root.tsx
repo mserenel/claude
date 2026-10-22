@@ -433,8 +433,7 @@ export const RemotionRoot: React.FC = () => {
           titulo: ["Regalos", "empresariales"],
           bajada: "Acompañá a tu cliente en cada momento del día",
           heroe: "mate-boca-arriba.png",
-          punto: [0.9, 0.36] as [number, number],
-          anotacion: "Grabado gratis",
+          grabado: "Grabado gratis",
           // Arriba los de calabaza (simple, repujado y base bolita); abajo
           // los de algarrobo (ranchero, imperial e imperial con base).
           otros: [

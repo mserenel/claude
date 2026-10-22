@@ -2,9 +2,9 @@ import { AbsoluteFill, Img, staticFile } from "remotion";
 import { colors, fonts } from "./brand";
 
 // Historia de Instagram (1080x1920) para los pedidos empresariales de fin
-// de año que muestra el beneficio en el producto: un mate grande y una línea
-// que señala el lugar donde va el logo de la empresa, el aro de la boca
-// ("grabado gratis"). Al lado, más chicos, otros modelos; abajo
+// de año que muestra el beneficio en el producto: el aro de la boca de un
+// mate, grande, con "grabado gratis" grabado en el metal, justo donde va el
+// logo de la empresa. Al lado, más chicos, otros modelos; abajo
 // quiénes ya los eligieron y el llamado con una flecha hacia abajo.
 // Crema y azul, Addington y Helvetica Neue, como el resto de la marca. Lo que
 // hay que leer va entre 230 y 1620: Instagram tapa arriba el perfil y abajo
@@ -16,26 +16,15 @@ export const HistoriaEmpresasLogo: React.FC<{
   readonly titulo: string[];
   readonly bajada: string;
   // El mate grande, visto desde arriba y recortado en círculo justo en el
-  // borde del aro (la foto real, sin el fondo), y el punto del aro donde va
-  // el logo, en fracción del ancho y del alto de la foto.
+  // borde del aro (la foto real, sin el fondo), y lo que va grabado en el
+  // aro, en curva por arriba.
   readonly heroe: string;
-  readonly punto: [x: number, y: number];
-  readonly anotacion: string;
+  readonly grabado: string;
   readonly otros: string[];
   readonly confianza: string;
   readonly logos: [archivo: string, alto: number][];
   readonly accion: string;
-}> = ({
-  titulo,
-  bajada,
-  heroe,
-  punto,
-  anotacion,
-  otros,
-  confianza,
-  logos,
-  accion,
-}) => {
+}> = ({ titulo, bajada, heroe, grabado, otros, confianza, logos, accion }) => {
   const rotulo: React.CSSProperties = {
     fontFamily: fonts.sans,
     fontWeight: 500,
@@ -52,14 +41,12 @@ export const HistoriaEmpresasLogo: React.FC<{
     opacity: 0.25,
   };
   // El mate grande, a la izquierda.
-  const lado = 450;
-  const x0 = 60;
-  const y0 = 600;
-  const px = x0 + punto[0] * lado;
-  const py = y0 + punto[1] * lado;
-  const xTexto = 560;
-  // Los otros modelos: una grilla chica a la derecha, bajo la anotación.
-  const chico = 215;
+  const lado = 520;
+  const x0 = 40;
+  const y0 = 590;
+  // Los otros modelos: una grilla chica a la derecha del aro.
+  const chico = 200;
+  const xGrilla = 570;
   return (
     <AbsoluteFill
       style={{
@@ -108,46 +95,50 @@ export const HistoriaEmpresasLogo: React.FC<{
           filter: "drop-shadow(0 18px 24px rgba(20,35,59,0.28))",
         }}
       />
-      {/* La anotación: un punto sobre la virola, una línea fina y el texto. */}
+      {/* El grabado, en curva por arriba del aro: letras oscuras con un
+          brillo apenas corrido hacia abajo, como talladas en el metal. Las
+          coordenadas son las de la foto (948 px). */}
       <svg
-        style={{ position: "absolute", top: 0, left: 0 }}
-        width={1080}
-        height={1920}
-      >
-        <circle
-          cx={px}
-          cy={py}
-          r={13}
-          fill="none"
-          stroke={colors.azul}
-          strokeWidth={3}
-        />
-        <circle cx={px} cy={py} r={4} fill={colors.azul} />
-        <path
-          d={`M ${px + 13} ${py} H ${xTexto - 24}`}
-          stroke={colors.azul}
-          strokeWidth={2}
-        />
-      </svg>
-      <div
+        viewBox="0 0 948 948"
         style={{
           position: "absolute",
-          top: py - 36,
-          left: xTexto,
-          right: 60,
+          top: y0,
+          left: x0,
+          width: lado,
+          height: lado,
         }}
       >
-        <div style={{ fontSize: 64, lineHeight: 1 }}>{anotacion}</div>
-      </div>
+        <defs>
+          <path id="arcoGrabado" d="M 98.2 368.6 A 388 388 0 0 1 847.8 368.6" />
+        </defs>
+        {[
+          { dy: 3, fill: "rgba(255,255,255,0.75)" },
+          { dy: 0, fill: "rgba(28,26,25,0.92)" },
+        ].map(({ dy, fill }) => (
+          <text
+            key={fill}
+            transform={`translate(0 ${dy})`}
+            fill={fill}
+            fontFamily={fonts.serif}
+            fontSize={66}
+            letterSpacing={9}
+            textAnchor="middle"
+          >
+            <textPath href="#arcoGrabado" startOffset="50%">
+              {grabado.toUpperCase()}
+            </textPath>
+          </text>
+        ))}
+      </svg>
       {/* Los otros modelos: dos filas de tres. */}
       {[otros.slice(0, 3), otros.slice(3)].map((fila, i) => (
         <div
           key={fila.join()}
           style={{
             position: "absolute",
-            top: py + 60 + i * chico * 0.86,
-            left: xTexto - 60,
-            right: 40,
+            top: y0 + lado / 2 - chico * 0.9 + i * chico * 0.86,
+            left: xGrilla,
+            right: 30,
             display: "flex",
             justifyContent: "center",
           }}
