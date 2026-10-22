@@ -22,6 +22,7 @@ import { Portada } from "./HerenciaPatria/Portada";
 import { PortadaFeed } from "./HerenciaPatria/PortadaFeed";
 import { Historia } from "./HerenciaPatria/Historia";
 import { HistoriaDedicada } from "./HerenciaPatria/HistoriaDedicada";
+import { HistoriaEmpresas } from "./HerenciaPatria/HistoriaEmpresas";
 
 // Cada <Composition> aparece en la barra lateral del Studio.
 
@@ -385,6 +386,37 @@ export const RemotionRoot: React.FC = () => {
           estilo: "azul" as const,
           frase: ["mate personalizado", "para Lucas Ronier 🇧🇷"],
           grabado: "LR11 · Mãe · Pai · Irmãos",
+        }}
+      />
+      {/* Pedidos empresariales de fin de año.
+          npx remotion still HP-Historia-Empresas entregas/historia-empresas-fin-de-ano.jpg */}
+      <Still
+        id="HP-Historia-Empresas"
+        component={HistoriaEmpresas}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          mates: [
+            [
+              "producto/mate-madera-liso.jpg",
+              "producto/mate-negro-dorado-flor-de-lis.jpg",
+              "producto/mate-algarrobo-blanco.jpg",
+            ],
+            [
+              "producto/mate-negro-cincelado-patas.jpg",
+              "producto/mate-bordo-cuero-cincelado.jpg",
+              "producto/mate-negro-guarda-pampa.jpg",
+            ],
+          ],
+          titulo: ["Regalos", "empresariales"],
+          bajada: "para cerrar el año",
+          puntos: [
+            "Mates hechos a mano en Argentina",
+            "Grabados con el logo o el nombre de tu empresa",
+            "Pedidos por cantidad",
+          ],
+          accion: "Escribinos y cotizá tu pedido",
+          nota: "reservá con tiempo para las fiestas",
         }}
       />
       {/* Variante con el sello y la dedicatoria escrita.
