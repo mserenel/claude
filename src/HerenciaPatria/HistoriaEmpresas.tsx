@@ -22,10 +22,10 @@ export const HistoriaEmpresas: React.FC<{
   // de lo grande.
   readonly etiqueta: [string, string, string];
   // Prueba social: clientes que ya regalaron Herencia, con su logo (el
-  // archivo oficial, con permiso del cliente). Sin archivo, un recuadro marca
-  // el lugar: esa versión no es para publicar.
+  // archivo oficial, con permiso del cliente) y el alto al que va cada uno,
+  // para que pesen parecido.
   readonly confianza: string;
-  readonly logos: string[];
+  readonly logos: [archivo: string, alto: number][];
   readonly accion: string;
 }> = ({ mates, titulo, bajada, etiqueta, confianza, logos, accion }) => {
   const rotulo: React.CSSProperties = {
@@ -173,50 +173,48 @@ export const HistoriaEmpresas: React.FC<{
           })}
         </div>
       ))}
-      <div style={{ ...filete, top: 1310 }} />
-      {/* Quiénes ya los eligieron. */}
+      <div style={{ ...filete, top: 1300 }} />
+      {/* Quiénes ya los eligieron: los logos en el azul de la marca, para
+          que se vean parejos y no sumen colores. */}
       <div
         style={{
           position: "absolute",
-          top: 1336,
+          top: 1324,
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          ...rotulo,
+        }}
+      >
+        {confianza}
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          top: 1366,
           left: margen,
           right: margen,
-          height: 70,
+          height: 80,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
         }}
       >
-        <div style={rotulo}>{confianza}</div>
-        {logos.length > 0 ? (
-          logos.map((l) => (
-            <Img key={l} src={staticFile(l)} style={{ height: 56 }} />
-          ))
-        ) : (
-          <div
-            style={{
-              width: 260,
-              height: 64,
-              border: `2px dashed ${colors.azul}`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: fonts.sans,
-              fontSize: 22,
-              opacity: 0.6,
-            }}
-          >
-            logo del cliente
-          </div>
-        )}
+        {logos.map(([archivo, alto]) => (
+          <Img
+            key={archivo}
+            src={staticFile(archivo)}
+            style={{ height: alto }}
+          />
+        ))}
       </div>
-      <div style={{ ...filete, top: 1430 }} />
+      <div style={{ ...filete, top: 1468 }} />
       {/* El llamado: texto con una flecha fina, no botón (el anuncio trae
           el suyo), y el sello de la marca al lado. */}
       <div
         style={{
           position: "absolute",
-          top: 1458,
+          top: 1494,
           left: margen,
           right: margen,
           display: "flex",

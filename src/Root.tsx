@@ -416,7 +416,12 @@ export const RemotionRoot: React.FC = () => {
             "Grabado",
           ],
           confianza: "Ya nos eligieron",
-          logos: [],
+          logos: [
+            ["clientes/farmacity.png", 46],
+            ["clientes/the-food-market.png", 76],
+            ["clientes/implicit.png", 60],
+            ["clientes/get-the-look.png", 58],
+          ],
           accion: "Cotizá tu pedido",
         }}
       />
