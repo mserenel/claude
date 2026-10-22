@@ -7,6 +7,8 @@ Uso:
 - MASCARA: recorte del mate (rembg, birefnet-general).
 - CUERPO_Y0..CUERPO_Y1: filas del cuerpo (cuero o madera). El metal (virola,
   chapas, base) queda fuera y no se toca: ni brillo ni color.
+- En todo el mate (metal incluido): sin brillo, los destellos bajan y las
+  altas luces se comprimen; el color no cambia.
 - En el cuerpo:
   * se bajan los brillos puntuales (destellos del barniz o del cuero): lo que
     sobresale de la luz de alrededor se acerca a ella, sin aplanar la forma;
@@ -71,6 +73,18 @@ def main():
     L = L - exceso * peso * 0.85
     A = A * (1 - peso) + suave(A, mm, ancho * 0.03) * peso
     B = B * (1 - peso) + suave(B, mm, ancho * 0.03) * peso
+
+    # Sin brillo, en todo el mate (metal incluido): los destellos que
+    # sobresalen se bajan y las altas luces se comprimen. Sólo la luz (L);
+    # el color de cada material queda.
+    todo = adentro
+    cerca2 = suave(L, mm, ancho * 0.02)
+    exceso2 = L - cerca2
+    peso2 = np.clip((exceso2 - 4) / 16, 0, 1) * todo
+    L = L - exceso2 * cv2.GaussianBlur(peso2, (0, 0), 1.2) * 0.7
+    hombro = 140.0
+    alto_ = L > hombro
+    L = np.where(alto_, hombro + (L - hombro) * (1 - 0.55 * todo), L)
 
     # Luz pareja: la variación grande (un costado más iluminado) a la mitad.
     lejos = suave(L, mm * cuerpo + 1e-3, ancho * 0.18)
