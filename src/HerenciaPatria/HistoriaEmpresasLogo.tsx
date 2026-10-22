@@ -45,7 +45,9 @@ export const HistoriaEmpresasLogo: React.FC<{
   const x0 = 40;
   const y0 = 620;
   // Los otros modelos: una grilla chica a la derecha del aro.
-  const altoChico = 150;
+  // Alto de los mates chicos por fila: los de calabaza (arriba) son apenas
+  // más grandes que los de algarrobo (abajo), como en la realidad.
+  const altoFila = [162, 148];
   // Los recortes traen debajo de la base su sombra de contacto: 24 px más
   // cada 700 de mate (ver tools/recorte_mate.py).
   const conPie = 724 / 700;
@@ -154,6 +156,7 @@ export const HistoriaEmpresasLogo: React.FC<{
           sobre la cara de arriba de la tabla. */}
       {[otros.slice(0, 3), otros.slice(3)].map((fila, i) => {
         const apoyo = y0 + lado / 2 - 30 + i * 205;
+        const altoChico = altoFila[i];
         const madera = (alto: number, desde: number, luz: number) => (
           <div style={{ height: alto, overflow: "hidden" }}>
             <Img
