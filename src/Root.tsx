@@ -408,9 +408,11 @@ export const RemotionRoot: React.FC = () => {
               "producto/mate-negro-guarda-pampa.jpg",
             ],
           ],
-          antetitulo: "Regalos empresariales · fin de año",
-          titulo: ["Regalá algo que se usa", "todos los días"],
+          titulo: "Regalos empresariales",
+          bajada: "Algo que se usa todos los días",
           beneficio: "Tu logo grabado gratis",
+          confianza: "Empresas que ya confiaron en nosotros",
+          logos: [],
           accion: "Cotizá tu pedido por mensaje",
           letraChica: "Pedido mínimo: 25 unidades",
         }}
