@@ -5,17 +5,31 @@ import { colors, fonts } from "./brand";
 // de año, sólo con letras de Herencia (Addington y Acumin; la Sketcha es la
 // de Don Patricio): el sello azul arriba, el título, una fila de mates reales (las
 // fotos de producto sobre blanco, que con "multiply" se funden con el
-// crema) y abajo qué incluye y cómo pedir. Instagram tapa ~200 px arriba y
-// ~180 px abajo: todo va entre 230 y 1740.
+// crema) y abajo qué incluye y cómo pedir. Va a publicitarse: en los
+// anuncios de historias Meta tapa ~250 px arriba y ~380 px abajo (el botón
+// del anuncio), así que todo va entre 250 y 1540.
 
 export const HistoriaEmpresas: React.FC<{
   readonly mates: string[][];
   readonly titulo: string[];
   readonly bajada: string;
-  readonly puntos: string[];
+  readonly frase: string[];
+  readonly destacado: string;
+  readonly detalle: string;
   readonly accion: string;
   readonly nota: string;
-}> = ({ mates, titulo, bajada, puntos, accion, nota }) => {
+  readonly letraChica: string;
+}> = ({
+  mates,
+  titulo,
+  bajada,
+  frase,
+  destacado,
+  detalle,
+  accion,
+  nota,
+  letraChica,
+}) => {
   return (
     <AbsoluteFill
       style={{
@@ -26,16 +40,16 @@ export const HistoriaEmpresas: React.FC<{
     >
       <Img
         src={staticFile("logos/herencia-patria-sello-azul.png")}
-        style={{ position: "absolute", top: 220, width: 230 }}
+        style={{ position: "absolute", top: 250, width: 160 }}
       />
       <div
         style={{
           position: "absolute",
-          top: 470,
+          top: 430,
           left: 70,
           right: 70,
           fontFamily: fonts.serif,
-          fontSize: 92,
+          fontSize: 80,
           lineHeight: 1.02,
           color: colors.azul,
         }}
@@ -47,7 +61,7 @@ export const HistoriaEmpresas: React.FC<{
           style={{
             marginTop: 18,
             fontStyle: "italic",
-            fontSize: 58,
+            fontSize: 52,
             color: colors.madera,
           }}
         >
@@ -60,7 +74,7 @@ export const HistoriaEmpresas: React.FC<{
           key={fila.join()}
           style={{
             position: "absolute",
-            top: i === 0 ? 760 : 1010,
+            top: i === 0 ? 685 : 885,
             left: 0,
             right: 0,
             display: "flex",
@@ -69,7 +83,7 @@ export const HistoriaEmpresas: React.FC<{
           }}
         >
           {fila.map((src) => {
-            const lado = i === 0 ? 300 : 340;
+            const lado = i === 0 ? 250 : 280;
             return (
               <Img
                 key={src}
@@ -86,58 +100,83 @@ export const HistoriaEmpresas: React.FC<{
           })}
         </div>
       ))}
+      {/* Abajo, de corrido: la frase, el grabado gratis como sello de
+          texto (no botón: va a publicitarse), cómo pedir y la letra chica. */}
       <div
         style={{
           position: "absolute",
-          top: 1350,
-          left: 90,
-          right: 90,
-          fontFamily: fonts.acumin,
-          fontSize: 38,
-          lineHeight: 1.4,
-          color: colors.azul,
-        }}
-      >
-        {puntos.map((p) => (
-          <div key={p}>{p}</div>
-        ))}
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          // Texto, no botón: va a publicitarse y un botón falso confunde.
-          top: 1590,
-          left: 0,
-          right: 0,
+          top: 1165,
+          left: 80,
+          right: 80,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          fontFamily: fonts.serif,
-          fontSize: 50,
           color: colors.azul,
         }}
       >
         <div
+          style={{ fontFamily: fonts.acumin, fontSize: 34, lineHeight: 1.35 }}
+        >
+          {frase.map((l) => (
+            <div key={l}>{l}</div>
+          ))}
+        </div>
+        <div
           style={{
+            marginTop: 20,
+            fontFamily: fonts.acumin,
+            fontWeight: 600,
+            fontSize: 34,
+            letterSpacing: 6,
+            textTransform: "uppercase",
+            color: colors.madera,
+          }}
+        >
+          {destacado}
+        </div>
+        <div
+          style={{
+            marginTop: 4,
+            fontFamily: fonts.serif,
+            fontStyle: "italic",
+            fontSize: 34,
+            color: colors.madera,
+          }}
+        >
+          {detalle}
+        </div>
+        <div
+          style={{
+            marginTop: 22,
             width: 90,
             height: 2,
             background: colors.mostaza,
-            marginBottom: 22,
           }}
         />
-        {accion}
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          top: 1700,
-          fontFamily: fonts.serif,
-          fontStyle: "italic",
-          fontSize: 40,
-          color: colors.madera,
-        }}
-      >
-        {nota}
+        <div style={{ marginTop: 14, fontFamily: fonts.serif, fontSize: 46 }}>
+          {accion}
+        </div>
+        <div
+          style={{
+            marginTop: 6,
+            fontFamily: fonts.serif,
+            fontStyle: "italic",
+            fontSize: 34,
+            color: colors.madera,
+          }}
+        >
+          {nota}
+        </div>
+        <div
+          style={{
+            marginTop: 8,
+            fontFamily: fonts.acumin,
+            fontSize: 24,
+            opacity: 0.7,
+          }}
+        >
+          {letraChica}
+        </div>
       </div>
     </AbsoluteFill>
   );
