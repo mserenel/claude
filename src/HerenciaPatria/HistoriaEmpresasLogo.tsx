@@ -3,8 +3,8 @@ import { colors, fonts } from "./brand";
 
 // Historia de Instagram (1080x1920) para los pedidos empresariales de fin
 // de año que muestra el beneficio en el producto: un mate grande y una línea
-// que señala el lugar donde va el logo de la empresa, el aro de la boca ("acá va
-// tu logo, grabado gratis"). Al lado, más chicos, otros modelos; abajo
+// que señala el lugar donde va el logo de la empresa, el aro de la boca
+// ("grabado gratis"). Al lado, más chicos, otros modelos; abajo
 // quiénes ya los eligieron y el llamado con una flecha hacia abajo.
 // Crema y azul, Addington y Helvetica Neue, como el resto de la marca. Lo que
 // hay que leer va entre 230 y 1620: Instagram tapa arriba el perfil y abajo
@@ -20,7 +20,7 @@ export const HistoriaEmpresasLogo: React.FC<{
   // el logo, en fracción del ancho y del alto de la foto.
   readonly heroe: string;
   readonly punto: [x: number, y: number];
-  readonly anotacion: [string, string];
+  readonly anotacion: string;
   readonly otros: string[];
   readonly confianza: string;
   readonly logos: [archivo: string, alto: number][];
@@ -132,17 +132,12 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: py - 46,
+          top: py - 64,
           left: xTexto,
           right: 60,
         }}
       >
-        <div style={{ fontSize: 56, lineHeight: 1 }}>{anotacion[0]}</div>
-        <div
-          style={{ ...rotulo, fontWeight: 700, fontSize: 26, marginTop: 14 }}
-        >
-          {anotacion[1]}
-        </div>
+        <div style={{ fontSize: 64, lineHeight: 1 }}>{anotacion}</div>
       </div>
       <div
         style={{

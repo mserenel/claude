@@ -434,14 +434,16 @@ export const RemotionRoot: React.FC = () => {
           bajada: "Acompañá a tu cliente en cada momento del día",
           heroe: "mate-boca-arriba.png",
           punto: [0.9, 0.36] as [number, number],
-          anotacion: ["Acá va tu logo", "Grabado gratis"] as [string, string],
+          anotacion: "Grabado gratis",
+          // Arriba los de calabaza (simple, repujado y base bolita); abajo
+          // los de algarrobo (ranchero, imperial e imperial con base).
           otros: [
-            "producto/mate-algarrobo-blanco.jpg",
+            "producto/mate-negro-guarda-pampa.jpg",
+            "producto/mate-bordo-cuero-cincelado.jpg",
             "producto/mate-negro-dorado-flor-de-lis.jpg",
             "producto/mate-madera-pintado-blanco.jpg",
-            "producto/mate-bordo-cuero-cincelado.jpg",
             "producto/mate-algarrobo-imperial.jpg",
-            "producto/mate-negro-guarda-pampa.jpg",
+            "producto/mate-algarrobo-blanco.jpg",
           ],
           confianza: "Ya nos eligieron",
           logos: [
