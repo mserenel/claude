@@ -89,12 +89,12 @@ export const HistoriaEmpresas: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1380,
+          top: 1350,
           left: 90,
           right: 90,
           fontFamily: fonts.acumin,
           fontSize: 38,
-          lineHeight: 1.5,
+          lineHeight: 1.4,
           color: colors.azul,
         }}
       >

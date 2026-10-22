@@ -411,7 +411,8 @@ export const RemotionRoot: React.FC = () => {
           titulo: ["Regalos", "empresariales"],
           bajada: "para cerrar el año",
           puntos: [
-            "Mates hechos a mano en Argentina",
+            "Regalá algo que se usa todos los días",
+            "con la presencia de tu empresa",
             "Grabados con el logo o el nombre de tu empresa",
             "Pedido mínimo: 25 unidades",
           ],
