@@ -13,6 +13,7 @@ export const fonts = {
   serif: '"Addington CF", serif',
   sans: '"Helvetica Neue", sans-serif',
   mano: '"Sketcha Kits", cursive',
+  acumin: '"Acumin", sans-serif',
 };
 
 // Zona segura para Reels/Stories (1080x1920): la interfaz de Instagram tapa

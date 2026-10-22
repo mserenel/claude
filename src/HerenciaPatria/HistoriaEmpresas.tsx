@@ -2,7 +2,8 @@ import { AbsoluteFill, Img, staticFile } from "remotion";
 import { colors, fonts } from "./brand";
 
 // Historia de Instagram (1080x1920) para los pedidos empresariales de fin
-// de año: el logo azul arriba, el título, una fila de mates reales (las
+// de año, sólo con letras de Herencia (Addington y Acumin; la Sketcha es la
+// de Don Patricio): el sello azul arriba, el título, una fila de mates reales (las
 // fotos de producto sobre blanco, que con "multiply" se funden con el
 // crema) y abajo qué incluye y cómo pedir. Instagram tapa ~200 px arriba y
 // ~180 px abajo: todo va entre 230 y 1740.
@@ -24,8 +25,8 @@ export const HistoriaEmpresas: React.FC<{
       }}
     >
       <Img
-        src={staticFile("logos/herencia-patria-azul.svg")}
-        style={{ position: "absolute", top: 230, width: 360 }}
+        src={staticFile("logos/herencia-patria-sello-azul.png")}
+        style={{ position: "absolute", top: 220, width: 230 }}
       />
       <div
         style={{
@@ -45,8 +46,8 @@ export const HistoriaEmpresas: React.FC<{
         <div
           style={{
             marginTop: 18,
-            fontFamily: fonts.mano,
-            fontSize: 64,
+            fontStyle: "italic",
+            fontSize: 58,
             color: colors.madera,
           }}
         >
@@ -91,7 +92,7 @@ export const HistoriaEmpresas: React.FC<{
           top: 1380,
           left: 90,
           right: 90,
-          fontFamily: fonts.sans,
+          fontFamily: fonts.acumin,
           fontSize: 38,
           lineHeight: 1.5,
           color: colors.azul,
@@ -109,7 +110,7 @@ export const HistoriaEmpresas: React.FC<{
           borderRadius: 999,
           background: colors.azul,
           color: colors.crema,
-          fontFamily: fonts.sans,
+          fontFamily: fonts.acumin,
           fontSize: 38,
           letterSpacing: 1,
         }}
@@ -120,8 +121,9 @@ export const HistoriaEmpresas: React.FC<{
         style={{
           position: "absolute",
           top: 1690,
-          fontFamily: fonts.mano,
-          fontSize: 44,
+          fontFamily: fonts.serif,
+          fontStyle: "italic",
+          fontSize: 40,
           color: colors.madera,
         }}
       >
