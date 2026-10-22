@@ -410,11 +410,7 @@ export const RemotionRoot: React.FC = () => {
           ],
           titulo: ["Regalos", "empresariales"],
           bajada: "Algo que se usa todos los días",
-          etiqueta: [
-            "Con el logo de tu empresa · con el logo de tu empresa ·",
-            "gratis",
-            "Grabado",
-          ],
+          etiqueta: ["Grabado gratis", "con el logo de tu empresa"],
           confianza: "Ya nos eligieron",
           logos: [
             ["clientes/farmacity.png", 46],

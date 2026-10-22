@@ -5,11 +5,11 @@ import { colors, fonts } from "./brand";
 // de año, pensada como anuncio. Fondo crema y todo en azul (sólo los dos
 // colores de la marca, más el de los mates), con las letras de la marca:
 // Addington para el título y el llamado, Helvetica Neue para el resto.
-// Arriba el título grande a la izquierda y, a su lado, el beneficio (el
-// grabado gratis) como un sello tipo lacre; al medio los mates reales,
-// grandes (fotos de producto sobre blanco, que con "multiply" se funden con
-// el crema); abajo, entre filetes finos, quiénes ya los eligieron, y el
-// llamado con una flecha y el sello de la marca. Lo que hay que leer va entre 230 y 1600: Instagram tapa
+// Arriba el título grande a la izquierda con el sello de la marca a su lado,
+// la bajada y el beneficio (el grabado gratis) en una etiqueta; al medio los
+// mates reales, grandes (fotos de producto sobre blanco, que con "multiply"
+// se funden con el crema); abajo, entre filetes finos, quiénes ya los
+// eligieron, y el llamado centrado con una flecha hacia abajo. Lo que hay que leer va entre 230 y 1600: Instagram tapa
 // arriba el perfil y abajo la respuesta o el botón del anuncio.
 
 const margen = 80;
@@ -18,9 +18,8 @@ export const HistoriaEmpresas: React.FC<{
   readonly mates: string[][];
   readonly titulo: string[];
   readonly bajada: string;
-  // El sello del beneficio: la leyenda del anillo, grande al centro y arriba
-  // de lo grande.
-  readonly etiqueta: [string, string, string];
+  // El beneficio: la etiqueta y su detalle.
+  readonly etiqueta: [string, string];
   // Prueba social: clientes que ya regalaron Herencia, con su logo (el
   // archivo oficial, con permiso del cliente) y el alto al que va cada uno,
   // para que pesen parecido.
@@ -76,71 +75,37 @@ export const HistoriaEmpresas: React.FC<{
       >
         {bajada}
       </div>
-      {/* El beneficio: un sello azul al lado del título, como un lacre, con
-          la leyenda en el anillo y "gratis" grande al centro. Lejos de los
-          mates, para que no los tape. */}
-      <svg
-        viewBox="0 0 260 260"
+      {/* El sello de la marca, grande, al lado del título. */}
+      <Img
+        src={staticFile("logos/herencia-patria-sello-azul.png")}
+        style={{ position: "absolute", top: 248, right: 70, width: 200 }}
+      />
+      {/* El beneficio, bajo la bajada: una etiqueta azul y su detalle. */}
+      <div
         style={{
           position: "absolute",
-          top: 250,
-          right: 56,
-          width: 260,
-          height: 260,
-          transform: "rotate(-10deg)",
+          top: 540,
+          left: margen,
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          fontFamily: fonts.sans,
         }}
       >
-        <defs>
-          <path
-            id="anillo"
-            d="M 130,130 m -100,0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0"
-          />
-        </defs>
-        <circle cx={130} cy={130} r={128} fill={colors.azul} />
-        <circle
-          cx={130}
-          cy={130}
-          r={78}
-          fill="none"
-          stroke={colors.crema}
-          strokeWidth={1.5}
-          strokeDasharray="3 5"
-        />
-        <text
-          fill={colors.crema}
-          fontFamily={fonts.sans}
-          fontWeight={500}
-          fontSize={17}
-          style={{ textTransform: "uppercase" }}
+        <div
+          style={{
+            ...rotulo,
+            fontWeight: 700,
+            fontSize: 24,
+            background: colors.azul,
+            color: colors.crema,
+            padding: "9px 16px 7px",
+          }}
         >
-          <textPath href="#anillo" textLength={622} lengthAdjust="spacing">
-            {etiqueta[0]}
-          </textPath>
-        </text>
-        <text
-          x={130}
-          y={112}
-          textAnchor="middle"
-          fill={colors.crema}
-          fontFamily={fonts.sans}
-          fontWeight={500}
-          fontSize={18}
-          letterSpacing={3}
-          style={{ textTransform: "uppercase" }}
-        >
-          {etiqueta[2]}
-        </text>
-        <text
-          x={130}
-          y={158}
-          textAnchor="middle"
-          fill={colors.crema}
-          fontFamily={fonts.serif}
-          fontSize={54}
-        >
-          {etiqueta[1]}
-        </text>
-      </svg>
+          {etiqueta[0]}
+        </div>
+        <div style={{ fontWeight: 300, fontSize: 30 }}>{etiqueta[1]}</div>
+      </div>
       {/* Los mates, grandes: dos filas, la de atrás un poco más chica. */}
       {mates.map((fila, i) => (
         <div
@@ -209,32 +174,33 @@ export const HistoriaEmpresas: React.FC<{
         ))}
       </div>
       <div style={{ ...filete, top: 1468 }} />
-      {/* El llamado: texto con una flecha fina, no botón (el anuncio trae
-          el suyo), y el sello de la marca al lado. */}
+      {/* El llamado, centrado, con una flecha hacia abajo (hacia la
+          respuesta o el botón del anuncio). Texto, no botón. */}
       <div
         style={{
           position: "absolute",
-          top: 1494,
-          left: margen,
-          right: margen,
+          top: 1492,
+          left: 0,
+          right: 0,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          gap: 26,
         }}
       >
         <div style={{ fontSize: 72 }}>{accion}</div>
-        <svg width={110} height={24} viewBox="0 0 110 24">
+        <svg
+          width={28}
+          height={70}
+          viewBox="0 0 28 70"
+          style={{ marginTop: 14 }}
+        >
           <path
-            d="M 0 12 H 106 M 94 2 L 106 12 L 94 22"
+            d="M 14 0 V 66 M 2 54 L 14 66 L 26 54"
             fill="none"
             stroke={colors.azul}
             strokeWidth={2}
           />
         </svg>
-        <Img
-          src={staticFile("logos/herencia-patria-sello-azul.png")}
-          style={{ marginLeft: "auto", width: 110 }}
-        />
       </div>
     </AbsoluteFill>
   );
