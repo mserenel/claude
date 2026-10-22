@@ -9,11 +9,13 @@ Uso:
   chapas, base) queda fuera y no se toca: ni brillo ni color.
 - En todo el mate (metal incluido): sin brillo, los destellos bajan y las
   altas luces se comprimen; el color no cambia.
+- En el metal: sin los reflejos del ambiente (manchas de luz y tintes de
+  otros colores), con su color propio y el cincelado intacto.
 - En el cuerpo:
   * se bajan los brillos puntuales (destellos del barniz o del cuero): lo que
     sobresale de la luz de alrededor se acerca a ella, sin aplanar la forma;
   * se empareja la luz: la diferencia grande de un costado al otro (la
-    ventana de un lado) se reduce a la mitad.
+    ventana de un lado) y las franjas de luz se reducen bastante.
 - Borde sin halo, recortado al mate y llevado a 700 px de alto (el mate), con
   la base a 700 px del borde de arriba. Debajo quedan PIE px para la sombra de
   contacto, que sale de los puntos reales de apoyo (cada pata, el borde de la
@@ -45,6 +47,9 @@ def main():
     m = cv2.imread(mask_path, 0)
     m = cv2.resize(m, (w, h), interpolation=cv2.INTER_LINEAR)
     duro = (m > 128).astype(np.uint8)
+    # Cerrar rendijas chicas del recorte (entre una chapa y el cuerpo), que
+    # dejarían ver el fondo.
+    duro = cv2.morphologyEx(duro, cv2.MORPH_CLOSE, np.ones((21, 21), np.uint8))
     n, lab, st, _ = cv2.connectedComponentsWithStats(duro)
     duro = (lab == 1 + np.argmax(st[1:, cv2.CC_STAT_AREA])).astype(np.uint8) * 255
     cont, _ = cv2.findContours(duro, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -86,10 +91,25 @@ def main():
     alto_ = L > hombro
     L = np.where(alto_, hombro + (L - hombro) * (1 - 0.55 * todo), L)
 
-    # Luz pareja: la variación grande (un costado más iluminado) a la mitad.
-    lejos = suave(L, mm * cuerpo + 1e-3, ancho * 0.18)
+    # Luz pareja en el cuerpo: la variación grande (un costado más iluminado,
+    # franjas de luz) se reduce bastante (60 %).
+    lejos = suave(L, mm * cuerpo + 1e-3, ancho * 0.12)
     media = (lejos * cuerpo).sum() / max(cuerpo.sum(), 1)
-    L = L - (lejos - media) * 0.5 * cuerpo
+    L = L - (lejos - media) * 0.6 * cuerpo
+
+    # Metal (virola, chapas, base): sin los reflejos del ambiente. Las manchas
+    # grandes de luz se emparejan y los tintes reflejados (azules, rojizos)
+    # vuelven al color propio del metal; el cincelado (el detalle fino) queda.
+    metal = adentro * (1 - fila[:, None])
+    if metal.sum() > 0:
+        m_ = metal + 1e-3
+        bajoL = suave(L, m_, ancho * 0.05)
+        mediaL = (bajoL * metal).sum() / metal.sum()
+        L = L - (bajoL - mediaL) * 0.45 * metal
+        sel = metal > 0.5
+        a0, b0 = np.median(A[sel]), np.median(B[sel])
+        A = A - (A - a0) * 0.6 * metal
+        B = B - (B - b0) * 0.6 * metal
 
     out = cv2.cvtColor(
         np.clip(np.dstack([L, A, B]), 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR
@@ -139,7 +159,7 @@ def main():
             n_caida = int(0.03 * ph)
             bajo[int(py) + 1 : int(py) + 1 + n_caida, x] = np.linspace(1, 0, n_caida)
     bajo = cv2.GaussianBlur(bajo, (0, 0), sigmaX=0.012 * ph, sigmaY=0.008 * ph)
-    sombra = np.clip(0.75 * ceñida + 0.3 * abierta + 0.35 * bajo, 0, 0.85)
+    sombra = np.clip(0.75 * ceñida + 0.3 * abierta + 0.7 * bajo, 0, 0.85)
 
     # El mate sobre su sombra (sombra azul muy oscuro, casi negro).
     tono = np.array([14, 20, 28], np.float32)
