@@ -144,33 +144,67 @@ export const HistoriaEmpresasLogo: React.FC<{
           )),
         )}
       </svg>
-      {/* Los otros modelos: dos filas de tres. */}
-      {[otros.slice(0, 3), otros.slice(3)].map((fila, i) => (
-        <div
-          key={fila.join()}
-          style={{
-            position: "absolute",
-            top: y0 + lado / 2 - chico * 0.9 + i * chico * 0.86,
-            left: xGrilla,
-            right: 30,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          {fila.map((src) => (
+      {/* Los otros modelos: dos filas de tres, cada una sobre una tabla de
+          madera fina (la madera real del ranchero, con la veta acostada y el
+          color apagado). La tabla va antes que los mates: con "multiply" la
+          sombra de cada mate cae sobre la madera. */}
+      {[otros.slice(0, 3), otros.slice(3)].map((fila, i) => {
+        const top = y0 + lado / 2 - chico * 0.98 + i * chico * 0.96;
+        // Donde apoyan los mates: el pie de la foto de producto.
+        const apoyo = top + chico * 0.83;
+        // Una franja de la foto de la madera, recortada a la altura de la cara.
+        const madera = (alto: number, desde: number, luz: number) => (
+          <div style={{ height: alto, overflow: "hidden" }}>
             <Img
-              key={src}
-              src={staticFile(src)}
+              src={staticFile("tabla-madera.jpg")}
               style={{
-                width: chico,
-                height: chico,
-                margin: `0 -${chico * 0.11}px`,
-                mixBlendMode: "multiply",
+                width: "100%",
+                marginTop: -desde,
+                filter: `brightness(${luz})`,
               }}
             />
-          ))}
-        </div>
-      ))}
+          </div>
+        );
+        return (
+          <div key={fila.join()}>
+            <div
+              style={{
+                position: "absolute",
+                top: apoyo - 4,
+                left: xGrilla + 14,
+                right: 34,
+                boxShadow: "0 10px 14px -6px rgba(20,35,59,0.35)",
+              }}
+            >
+              {madera(10, 0, 1.12)}
+              {madera(15, 40, 0.72)}
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                top,
+                left: xGrilla,
+                right: 30,
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              {fila.map((src) => (
+                <Img
+                  key={src}
+                  src={staticFile(src)}
+                  style={{
+                    width: chico,
+                    height: chico,
+                    margin: `0 -${chico * 0.11}px`,
+                    mixBlendMode: "multiply",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
       <div style={{ ...filete, top: 1250 }} />
       {/* Quiénes ya los eligieron: los logos en el azul de la marca. */}
       <div
