@@ -2,29 +2,47 @@ import { AbsoluteFill, Img, staticFile } from "remotion";
 import { colors, fonts } from "./brand";
 
 // Historia de Instagram (1080x1920) para los pedidos empresariales de fin
-// de año que muestra el beneficio en el producto: el aro de la boca de un
-// mate, grande, con "grabado gratis" grabado en el metal, justo donde va el
-// logo de la empresa. Al lado, más chicos, otros modelos; abajo
-// quiénes ya los eligieron y el llamado con una flecha hacia abajo.
-// Crema y azul, Addington y Helvetica Neue, como el resto de la marca. Lo que
-// hay que leer va entre 230 y 1620: Instagram tapa arriba el perfil y abajo
-// la respuesta o el botón del anuncio.
+// de año. Los protagonistas son los mates: seis modelos reales en dos
+// estantes de madera a todo el ancho (arriba los de calabaza, apenas más
+// grandes; abajo los de algarrobo). Debajo, chico, el aro de la boca de un
+// mate con yerba y "grabado gratis" grabado en el metal (donde va el logo de
+// la empresa), y al lado la fecha límite. Abajo, quiénes ya los eligieron y
+// el llamado con una flecha hacia abajo. Crema y azul, Addington y Helvetica
+// Neue, como el resto de la marca. Lo que hay que leer va entre 230 y 1700:
+// Instagram tapa arriba el perfil y abajo la respuesta o el botón del anuncio.
 
 const margen = 80;
 
 export const HistoriaEmpresasLogo: React.FC<{
   readonly titulo: string[];
   readonly bajada: string[];
-  // El mate grande, visto desde arriba y recortado en círculo justo en el
-  // borde del aro (la foto real, sin el fondo), y lo que va grabado en el
-  // aro: una palabra arriba y otra abajo.
-  readonly heroe: string;
+  // Arriba los de calabaza, abajo los de algarrobo (tres y tres): recortes con
+  // su sombra de contacto debajo (tools/recorte_mate.py).
+  readonly mates: string[];
+  // El aro: la boca de un mate vista desde arriba, recortada en círculo justo
+  // en el borde (foto real, con yerba), y lo que va grabado en el metal: una
+  // palabra arriba y otra abajo.
+  readonly aro: string;
   readonly grabado: [arriba: string, abajo: string];
-  readonly otros: string[];
+  // La fecha límite: lo chico de arriba y lo grande.
+  readonly urgencia: [string, string];
+  // El beneficio dicho en palabras, bajo la fecha.
+  readonly beneficio: string;
   readonly confianza: string;
   readonly logos: [archivo: string, alto: number][];
   readonly accion: string;
-}> = ({ titulo, bajada, heroe, grabado, otros, confianza, logos, accion }) => {
+}> = ({
+  titulo,
+  bajada,
+  mates,
+  aro,
+  grabado,
+  urgencia,
+  beneficio,
+  confianza,
+  logos,
+  accion,
+}) => {
   const rotulo: React.CSSProperties = {
     fontFamily: fonts.sans,
     fontWeight: 500,
@@ -40,18 +58,28 @@ export const HistoriaEmpresasLogo: React.FC<{
     background: colors.azul,
     opacity: 0.25,
   };
-  // El mate grande, a la izquierda.
-  const lado = 520;
-  const x0 = 40;
-  const y0 = 620;
-  // Los otros modelos: una grilla chica a la derecha del aro.
-  // Alto de los mates chicos por fila: los de calabaza (arriba) son apenas
-  // más grandes que los de algarrobo (abajo), como en la realidad.
-  const altoFila = [182, 148];
+  // Los estantes: dónde apoyan los mates de cada fila y su alto (los de
+  // calabaza son algo más grandes que los de algarrobo, como en la realidad).
+  const apoyos = [852, 1092];
+  const altoFila = [248, 204];
   // Los recortes traen debajo de la base su sombra de contacto: 24 px más
-  // cada 700 de mate (ver tools/recorte_mate.py).
+  // cada 700 de mate.
   const conPie = 724 / 700;
-  const xGrilla = 570;
+  // El aro, chico, abajo a la izquierda.
+  const ladoAro = 236;
+  const yAro = 1140;
+  const madera = (alto: number, desde: number, luz: number) => (
+    <div style={{ height: alto, overflow: "hidden" }}>
+      <Img
+        src={staticFile("tabla-madera.jpg")}
+        style={{
+          width: "100%",
+          marginTop: -desde,
+          filter: `brightness(${luz})`,
+        }}
+      />
+    </div>
+  );
   return (
     <AbsoluteFill
       style={{
@@ -92,29 +120,70 @@ export const HistoriaEmpresasLogo: React.FC<{
           <div key={l}>{l}</div>
         ))}
       </div>
+      {/* Los mates en dos estantes de madera fina (la madera real del
+          ranchero, con la veta acostada y el color apagado), apoyados sobre
+          la cara de arriba de la tabla. */}
+      {[mates.slice(0, 3), mates.slice(3)].map((fila, i) => {
+        const apoyo = apoyos[i];
+        const alto = altoFila[i];
+        return (
+          <div key={fila.join()}>
+            <div
+              style={{
+                position: "absolute",
+                top: apoyo - 26,
+                left: margen - 10,
+                right: margen - 10,
+                boxShadow: "0 12px 16px -6px rgba(20,35,59,0.35)",
+              }}
+            >
+              {madera(36, 0, 1.08)}
+              {madera(18, 60, 0.7)}
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                top: apoyo + 5 - alto,
+                left: margen,
+                right: margen,
+                height: alto * conPie,
+                display: "flex",
+                justifyContent: "space-evenly",
+                alignItems: "flex-end",
+              }}
+            >
+              {fila.map((src) => (
+                <Img
+                  key={src}
+                  src={staticFile(src)}
+                  style={{ display: "block", height: alto * conPie }}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+      {/* El aro con el grabado, en curva arriba y abajo, como tallado en el
+          metal. Coordenadas de la foto (948 px). */}
       <Img
-        src={staticFile(heroe)}
+        src={staticFile(aro)}
         style={{
           position: "absolute",
-          top: y0,
-          left: x0,
-          width: lado,
-          height: lado,
-          filter: "drop-shadow(0 18px 24px rgba(20,35,59,0.28))",
+          top: yAro,
+          left: margen,
+          width: ladoAro,
+          height: ladoAro,
+          filter: "drop-shadow(0 10px 14px rgba(20,35,59,0.28))",
         }}
       />
-      {/* El grabado en el aro, una palabra arriba y otra abajo (las dos
-          derechas), grandes y en negrita para que se lean en el teléfono:
-          letras oscuras con un brillo apenas corrido hacia abajo, como
-          talladas en el metal. Coordenadas de la foto (948 px). */}
       <svg
         viewBox="0 0 948 948"
         style={{
           position: "absolute",
-          top: y0,
-          left: x0,
-          width: lado,
-          height: lado,
+          top: yAro,
+          left: margen,
+          width: ladoAro,
+          height: ladoAro,
         }}
       >
         <defs>
@@ -149,70 +218,36 @@ export const HistoriaEmpresasLogo: React.FC<{
           )),
         )}
       </svg>
-      {/* Los otros modelos: dos filas de tres, cada una sobre una tabla de
-          madera fina (la madera real del ranchero, con la veta acostada y el
-          color apagado). Los mates van recortados (fondo transparente, la
-          base a una altura fija, con su sombra de contacto debajo) y apoyados
-          sobre la cara de arriba de la tabla. */}
-      {[otros.slice(0, 3), otros.slice(3)].map((fila, i) => {
-        const apoyo = y0 + lado / 2 - 30 + i * 205;
-        const altoChico = altoFila[i];
-        const madera = (alto: number, desde: number, luz: number) => (
-          <div style={{ height: alto, overflow: "hidden" }}>
-            <Img
-              src={staticFile("tabla-madera.jpg")}
-              style={{
-                width: "100%",
-                marginTop: -desde,
-                filter: `brightness(${luz})`,
-              }}
-            />
-          </div>
-        );
-        return (
-          <div key={fila.join()}>
-            <div
-              style={{
-                position: "absolute",
-                top: apoyo - 22,
-                left: xGrilla + 14,
-                right: 34,
-                boxShadow: "0 10px 14px -6px rgba(20,35,59,0.35)",
-              }}
-            >
-              {madera(30, 0, 1.08)}
-              {madera(14, 60, 0.7)}
-            </div>
-            <div
-              style={{
-                position: "absolute",
-                // La base apenas metida en la cara de arriba de la tabla.
-                top: apoyo + 4 - altoChico,
-                left: xGrilla + 14,
-                right: 34,
-                height: altoChico * conPie,
-                display: "flex",
-                justifyContent: "space-evenly",
-                alignItems: "flex-end",
-              }}
-            >
-              {fila.map((src) => (
-                <Img
-                  key={src}
-                  src={staticFile(src)}
-                  style={{ display: "block", height: altoChico * conPie }}
-                />
-              ))}
-            </div>
-          </div>
-        );
-      })}
-      <div style={{ ...filete, top: 1250 }} />
+      {/* La fecha límite, al lado del aro. */}
+      <div
+        style={{
+          position: "absolute",
+          top: yAro + 40,
+          left: margen + ladoAro + 44,
+          right: margen,
+        }}
+      >
+        <div style={rotulo}>{urgencia[0]}</div>
+        <div style={{ fontSize: 66, lineHeight: 1.05, marginTop: 8 }}>
+          {urgencia[1]}
+        </div>
+        <div
+          style={{
+            fontFamily: fonts.sans,
+            fontWeight: 300,
+            fontSize: 30,
+            marginTop: 14,
+          }}
+        >
+          {beneficio}
+        </div>
+      </div>
+      <div style={{ ...filete, top: 1408 }} />
       {/* Quiénes ya los eligieron: los logos en el azul de la marca. */}
       <div
         style={{
           position: "absolute",
-          top: 1274,
+          top: 1428,
           left: 0,
           right: 0,
           textAlign: "center",
@@ -224,7 +259,7 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1316,
+          top: 1466,
           left: margen,
           right: margen,
           height: 80,
@@ -241,12 +276,12 @@ export const HistoriaEmpresasLogo: React.FC<{
           />
         ))}
       </div>
-      <div style={{ ...filete, top: 1418 }} />
+      <div style={{ ...filete, top: 1566 }} />
       {/* El llamado, centrado, con una flecha hacia abajo. Texto, no botón. */}
       <div
         style={{
           position: "absolute",
-          top: 1446,
+          top: 1584,
           left: 0,
           right: 0,
           display: "flex",
@@ -254,15 +289,15 @@ export const HistoriaEmpresasLogo: React.FC<{
           alignItems: "center",
         }}
       >
-        <div style={{ fontSize: 72 }}>{accion}</div>
+        <div style={{ fontSize: 66 }}>{accion}</div>
         <svg
-          width={28}
-          height={70}
-          viewBox="0 0 28 70"
-          style={{ marginTop: 14 }}
+          width={26}
+          height={56}
+          viewBox="0 0 26 56"
+          style={{ marginTop: 8 }}
         >
           <path
-            d="M 14 0 V 66 M 2 54 L 14 66 L 26 54"
+            d="M 13 0 V 52 M 2 41 L 13 52 L 24 41"
             fill="none"
             stroke={colors.azul}
             strokeWidth={2}

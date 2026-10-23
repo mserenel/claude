@@ -435,11 +435,9 @@ export const RemotionRoot: React.FC = () => {
             "Acompañá en cada momento del día",
             "a ese cliente que confió en vos este año",
           ],
-          heroe: "mate-boca-arriba.png",
-          grabado: ["Grabado", "gratis"] as [string, string],
           // Arriba los de calabaza (simple, repujado y base bolita); abajo
           // los de algarrobo (ranchero, imperial e imperial con base).
-          otros: [
+          mates: [
             "recortes/calabaza-simple.png",
             "recortes/calabaza-repujado.png",
             "recortes/calabaza-base-bolita.png",
@@ -447,6 +445,10 @@ export const RemotionRoot: React.FC = () => {
             "recortes/algarrobo-imperial.png",
             "recortes/algarrobo-imperial-con-base.png",
           ],
+          aro: "mate-boca-arriba.png",
+          grabado: ["Grabado", "gratis"] as [string, string],
+          urgencia: ["Pedidos hasta el", "10 de noviembre"] as [string, string],
+          beneficio: "Con el grabado de tu logo, sin cargo",
           confianza: "Ya nos eligieron",
           logos: [
             ["clientes/farmacity.png", 46],
