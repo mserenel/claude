@@ -5,13 +5,11 @@ Uso:
   python recorte_mate.py FOTO MASCARA SALIDA.png CUERPO_Y0 CUERPO_Y1
 
 - MASCARA: recorte del mate (rembg, birefnet-general).
+- Si el mate salió torcido (el celular inclinado), primero se endereza.
 - CUERPO_Y0..CUERPO_Y1: filas del cuerpo (cuero o madera). El metal (virola,
   chapas, base) queda fuera y no se toca: ni brillo ni color.
-- En todo el mate (metal incluido): sin brillo, los destellos bajan y las
-  altas luces se comprimen; el color no cambia.
-- En el metal: sin los reflejos del ambiente (manchas de luz y tintes de
-  otros colores), con su color propio y el cincelado intacto.
-- En el cuerpo:
+- En el cuerpo (no en el metal):
+  * sin brillo: los destellos bajan y las altas luces se comprimen;
   * se bajan los brillos puntuales (destellos del barniz o del cuero): lo que
     sobresale de la luz de alrededor se acerca a ella, sin aplanar la forma;
   * se empareja la luz: la diferencia grande de un costado al otro (la
@@ -39,6 +37,37 @@ def suave(img, m, sigma):
     return num / den
 
 
+def enderezar(im, m):
+    # Si el celular estaba inclinado, el mate sale torcido. Se mide la
+    # inclinación del eje (el medio entre los dos bordes, a lo alto) y la de la
+    # boca, y se gira la foto el promedio para dejarlo derecho.
+    mk = m > 128
+    ys = np.where(mk.any(1))[0]
+    y0, y1 = ys.min(), ys.max()
+    alto = y1 - y0
+    pts = []
+    for y in range(int(y0 + 0.08 * alto), int(y0 + 0.8 * alto), 5):
+        xs = np.where(mk[y])[0]
+        if xs.size:
+            pts.append((y, (xs.min() + xs.max()) / 2))
+    pts = np.array(pts)
+    eje = np.degrees(np.arctan(np.polyfit(pts[:, 0], pts[:, 1], 1)[0]))
+    xs = np.where(mk.any(0))[0]
+    x0, x1 = xs.min(), xs.max()
+    tl, tr = int(x0 + 0.15 * (x1 - x0)), int(x0 + 0.85 * (x1 - x0))
+    boca = np.degrees(
+        np.arctan2(np.where(mk[:, tr])[0].min() - np.where(mk[:, tl])[0].min(), tr - tl)
+    )
+    giro = (boca - eje) / 2
+    if abs(giro) < 0.2:
+        return im, m
+    h, w = m.shape
+    rot = cv2.getRotationMatrix2D(((x0 + x1) / 2, (y0 + y1) / 2), giro, 1)
+    im = cv2.warpAffine(im, rot, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+    m = cv2.warpAffine(m, rot, (w, h), flags=cv2.INTER_LINEAR)
+    return im, m
+
+
 def main():
     src, mask_path, out_path = sys.argv[1:4]
     y0, y1 = int(sys.argv[4]), int(sys.argv[5])
@@ -46,6 +75,7 @@ def main():
     h, w = im.shape[:2]
     m = cv2.imread(mask_path, 0)
     m = cv2.resize(m, (w, h), interpolation=cv2.INTER_LINEAR)
+    im, m = enderezar(im, m)
     duro = (m > 128).astype(np.uint8)
     # Cerrar rendijas chicas del recorte (entre una chapa y el cuerpo), que
     # dejarían ver el fondo.
@@ -79,10 +109,10 @@ def main():
     A = A * (1 - peso) + suave(A, mm, ancho * 0.03) * peso
     B = B * (1 - peso) + suave(B, mm, ancho * 0.03) * peso
 
-    # Sin brillo, en todo el mate (metal incluido): los destellos que
-    # sobresalen se bajan y las altas luces se comprimen. Sólo la luz (L);
-    # el color de cada material queda.
-    todo = adentro
+    # Sin brillo en el cuerpo: los destellos que sobresalen se bajan y las
+    # altas luces se comprimen. Sólo la luz (L); el color queda. El metal no
+    # se toca: cualquier retoque ahí borra el cincelado.
+    todo = cuerpo
     cerca2 = suave(L, mm, ancho * 0.02)
     exceso2 = L - cerca2
     peso2 = np.clip((exceso2 - 4) / 16, 0, 1) * todo
@@ -96,20 +126,6 @@ def main():
     lejos = suave(L, mm * cuerpo + 1e-3, ancho * 0.12)
     media = (lejos * cuerpo).sum() / max(cuerpo.sum(), 1)
     L = L - (lejos - media) * 0.6 * cuerpo
-
-    # Metal (virola, chapas, base): sin los reflejos del ambiente. Las manchas
-    # grandes de luz se emparejan y los tintes reflejados (azules, rojizos)
-    # vuelven al color propio del metal; el cincelado (el detalle fino) queda.
-    metal = adentro * (1 - fila[:, None])
-    if metal.sum() > 0:
-        m_ = metal + 1e-3
-        bajoL = suave(L, m_, ancho * 0.05)
-        mediaL = (bajoL * metal).sum() / metal.sum()
-        L = L - (bajoL - mediaL) * 0.45 * metal
-        sel = metal > 0.5
-        a0, b0 = np.median(A[sel]), np.median(B[sel])
-        A = A - (A - a0) * 0.6 * metal
-        B = B - (B - b0) * 0.6 * metal
 
     out = cv2.cvtColor(
         np.clip(np.dstack([L, A, B]), 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR
