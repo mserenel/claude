@@ -445,10 +445,8 @@ export const RemotionRoot: React.FC = () => {
             "recortes/algarrobo-imperial.png",
             "recortes/algarrobo-imperial-con-base.png",
           ],
-          aro: "mate-boca-arriba.png",
-          grabado: ["Grabado", "gratis"] as [string, string],
           urgencia: ["Pedidos hasta el", "10 de noviembre"] as [string, string],
-          beneficio: "Con el grabado de tu logo, sin cargo",
+          beneficio: ["Con tu logo", "Grabado gratis"] as [string, string],
           confianza: "Ya nos eligieron",
           logos: [
             ["clientes/farmacity.png", 46],
