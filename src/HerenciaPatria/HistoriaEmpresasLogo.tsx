@@ -7,7 +7,9 @@ import { colors, fonts } from "./brand";
 // título; al medio, a todo el ancho, la foto real de un logo grabado en la
 // boca del mate (la prueba de cómo queda) y debajo los datos duros (precio,
 // mínimo, grabado). Después, los seis modelos en fila (fotos del catálogo),
-// quiénes ya los eligieron y el llamado con una flecha hacia abajo. Addington y Helvetica Neue, como el resto de la marca.
+// quiénes ya los eligieron y el llamado con una flecha hacia abajo. Las
+// letras del brandbook: Addington CF Medium para los titulares y Helvetica
+// LT Std para los textos.
 // Lo que hay que leer va entre 230 y 1700: Instagram tapa arriba el perfil y
 // abajo la respuesta o el botón del anuncio.
 
@@ -42,8 +44,8 @@ export const HistoriaEmpresasLogo: React.FC<{
   accion,
 }) => {
   const rotulo: React.CSSProperties = {
-    fontFamily: fonts.sans,
-    fontWeight: 500,
+    fontFamily: fonts.texto,
+    fontWeight: 400,
     fontSize: 20,
     letterSpacing: 3,
     textTransform: "uppercase",
@@ -62,6 +64,7 @@ export const HistoriaEmpresasLogo: React.FC<{
       style={{
         backgroundColor: colors.azul,
         fontFamily: fonts.serif,
+        fontWeight: 500,
         color: colors.crema,
       }}
     >
@@ -87,7 +90,7 @@ export const HistoriaEmpresasLogo: React.FC<{
           position: "absolute",
           top: 472,
           left: margen,
-          fontFamily: fonts.sans,
+          fontFamily: fonts.texto,
           fontWeight: 300,
           fontSize: 38,
           lineHeight: 1.25,

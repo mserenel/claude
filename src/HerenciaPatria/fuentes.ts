@@ -6,7 +6,7 @@ import {
 } from "remotion";
 
 // Tipografías de la marca, enviadas por Herencia Patria: Addington CF
-// (serif), Helvetica Neue LT Std (sans), Acumin (sans variable) y Sketcha
+// (serif), Helvetica LT Std y Helvetica Neue LT Std (sans), Acumin (sans variable) y Sketcha
 // Kits (a mano, para Don Patricio). Tienen licencia: van en public/fonts/, que no se sube al
 // repositorio. Si faltan, el render falla en vez de usar otra letra.
 
@@ -20,6 +20,10 @@ const lista: [family: string, file: string, weight: string, style: string][] = [
   ["Addington CF", "AddingtonCF-DemiBoldItalic.otf", "600", "italic"],
   ["Addington CF", "AddingtonCF-Bold.otf", "700", "normal"],
   ["Addington CF", "AddingtonCF-ExtraBold.otf", "800", "normal"],
+  // La de los textos según el brandbook (Helvetica LT Std).
+  ["Helvetica LT Std", "HelveticaLTStd-Light.otf", "300", "normal"],
+  ["Helvetica LT Std", "HelveticaLTStd-Roman.otf", "400", "normal"],
+  ["Helvetica LT Std", "HelveticaLTStd-Bold.otf", "700", "normal"],
   ["Helvetica Neue", "HelveticaNeueLTStd-Lt.otf", "300", "normal"],
   ["Helvetica Neue", "HelveticaNeueLTStd-Md.otf", "500", "normal"],
   ["Helvetica Neue", "HelveticaNeueLTStd-Bd.otf", "700", "normal"],

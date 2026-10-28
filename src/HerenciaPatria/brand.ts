@@ -12,6 +12,8 @@ export const colors = {
 export const fonts = {
   serif: '"Addington CF", serif',
   sans: '"Helvetica Neue", sans-serif',
+  // La de los textos según el brandbook: Light, Roman y Bold.
+  texto: '"Helvetica LT Std", sans-serif',
   mano: '"Sketcha Kits", cursive',
   acumin: '"Acumin", sans-serif',
 };
