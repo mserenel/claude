@@ -2,9 +2,12 @@
 tabla, un estante) en vez de sobre el piso blanco.
 
 Uso:
-  python recorte_mate.py FOTO MASCARA SALIDA.png CUERPO_Y0 CUERPO_Y1
+  python recorte_mate.py FOTO MASCARA SALIDA.png [CUERPO_Y0 CUERPO_Y1]
 
-- MASCARA: recorte del mate (rembg, birefnet-general).
+- MASCARA: recorte del mate (rembg, birefnet-general), o "-" si la FOTO ya
+  viene recortada (PNG con transparencia).
+- Sin CUERPO_Y0..CUERPO_Y1 (fotos de catálogo, ya retocadas y derechas): no
+  se endereza ni se retoca nada; sólo el recorte, el borde y la sombra.
 - Si el mate salió torcido (el celular inclinado), primero se endereza.
 - CUERPO_Y0..CUERPO_Y1: filas del cuerpo (cuero o madera). El metal (virola,
   chapas, base) queda fuera y no se toca: ni brillo ni color.
@@ -70,12 +73,17 @@ def enderezar(im, m):
 
 def main():
     src, mask_path, out_path = sys.argv[1:4]
-    y0, y1 = int(sys.argv[4]), int(sys.argv[5])
-    im = cv2.imread(src)
+    retoque = len(sys.argv) > 5
+    foto = cv2.imread(src, cv2.IMREAD_UNCHANGED)
+    im = foto[..., :3]
     h, w = im.shape[:2]
-    m = cv2.imread(mask_path, 0)
-    m = cv2.resize(m, (w, h), interpolation=cv2.INTER_LINEAR)
-    im, m = enderezar(im, m)
+    if mask_path == "-":
+        m = foto[..., 3]
+    else:
+        m = cv2.imread(mask_path, 0)
+        m = cv2.resize(m, (w, h), interpolation=cv2.INTER_LINEAR)
+    if retoque:
+        im, m = enderezar(im, m)
     duro = (m > 128).astype(np.uint8)
     # Cerrar rendijas chicas del recorte (entre una chapa y el cuerpo), que
     # dejarían ver el fondo.
@@ -90,7 +98,8 @@ def main():
 
     # Cuerpo: dentro del mate y entre las filas dadas, con transición suave.
     fila = np.zeros(h, np.float32)
-    fila[y0:y1] = 1
+    if retoque:
+        fila[int(sys.argv[4]) : int(sys.argv[5])] = 1
     fila = np.convolve(fila, np.ones(21) / 21, "same")
     adentro = cv2.erode(lleno, np.ones((7, 7), np.uint8)).astype(np.float32) / 255
     cuerpo = adentro * fila[:, None]
@@ -130,6 +139,8 @@ def main():
     out = cv2.cvtColor(
         np.clip(np.dstack([L, A, B]), 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR
     )
+    if not retoque:
+        out = im.copy()
 
     # Borde sin halo: en la franja del borde, el color del interior cercano.
     adentro9 = cv2.erode(lleno, np.ones((9, 9), np.uint8))
@@ -159,7 +170,13 @@ def main():
     cx_c, cy_c = zip(*casco)
     piso_y = np.interp(xs_p, cx_c, cy_c)
     tol = max(2, 0.005 * ph)
-    apoya = [x for x, py in zip(xs_p, piso_y) if py - perfil[x] <= tol]
+    # Sólo lo que llega abajo de todo: si la panza es más ancha que la base,
+    # sus bordes quedan en la envolvente pero no tocan el piso.
+    apoya = [
+        x
+        for x, py in zip(xs_p, piso_y)
+        if py - perfil[x] <= tol and perfil[x] >= by1 - 0.04 * ph
+    ]
     pie = int(PIE * ph / ALTO)
     hh = h + pie + 4
     contacto = np.zeros((hh, w), np.float32)

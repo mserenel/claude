@@ -436,13 +436,14 @@ export const RemotionRoot: React.FC = () => {
             "a ese cliente que confió en vos este año",
           ],
           // Arriba los de calabaza (simple, repujado y base bolita); abajo
-          // los de algarrobo (ranchero, imperial e imperial con base).
+          // los de algarrobo (liso, pintado e imperial con base). Fotos del
+          // catálogo.
           mates: [
             "recortes/calabaza-simple.png",
             "recortes/calabaza-repujado.png",
             "recortes/calabaza-base-bolita.png",
-            "recortes/algarrobo-ranchero.png",
-            "recortes/algarrobo-imperial.png",
+            "recortes/algarrobo-liso.png",
+            "recortes/algarrobo-pintado.png",
             "recortes/algarrobo-imperial-con-base.png",
           ],
           urgencia: ["Pedidos hasta el", "10 de noviembre"] as [string, string],
