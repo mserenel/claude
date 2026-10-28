@@ -422,7 +422,8 @@ export const RemotionRoot: React.FC = () => {
           accion: "Cotizá tu pedido",
         }}
       />
-      {/* Pedidos empresariales, con el lugar del logo señalado en el mate.
+      {/* Pedidos empresariales, para quien compra en la empresa: la prueba
+          del grabado y los datos para cotizar.
           npx remotion still HP-Historia-Empresas-Logo entregas/historia-empresas-fin-de-ano-b.jpg */}
       <Still
         id="HP-Historia-Empresas-Logo"
@@ -435,19 +436,29 @@ export const RemotionRoot: React.FC = () => {
             "Acompañá en cada momento del día",
             "a ese cliente que confió en vos este año",
           ],
-          // Arriba los de calabaza (simple, repujado y base bolita); abajo
-          // los de algarrobo (liso, pintado e imperial con base). Fotos del
-          // catálogo.
+          grabado: {
+            foto: "grabado-logo.jpg",
+            leyenda: "Así queda tu logo grabado",
+          },
+          datos: [
+            ["Desde", "$19.000 c/u"],
+            ["Pedido mínimo", "25 unidades"],
+            ["Grabado del logo", "Sin cargo"],
+            ["Envíos", "A varias direcciones"],
+          ] as [string, string][],
+          // Los de calabaza (simple, repujado y base bolita), algo más
+          // grandes, y los de algarrobo (liso, pintado e imperial con base).
+          // Fotos del catálogo.
           mates: [
-            "recortes/calabaza-simple.png",
-            "recortes/calabaza-repujado.png",
-            "recortes/calabaza-base-bolita.png",
-            "recortes/algarrobo-liso.png",
-            "recortes/algarrobo-pintado.png",
-            "recortes/algarrobo-imperial-con-base.png",
-          ],
-          urgencia: ["Pedidos hasta el", "10 de noviembre"] as [string, string],
-          beneficio: ["Con tu logo", "Grabado gratis"] as [string, string],
+            ["recortes/calabaza-simple.png", 170],
+            ["recortes/calabaza-repujado.png", 170],
+            ["recortes/calabaza-base-bolita.png", 170],
+            ["recortes/algarrobo-liso.png", 150],
+            ["recortes/algarrobo-pintado.png", 150],
+            ["recortes/algarrobo-imperial-con-base.png", 150],
+          ] as [string, number][],
+          modelos: "6 modelos · Con factura · En bolsa de papel kraft",
+          urgencia: "Pedidos hasta el 10 de noviembre",
           confianza: "Ya nos eligieron",
           logos: [
             ["clientes/farmacity-crema.png", 46],
