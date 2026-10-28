@@ -438,7 +438,6 @@ export const RemotionRoot: React.FC = () => {
           ],
           grabado: {
             foto: "grabado-logo.png",
-            leyenda: "Así queda tu logo grabado",
           },
           datos: [
             ["Desde", "$19.000 c/u"],
@@ -446,13 +445,13 @@ export const RemotionRoot: React.FC = () => {
             ["Grabado", "Sin cargo"],
           ] as [string, string][],
           // Los de calabaza (simple, repujado y base bolita), algo más
-          // grandes, y los de algarrobo (liso, pintado e imperial con base).
+          // grandes, y los de algarrobo (imperial, pintado e imperial con base).
           // Fotos del catálogo.
           mates: [
             ["recortes/calabaza-simple.png", 150],
             ["recortes/calabaza-repujado.png", 150],
             ["recortes/calabaza-base-bolita.png", 150],
-            ["recortes/algarrobo-liso.png", 132],
+            ["recortes/algarrobo-imperial.png", 132],
             ["recortes/algarrobo-pintado.png", 132],
             ["recortes/algarrobo-imperial-con-base.png", 132],
           ] as [string, number][],

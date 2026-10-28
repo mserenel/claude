@@ -21,8 +21,9 @@ const conPie = 724 / 700;
 export const HistoriaEmpresasLogo: React.FC<{
   readonly titulo: string[];
   readonly bajada: string[];
-  // Foto real de un logo grabado en la boca del mate, y lo que dice debajo.
-  readonly grabado: { readonly foto: string; readonly leyenda: string };
+  // Foto real de un grabado en la boca del mate (con "TU LOGO" en lugar del
+  // logo del cliente: tools/grabado_tu_logo.py).
+  readonly grabado: { readonly foto: string };
   // Los datos duros: rótulo chico y valor grande.
   readonly datos: [rotulo: string, valor: string][];
   // Los seis modelos, con su alto en la fila (los de calabaza son algo más
@@ -106,23 +107,11 @@ export const HistoriaEmpresasLogo: React.FC<{
         src={staticFile(grabado.foto)}
         style={{ position: "absolute", top: 592, left: 160, width: 760 }}
       />
-      <div
-        style={{
-          ...rotulo,
-          position: "absolute",
-          top: 880,
-          left: 0,
-          right: 0,
-          textAlign: "center",
-        }}
-      >
-        {grabado.leyenda}
-      </div>
       {/* Los datos duros, en columnas separadas por filetes. */}
       <div
         style={{
           position: "absolute",
-          top: 944,
+          top: 912,
           left: margen,
           right: margen,
           display: "flex",
