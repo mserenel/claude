@@ -450,10 +450,10 @@ export const RemotionRoot: React.FC = () => {
           beneficio: ["Con tu logo", "Grabado gratis"] as [string, string],
           confianza: "Ya nos eligieron",
           logos: [
-            ["clientes/farmacity.png", 46],
-            ["clientes/the-food-market.png", 76],
-            ["clientes/simplicity.png", 30],
-            ["clientes/get-the-look.png", 58],
+            ["clientes/farmacity-crema.png", 46],
+            ["clientes/the-food-market-crema.png", 76],
+            ["clientes/simplicity-crema.png", 30],
+            ["clientes/get-the-look-crema.png", 58],
           ] as [string, number][],
           accion: "Cotizá tu pedido",
         }}

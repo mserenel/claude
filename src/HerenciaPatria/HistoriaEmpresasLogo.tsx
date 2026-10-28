@@ -2,21 +2,32 @@ import { AbsoluteFill, Img, staticFile } from "remotion";
 import { colors, fonts } from "./brand";
 
 // Historia de Instagram (1080x1920) para los pedidos empresariales de fin
-// de año. Los protagonistas son los mates: seis modelos reales, sin efectos,
-// en dos filas sobre el crema (arriba los de calabaza, apenas más grandes;
-// abajo los de algarrobo). Debajo, sólo tipografía: el beneficio y la fecha
-// límite en dos columnas. Abajo, quiénes ya los eligieron y el llamado con
-// una flecha hacia abajo. Crema y azul, Addington y Helvetica Neue, como el
-// resto de la marca. Lo que hay que leer va entre 230 y 1700:
-// Instagram tapa arriba el perfil y abajo la respuesta o el botón del anuncio.
+// de año. Fondo azul y letras crema, para que la alpaca y el dorado de las
+// virolas se luzcan. Los mates, fotos del catálogo, van agrupados como en una
+// foto de familia, en zigzag: uno atrás (algarrobo, más chico y apoyado un poco más
+// arriba) y uno adelante (calabaza), que lo tapa apenas de costado. Debajo, el beneficio y la
+// fecha límite en dos columnas; abajo, quiénes ya los eligieron y el llamado
+// con una flecha hacia abajo. Addington y Helvetica Neue, como el resto de la
+// marca. Lo que hay que leer va entre 230 y 1700: Instagram tapa arriba el
+// perfil y abajo la respuesta o el botón del anuncio.
 
 const margen = 80;
+
+// El grupo: el centro del primer mate y la distancia entre uno y otro.
+const desde = 139;
+const paso = 165;
+// Atrás (algarrobo) y adelante (calabaza): dónde apoyan y su alto.
+const atras = { apoyo: 935, alto: 235 };
+const adelante = { apoyo: 980, alto: 270 };
+// Los recortes traen debajo de la base su sombra de contacto: 24 px más cada
+// 700 de mate.
+const conPie = 724 / 700;
 
 export const HistoriaEmpresasLogo: React.FC<{
   readonly titulo: string[];
   readonly bajada: string[];
-  // Arriba los de calabaza, abajo los de algarrobo (tres y tres): recortes con
-  // su sombra de contacto debajo (tools/recorte_mate.py).
+  // Primero los tres de calabaza (adelante), después los tres de algarrobo
+  // (atrás): recortes con su sombra de contacto (tools/recorte_mate.py).
   readonly mates: string[];
   // El beneficio y la fecha límite: lo chico de arriba y lo grande.
   readonly beneficio: [string, string];
@@ -46,22 +57,31 @@ export const HistoriaEmpresasLogo: React.FC<{
     left: margen,
     right: margen,
     height: 2,
-    background: colors.azul,
-    opacity: 0.25,
+    background: colors.crema,
+    opacity: 0.3,
   };
-  // Las filas: dónde apoyan los mates de cada fila y su alto (los de
-  // calabaza son algo más grandes que los de algarrobo, como en la realidad).
-  const apoyos = [810, 1050];
-  const altoFila = [205, 172];
-  // Los recortes traen debajo de la base su sombra de contacto: 24 px más
-  // cada 700 de mate.
-  const conPie = 724 / 700;
+  // Los de atrás van en los lugares pares (0, 2, 4) y los de adelante en
+  // los impares.
+  const fila = (srcs: string[], { apoyo, alto }: typeof atras, lado: number) =>
+    srcs.map((src, i) => (
+      <Img
+        key={src}
+        src={staticFile(src)}
+        style={{
+          position: "absolute",
+          top: apoyo - alto,
+          left: desde + (2 * i + lado) * paso,
+          height: alto * conPie,
+          transform: "translateX(-50%)",
+        }}
+      />
+    ));
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: colors.crema,
+        backgroundColor: colors.azul,
         fontFamily: fonts.serif,
-        color: colors.azul,
+        color: colors.crema,
       }}
     >
       <div
@@ -78,7 +98,7 @@ export const HistoriaEmpresasLogo: React.FC<{
         ))}
       </div>
       <Img
-        src={staticFile("logos/herencia-patria-sello-azul.png")}
+        src={staticFile("logos/herencia-patria-sello-crema.png")}
         style={{ position: "absolute", top: 248, right: 70, width: 200 }}
       />
       <div
@@ -96,41 +116,15 @@ export const HistoriaEmpresasLogo: React.FC<{
           <div key={l}>{l}</div>
         ))}
       </div>
-      {/* Los mates, reales, en dos filas sobre el crema (sin estantes ni
-          efectos), cada uno con su sombra de contacto. */}
-      {[mates.slice(0, 3), mates.slice(3)].map((fila, i) => {
-        const apoyo = apoyos[i];
-        const alto = altoFila[i];
-        return (
-          <div
-            key={fila.join()}
-            style={{
-              position: "absolute",
-              top: apoyo - alto,
-              left: margen + 30,
-              right: margen + 30,
-              height: alto * conPie,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-end",
-            }}
-          >
-            {fila.map((src) => (
-              <Img
-                key={src}
-                src={staticFile(src)}
-                style={{ display: "block", height: alto * conPie }}
-              />
-            ))}
-          </div>
-        );
-      })}
+      {/* El grupo: primero los de atrás, para que los de adelante los tapen. */}
+      {fila(mates.slice(3), atras, 0)}
+      {fila(mates.slice(0, 3), adelante, 1)}
       {/* El beneficio y la fecha límite: tipografía, dos columnas. */}
-      <div style={{ ...filete, top: 1138 }} />
+      <div style={{ ...filete, top: 1100 }} />
       <div
         style={{
           position: "absolute",
-          top: 1168,
+          top: 1128,
           left: margen,
           right: margen,
           display: "flex",
@@ -142,26 +136,28 @@ export const HistoriaEmpresasLogo: React.FC<{
             style={{
               flex: 1,
               paddingLeft: k === 1 ? 44 : 0,
-              borderLeft: k === 1 ? `2px solid rgba(20,35,59,0.25)` : undefined,
+              borderLeft:
+                k === 1 ? `2px solid rgba(243,235,221,0.3)` : undefined,
             }}
           >
-            <div style={rotulo}>{chico}</div>
+            <div style={{ ...rotulo, opacity: 0.75 }}>{chico}</div>
             <div style={{ fontSize: 58, lineHeight: 1.05, marginTop: 10 }}>
               {grande}
             </div>
           </div>
         ))}
       </div>
-      <div style={{ ...filete, top: 1330 }} />
-      {/* Quiénes ya los eligieron: los logos en el azul de la marca. */}
+      <div style={{ ...filete, top: 1278 }} />
+      {/* Quiénes ya los eligieron: los logos en crema. */}
       <div
         style={{
           position: "absolute",
-          top: 1352,
+          top: 1300,
           left: 0,
           right: 0,
           textAlign: "center",
           ...rotulo,
+          opacity: 0.75,
         }}
       >
         {confianza}
@@ -169,7 +165,7 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1392,
+          top: 1340,
           left: margen,
           right: margen,
           height: 80,
@@ -186,12 +182,12 @@ export const HistoriaEmpresasLogo: React.FC<{
           />
         ))}
       </div>
-      <div style={{ ...filete, top: 1494 }} />
+      <div style={{ ...filete, top: 1442 }} />
       {/* El llamado, centrado, con una flecha hacia abajo. Texto, no botón. */}
       <div
         style={{
           position: "absolute",
-          top: 1516,
+          top: 1464,
           left: 0,
           right: 0,
           display: "flex",
@@ -209,7 +205,7 @@ export const HistoriaEmpresasLogo: React.FC<{
           <path
             d="M 13 0 V 52 M 2 41 L 13 52 L 24 41"
             fill="none"
-            stroke={colors.azul}
+            stroke={colors.crema}
             strokeWidth={2}
           />
         </svg>
