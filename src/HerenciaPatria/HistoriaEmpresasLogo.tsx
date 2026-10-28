@@ -4,11 +4,10 @@ import { colors, fonts } from "./brand";
 // Historia de Instagram (1080x1920) para los pedidos empresariales de fin
 // de año, pensada para quien compra en una empresa: lo que necesita saber
 // para cotizar sin miedo a quedar mal. Fondo azul y letras crema. Arriba el
-// título; al medio, a la izquierda, la foto real de un logo grabado en la
-// virola (la prueba de cómo queda) y a la derecha los datos duros (precio,
-// mínimo, grabado, envíos). Debajo, los seis modelos en fila (fotos del
-// catálogo), la fecha límite, quiénes ya los eligieron y el llamado con una
-// flecha hacia abajo. Addington y Helvetica Neue, como el resto de la marca.
+// título; al medio, a todo el ancho, la foto real de un logo grabado en la
+// boca del mate (la prueba de cómo queda) y debajo los datos duros (precio,
+// mínimo, grabado). Después, los seis modelos en fila (fotos del catálogo),
+// quiénes ya los eligieron y el llamado con una flecha hacia abajo. Addington y Helvetica Neue, como el resto de la marca.
 // Lo que hay que leer va entre 230 y 1700: Instagram tapa arriba el perfil y
 // abajo la respuesta o el botón del anuncio.
 
@@ -20,7 +19,7 @@ const conPie = 724 / 700;
 export const HistoriaEmpresasLogo: React.FC<{
   readonly titulo: string[];
   readonly bajada: string[];
-  // Foto real de un logo grabado en la virola, y lo que dice debajo.
+  // Foto real de un logo grabado en la boca del mate, y lo que dice debajo.
   readonly grabado: { readonly foto: string; readonly leyenda: string };
   // Los datos duros: rótulo chico y valor grande.
   readonly datos: [rotulo: string, valor: string][];
@@ -28,7 +27,6 @@ export const HistoriaEmpresasLogo: React.FC<{
   // grandes): recortes con su sombra de contacto (tools/recorte_mate.py).
   readonly mates: [archivo: string, alto: number][];
   readonly modelos: string;
-  readonly urgencia: string;
   readonly confianza: string;
   readonly logos: [archivo: string, alto: number][];
   readonly accion: string;
@@ -39,7 +37,6 @@ export const HistoriaEmpresasLogo: React.FC<{
   datos,
   mates,
   modelos,
-  urgencia,
   confianza,
   logos,
   accion,
@@ -100,44 +97,46 @@ export const HistoriaEmpresasLogo: React.FC<{
           <div key={l}>{l}</div>
         ))}
       </div>
-      {/* La prueba: un logo grabado de verdad, en la virola. */}
+      {/* La prueba: un logo grabado de verdad, en la boca del mate (vista
+          de arriba, recortada por el borde real y fundida hacia abajo). */}
       <Img
         src={staticFile(grabado.foto)}
-        style={{
-          position: "absolute",
-          top: 610,
-          left: margen,
-          width: 440,
-          height: 424,
-          objectFit: "cover",
-          borderRadius: 4,
-        }}
+        style={{ position: "absolute", top: 592, left: 160, width: 760 }}
       />
-      <div style={{ ...rotulo, position: "absolute", top: 1050, left: margen }}>
+      <div
+        style={{
+          ...rotulo,
+          position: "absolute",
+          top: 880,
+          left: 0,
+          right: 0,
+          textAlign: "center",
+        }}
+      >
         {grabado.leyenda}
       </div>
-      {/* Los datos duros, uno debajo del otro. */}
+      {/* Los datos duros, en columnas separadas por filetes. */}
       <div
         style={{
           position: "absolute",
-          top: 610,
-          left: 572,
+          top: 944,
+          left: margen,
           right: margen,
+          display: "flex",
         }}
       >
         {datos.map(([r, v], i) => (
           <div
             key={r}
             style={{
-              height: 106,
-              borderTop:
+              flex: 1,
+              textAlign: "center",
+              borderLeft:
                 i === 0 ? undefined : `2px solid rgba(243,235,221,0.3)`,
-              paddingTop: i === 0 ? 0 : 16,
-              boxSizing: "border-box",
             }}
           >
             <div style={rotulo}>{r}</div>
-            <div style={{ fontSize: 46, lineHeight: 1.1, marginTop: 6 }}>
+            <div style={{ fontSize: 46, lineHeight: 1.1, marginTop: 12 }}>
               {v}
             </div>
           </div>
@@ -147,10 +146,10 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1110,
-          left: margen + 10,
-          right: margen + 10,
-          height: 170 * conPie,
+          top: 1262 - 150,
+          left: margen + 20,
+          right: margen + 20,
+          height: 150 * conPie,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-end",
@@ -168,7 +167,7 @@ export const HistoriaEmpresasLogo: React.FC<{
         style={{
           ...rotulo,
           position: "absolute",
-          top: 1306,
+          top: 1294,
           left: 0,
           right: 0,
           textAlign: "center",
@@ -176,26 +175,13 @@ export const HistoriaEmpresasLogo: React.FC<{
       >
         {modelos}
       </div>
-      <div style={{ ...filete, top: 1352 }} />
-      <div
-        style={{
-          position: "absolute",
-          top: 1370,
-          left: 0,
-          right: 0,
-          textAlign: "center",
-          fontSize: 50,
-        }}
-      >
-        {urgencia}
-      </div>
-      <div style={{ ...filete, top: 1446 }} />
+      <div style={{ ...filete, top: 1362 }} />
       {/* Quiénes ya los eligieron: los logos en crema. */}
       <div
         style={{
           ...rotulo,
           position: "absolute",
-          top: 1466,
+          top: 1388,
           left: 0,
           right: 0,
           textAlign: "center",
@@ -206,7 +192,7 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1500,
+          top: 1426,
           left: margen,
           right: margen,
           height: 76,
@@ -227,7 +213,7 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1596,
+          top: 1560,
           left: 0,
           right: 0,
           display: "flex",

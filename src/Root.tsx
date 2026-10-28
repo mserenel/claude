@@ -437,28 +437,26 @@ export const RemotionRoot: React.FC = () => {
             "a ese cliente que confió en vos este año",
           ],
           grabado: {
-            foto: "grabado-logo.jpg",
+            foto: "grabado-logo.png",
             leyenda: "Así queda tu logo grabado",
           },
           datos: [
             ["Desde", "$19.000 c/u"],
             ["Pedido mínimo", "25 unidades"],
-            ["Grabado del logo", "Sin cargo"],
-            ["Envíos", "A varias direcciones"],
+            ["Grabado", "Sin cargo"],
           ] as [string, string][],
           // Los de calabaza (simple, repujado y base bolita), algo más
           // grandes, y los de algarrobo (liso, pintado e imperial con base).
           // Fotos del catálogo.
           mates: [
-            ["recortes/calabaza-simple.png", 170],
-            ["recortes/calabaza-repujado.png", 170],
-            ["recortes/calabaza-base-bolita.png", 170],
-            ["recortes/algarrobo-liso.png", 150],
-            ["recortes/algarrobo-pintado.png", 150],
-            ["recortes/algarrobo-imperial-con-base.png", 150],
+            ["recortes/calabaza-simple.png", 150],
+            ["recortes/calabaza-repujado.png", 150],
+            ["recortes/calabaza-base-bolita.png", 150],
+            ["recortes/algarrobo-liso.png", 132],
+            ["recortes/algarrobo-pintado.png", 132],
+            ["recortes/algarrobo-imperial-con-base.png", 132],
           ] as [string, number][],
           modelos: "6 modelos · Con factura · En bolsa de papel kraft",
-          urgencia: "Pedidos hasta el 10 de noviembre",
           confianza: "Ya nos eligieron",
           logos: [
             ["clientes/farmacity-crema.png", 46],
