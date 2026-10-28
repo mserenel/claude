@@ -455,7 +455,6 @@ export const RemotionRoot: React.FC = () => {
             ["recortes/algarrobo-pintado.png", 132],
             ["recortes/algarrobo-imperial-con-base.png", 132],
           ] as [string, number][],
-          modelos: "6 modelos · Con factura · En bolsa de papel kraft",
           confianza: "Ya nos eligieron",
           logos: [
             ["clientes/farmacity-crema.png", 46],

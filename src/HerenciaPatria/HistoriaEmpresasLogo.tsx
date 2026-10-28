@@ -4,9 +4,9 @@ import { colors, fonts } from "./brand";
 // Historia de Instagram (1080x1920) para los pedidos empresariales de fin
 // de año, pensada para quien compra en una empresa: lo que necesita saber
 // para cotizar sin miedo a quedar mal. Fondo azul y letras crema. Arriba el
-// título; al medio, a todo el ancho, la foto real de un logo grabado en la
-// boca del mate (la prueba de cómo queda) y debajo los datos duros (precio,
-// mínimo, grabado). Después, los seis modelos en fila (fotos del catálogo),
+// título; al medio, a la izquierda, la boca de un mate grabado con "TU LOGO"
+// (la prueba de cómo queda) y a la derecha los datos duros (precio, mínimo,
+// grabado). Después, los seis modelos en fila (fotos del catálogo),
 // quiénes ya los eligieron y el llamado con una flecha hacia abajo. Las
 // letras del brandbook: Addington CF Medium para los titulares y Helvetica
 // LT Std para los textos.
@@ -29,21 +29,10 @@ export const HistoriaEmpresasLogo: React.FC<{
   // Los seis modelos, con su alto en la fila (los de calabaza son algo más
   // grandes): recortes con su sombra de contacto (tools/recorte_mate.py).
   readonly mates: [archivo: string, alto: number][];
-  readonly modelos: string;
   readonly confianza: string;
   readonly logos: [archivo: string, alto: number][];
   readonly accion: string;
-}> = ({
-  titulo,
-  bajada,
-  grabado,
-  datos,
-  mates,
-  modelos,
-  confianza,
-  logos,
-  accion,
-}) => {
+}> = ({ titulo, bajada, grabado, datos, mates, confianza, logos, accion }) => {
   const rotulo: React.CSSProperties = {
     fontFamily: fonts.texto,
     fontWeight: 400,
@@ -101,34 +90,32 @@ export const HistoriaEmpresasLogo: React.FC<{
           <div key={l}>{l}</div>
         ))}
       </div>
-      {/* La prueba: un logo grabado de verdad, en la boca del mate (vista
-          de arriba, recortada por el borde real y fundida hacia abajo). */}
+      {/* La prueba: la boca de un mate grabado, vista de arriba y recortada
+          por su borde real. */}
       <Img
         src={staticFile(grabado.foto)}
-        style={{ position: "absolute", top: 592, left: 160, width: 760 }}
+        style={{ position: "absolute", top: 606, left: margen, height: 470 }}
       />
-      {/* Los datos duros, en columnas separadas por filetes. */}
+      {/* Los datos duros, al costado, uno debajo del otro. */}
       <div
         style={{
           position: "absolute",
-          top: 912,
-          left: margen,
+          top: 650,
+          left: 600,
           right: margen,
-          display: "flex",
         }}
       >
         {datos.map(([r, v], i) => (
           <div
             key={r}
             style={{
-              flex: 1,
-              textAlign: "center",
-              borderLeft:
+              borderTop:
                 i === 0 ? undefined : `2px solid rgba(243,235,221,0.3)`,
+              padding: "22px 0",
             }}
           >
             <div style={rotulo}>{r}</div>
-            <div style={{ fontSize: 46, lineHeight: 1.1, marginTop: 12 }}>
+            <div style={{ fontSize: 46, lineHeight: 1.1, marginTop: 10 }}>
               {v}
             </div>
           </div>
@@ -138,7 +125,7 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1262 - 150,
+          top: 1290 - 150,
           left: margen + 20,
           right: margen + 20,
           height: 150 * conPie,
@@ -155,25 +142,13 @@ export const HistoriaEmpresasLogo: React.FC<{
           />
         ))}
       </div>
-      <div
-        style={{
-          ...rotulo,
-          position: "absolute",
-          top: 1294,
-          left: 0,
-          right: 0,
-          textAlign: "center",
-        }}
-      >
-        {modelos}
-      </div>
-      <div style={{ ...filete, top: 1362 }} />
+      <div style={{ ...filete, top: 1370 }} />
       {/* Quiénes ya los eligieron: los logos en crema. */}
       <div
         style={{
           ...rotulo,
           position: "absolute",
-          top: 1388,
+          top: 1396,
           left: 0,
           right: 0,
           textAlign: "center",
@@ -184,7 +159,7 @@ export const HistoriaEmpresasLogo: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 1426,
+          top: 1434,
           left: margen,
           right: margen,
           height: 76,
