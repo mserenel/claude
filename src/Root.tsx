@@ -446,10 +446,11 @@ export const RemotionRoot: React.FC = () => {
           ] as [string, string][],
           // Los de calabaza (simple, repujado y base bolita), algo más
           // grandes, y los de algarrobo (camionero, imperial e imperial con
-          // base), sobre una mesa de estudio. Los de calabaza van un poco más
+          // base), sobre un estante crema. Antes se iguala el color de la madera de
+          // los de algarrobo (tools/igualar_madera.py). Los de calabaza van un poco más
           // abajo (el último número): la foto los muestra desde arriba y la
           // pata de adelante queda más abajo que el piso real.
-          //   python tools/estudio_mates.py public/estudio-mates.png 1080 260 214 100 \
+          //   python tools/estudio_mates.py public/estudio-mates.png 1080 300 220 100 \
           //     public/recortes/calabaza-simple.png:150:12 \
           //     public/recortes/calabaza-repujado.png:150:15 \
           //     public/recortes/calabaza-base-bolita.png:150:10 \

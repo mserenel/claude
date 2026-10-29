@@ -6,7 +6,7 @@ import { colors, fonts } from "./brand";
 // para cotizar sin miedo a quedar mal. Fondo azul y letras crema. Arriba el
 // título; al medio, a la izquierda, la boca de un mate grabado con "TU LOGO"
 // (la prueba de cómo queda) y a la derecha los datos duros (precio, mínimo,
-// grabado). Después, los seis modelos sobre una mesa de estudio,
+// grabado). Después, los seis modelos sobre un estante crema,
 // quiénes ya los eligieron y el llamado con una flecha hacia abajo. Las
 // letras del brandbook: Addington CF Medium para los titulares y Helvetica
 // LT Std para los textos.
@@ -23,7 +23,7 @@ export const HistoriaEmpresasLogo: React.FC<{
   readonly grabado: { readonly foto: string };
   // Los datos duros: rótulo chico y valor grande.
   readonly datos: [rotulo: string, valor: string][];
-  // Los seis modelos en fila sobre la mesa de estudio: una sola imagen.
+  // Los seis modelos en fila sobre el estante: una sola imagen.
   readonly estudio: string;
   readonly confianza: string;
   readonly logos: [archivo: string, alto: number][];
@@ -118,10 +118,10 @@ export const HistoriaEmpresasLogo: React.FC<{
           </div>
         ))}
       </div>
-      {/* Los seis modelos sobre una mesa de estudio (tools/estudio_mates.py). */}
+      {/* Los seis modelos sobre un estante crema (tools/estudio_mates.py). */}
       <Img
         src={staticFile(estudio)}
-        style={{ position: "absolute", top: 1100, left: 0, width: 1080 }}
+        style={{ position: "absolute", top: 1072, left: 0, width: 1080 }}
       />
       {/* Quiénes ya los eligieron: los logos en crema. */}
       <div
