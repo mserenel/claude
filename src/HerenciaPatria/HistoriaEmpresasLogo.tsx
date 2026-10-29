@@ -28,7 +28,7 @@ export const HistoriaEmpresasLogo: React.FC<{
   readonly datos: [rotulo: string, valor: string][];
   // Los seis modelos, con su alto en la fila (los de calabaza son algo más
   // grandes): recortes con su sombra de contacto (tools/recorte_mate.py).
-  readonly mates: [archivo: string, alto: number][];
+  readonly mates: [archivo: string, alto: number, bajar: number][];
   readonly confianza: string;
   readonly logos: [archivo: string, alto: number][];
   readonly accion: string;
@@ -138,11 +138,15 @@ export const HistoriaEmpresasLogo: React.FC<{
           alignItems: "flex-end",
         }}
       >
-        {mates.map(([src, alto]) => (
+        {mates.map(([src, alto, bajar]) => (
           <Img
             key={src}
             src={staticFile(src)}
-            style={{ display: "block", height: alto * conPie }}
+            style={{
+              display: "block",
+              height: alto * conPie,
+              marginBottom: -bajar,
+            }}
           />
         ))}
       </div>
