@@ -449,7 +449,8 @@ export const RemotionRoot: React.FC = () => {
           // base), sobre un estante crema. Antes se iguala el color de la madera de
           // los de algarrobo (tools/igualar_madera.py) y se empareja la luz del
           // cuerpo de los seis (tools/sin_brillo.py: filas 140-700, 140-700,
-          // 150-495, 22-690, 178-690 y 198-595). Los de calabaza van un poco más
+          // 150-495, 22-690, 178-690 y 198-595) y se baja el brillo del metal
+          // sin tocar el cincelado (tools/virola_mate.py, el resto de las filas). Los de calabaza van un poco más
           // abajo (el último número): la foto los muestra desde arriba y la
           // pata de adelante queda más abajo que el piso real.
           //   python tools/estudio_mates.py public/estudio-mates.png 1080 300 220 100 \
