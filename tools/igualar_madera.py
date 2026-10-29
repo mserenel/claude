@@ -5,6 +5,10 @@ El metal y la sombra quedan como estaban.
 
 Uso:
   python igualar_madera.py RECORTE.png [RECORTE.png ...]   (los reescribe)
+
+Un recorte con "=" adelante (=RECORTE.png) sólo sirve de referencia: cuenta
+para el promedio pero no se reescribe (para sumar uno nuevo a los que ya
+están igualados).
 """
 
 import sys
@@ -23,14 +27,20 @@ def madera(r):
 
 
 def main():
-    rs = [cv2.imread(f, cv2.IMREAD_UNCHANGED) for f in sys.argv[1:]]
+    archivos = [a.lstrip("=") for a in sys.argv[1:]]
+    referencia = [a.startswith("=") for a in sys.argv[1:]]
+    rs = [cv2.imread(f, cv2.IMREAD_UNCHANGED) for f in archivos]
     datos = []
     for r in rs:
         lab, croma, m = madera(r)
         datos.append((lab, croma, m, lab[m].mean(0), lab[m].std(0)))
-    media = np.mean([d[3] for d in datos], 0)
-    desvio = np.mean([d[4] for d in datos], 0)
-    for f, r, (lab, croma, m, mu, sd) in zip(sys.argv[1:], rs, datos):
+    # Si hay referencias, el objetivo es el de ellas; si no, el de todos.
+    base = [d for d, ref in zip(datos, referencia) if ref] or datos
+    media = np.mean([d[3] for d in base], 0)
+    desvio = np.mean([d[4] for d in base], 0)
+    for f, ref, r, (lab, croma, m, mu, sd) in zip(archivos, referencia, rs, datos):
+        if ref:
+            continue
         nuevo = (lab - mu) * (desvio / sd) + media
         # Peso suave según cuánto color tiene el píxel: el metal (gris) no cambia.
         peso = np.clip((croma - 10) / 12, 0, 1) * (r[..., 3] > 0)
