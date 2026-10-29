@@ -6,7 +6,7 @@ import { colors, fonts } from "./brand";
 // para cotizar sin miedo a quedar mal. Fondo azul y letras crema. Arriba el
 // título; al medio, a la izquierda, la boca de un mate grabado con "TU LOGO"
 // (la prueba de cómo queda) y a la derecha los datos duros (precio, mínimo,
-// grabado). Después, los seis modelos en fila sobre una franja crema,
+// grabado). Después, los seis modelos sobre una mesa de estudio,
 // quiénes ya los eligieron y el llamado con una flecha hacia abajo. Las
 // letras del brandbook: Addington CF Medium para los titulares y Helvetica
 // LT Std para los textos.
@@ -14,9 +14,6 @@ import { colors, fonts } from "./brand";
 // abajo la respuesta o el botón del anuncio.
 
 const margen = 80;
-// Los recortes traen debajo de la base su sombra de contacto: 24 px más cada
-// 700 de mate.
-const conPie = 724 / 700;
 
 export const HistoriaEmpresasLogo: React.FC<{
   readonly titulo: string[];
@@ -26,13 +23,21 @@ export const HistoriaEmpresasLogo: React.FC<{
   readonly grabado: { readonly foto: string };
   // Los datos duros: rótulo chico y valor grande.
   readonly datos: [rotulo: string, valor: string][];
-  // Los seis modelos, con su alto en la fila (los de calabaza son algo más
-  // grandes): recortes con su sombra de contacto (tools/recorte_mate.py).
-  readonly mates: [archivo: string, alto: number, bajar: number][];
+  // Los seis modelos en fila sobre la mesa de estudio: una sola imagen.
+  readonly estudio: string;
   readonly confianza: string;
   readonly logos: [archivo: string, alto: number][];
   readonly accion: string;
-}> = ({ titulo, bajada, grabado, datos, mates, confianza, logos, accion }) => {
+}> = ({
+  titulo,
+  bajada,
+  grabado,
+  datos,
+  estudio,
+  confianza,
+  logos,
+  accion,
+}) => {
   const rotulo: React.CSSProperties = {
     fontFamily: fonts.texto,
     fontWeight: 400,
@@ -113,43 +118,11 @@ export const HistoriaEmpresasLogo: React.FC<{
           </div>
         ))}
       </div>
-      {/* Los seis modelos, en fila, apoyados sobre una franja crema a todo el
-          ancho (como el fondo de estudio de las fotos del catálogo), cada uno
-          con su sombra de contacto. */}
-      <div
-        style={{
-          position: "absolute",
-          top: 1108,
-          left: 0,
-          right: 0,
-          height: 236,
-          background: colors.crema,
-        }}
+      {/* Los seis modelos sobre una mesa de estudio (tools/estudio_mates.py). */}
+      <Img
+        src={staticFile(estudio)}
+        style={{ position: "absolute", top: 1100, left: 0, width: 1080 }}
       />
-      <div
-        style={{
-          position: "absolute",
-          top: 1306 - 150,
-          left: margen + 20,
-          right: margen + 20,
-          height: 150 * conPie,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-end",
-        }}
-      >
-        {mates.map(([src, alto, bajar]) => (
-          <Img
-            key={src}
-            src={staticFile(src)}
-            style={{
-              display: "block",
-              height: alto * conPie,
-              marginBottom: -bajar,
-            }}
-          />
-        ))}
-      </div>
       {/* Quiénes ya los eligieron: los logos en crema. */}
       <div
         style={{

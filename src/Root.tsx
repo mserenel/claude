@@ -445,18 +445,18 @@ export const RemotionRoot: React.FC = () => {
             ["Grabado", "Sin cargo"],
           ] as [string, string][],
           // Los de calabaza (simple, repujado y base bolita), algo más
-          // grandes, y los de algarrobo (camionero, imperial e imperial con base).
-          // Fotos del catálogo. El tercer número baja los que tienen patas: la
-          // foto los muestra un poco desde arriba, así que la pata de adelante
-          // queda más abajo que el piso real (el de las patas de los costados).
-          mates: [
-            ["recortes/calabaza-simple.png", 150, 12],
-            ["recortes/calabaza-repujado.png", 150, 15],
-            ["recortes/calabaza-base-bolita.png", 150, 10],
-            ["recortes/algarrobo-camionero.png", 132, 0],
-            ["recortes/algarrobo-imperial.png", 132, 0],
-            ["recortes/algarrobo-imperial-con-base.png", 132, 0],
-          ] as [string, number, number][],
+          // grandes, y los de algarrobo (camionero, imperial e imperial con
+          // base), sobre una mesa de estudio. Los de calabaza van un poco más
+          // abajo (el último número): la foto los muestra desde arriba y la
+          // pata de adelante queda más abajo que el piso real.
+          //   python tools/estudio_mates.py public/estudio-mates.png 1080 260 214 100 \
+          //     public/recortes/calabaza-simple.png:150:12 \
+          //     public/recortes/calabaza-repujado.png:150:15 \
+          //     public/recortes/calabaza-base-bolita.png:150:10 \
+          //     public/recortes/algarrobo-camionero.png:132:0 \
+          //     public/recortes/algarrobo-imperial.png:132:0 \
+          //     public/recortes/algarrobo-imperial-con-base.png:132:0
+          estudio: "estudio-mates.png",
           confianza: "Ya nos eligieron",
           logos: [
             ["clientes/farmacity-crema.png", 46],
