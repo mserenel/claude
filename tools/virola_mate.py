@@ -1,7 +1,8 @@
 """Baja el brillo del metal de un recorte de mate (virola, base, patas) sin
-borrar el cincelado: sólo una curva de tono (las altas luces se comprimen y
-el conjunto baja un poco), igual para todos los píxeles, así cada relieve
-conserva su luz y su sombra. No desenfoca ni mezcla nada.
+perder el cincelado: la luz del metal se separa en la de fondo (desenfocada)
+y el relieve (lo que queda); sólo la de fondo baja y se comprime, y el
+relieve se refuerza un poco, así los dibujos se leen mejor aunque el metal
+brille menos.
 
 Uso:
   python virola_mate.py RECORTE.png Y0:Y1 [Y0:Y1 ...]   (lo reescribe)
@@ -29,8 +30,11 @@ def main():
     lab = cv2.cvtColor(r[..., :3], cv2.COLOR_BGR2LAB).astype(np.float32)
     L = lab[..., 0]
     zona = metal > 0.5
-    hombro = float(np.percentile(L[zona], 45))
-    curva = np.where(L > hombro, hombro + (L - hombro) * 0.45, L) * 0.9
+    fondo = cv2.GaussianBlur(L, (0, 0), 3)
+    relieve = L - fondo
+    hombro = float(np.percentile(fondo[zona], 45))
+    curva = np.where(fondo > hombro, hombro + (fondo - hombro) * 0.45, fondo) * 0.9
+    curva = curva + relieve * 1.35
     lab[..., 0] = L * (1 - metal) + curva * metal
     # El color del metal (alpaca o dorado) un poco menos saturado, sin brillo.
     for c in (1, 2):
