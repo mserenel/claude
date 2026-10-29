@@ -6,10 +6,7 @@ del cuerpo: el metal (virola, base, patas) queda como estaba, porque cualquier
 retoque ahí borra el cincelado.
 
 Uso:
-  python sin_brillo.py RECORTE.png CUERPO_Y0 CUERPO_Y1 [GAMMA]   (lo reescribe)
-
-GAMMA (opcional, menor que 1) aclara las sombras del cuerpo: para los cueros
-negros, que sobre el fondo azul se pierden.
+  python sin_brillo.py RECORTE.png CUERPO_Y0 CUERPO_Y1   (lo reescribe)
 """
 
 import sys
@@ -56,10 +53,6 @@ def main():
     lejos = suave(L, mm * cuerpo + 1e-3, ancho * 0.15)
     media = (lejos * cuerpo).sum() / max(cuerpo.sum(), 1)
     L = L - (lejos - media) * 0.5 * cuerpo
-
-    if len(sys.argv) > 4:
-        aclarado = 100 * (np.clip(L, 0, 255) / 255) ** float(sys.argv[4]) * 2.55
-        L = L * (1 - cuerpo) + aclarado * cuerpo
 
     r[..., :3] = cv2.cvtColor(np.clip(np.dstack([L, A, B]), 0, 255).astype(np.uint8), cv2.COLOR_LAB2BGR)
     cv2.imwrite(f, r)

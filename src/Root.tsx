@@ -444,21 +444,19 @@ export const RemotionRoot: React.FC = () => {
             ["Pedido mínimo", "25 unidades"],
             ["Grabado", "Sin cargo"],
           ] as [string, string][],
-          // Fotos del catálogo (CATALOGO_HERENCIA_PATRIA.pdf). Los de calabaza
-          // (Imperial Combinado, Combinado Repujado y Bronce Deluxe), algo más
-          // grandes, y los de algarrobo (Camionero, Imperial de Algarrobo e
-          // Imperial Roma Alpaca), sobre un estante crema. Antes se iguala el color de la madera de
+          // Los de calabaza (simple, repujado y base bolita), algo más
+          // grandes, y los de algarrobo (camionero, imperial e imperial con
+          // base), sobre un estante crema. Antes se iguala el color de la madera de
           // los de algarrobo (tools/igualar_madera.py) y se empareja la luz del
-          // cuerpo de los seis (tools/sin_brillo.py: filas 160-700, 155-700,
-          // 160-468, 25-690, 175-690 y 170-570; los de calabaza con gamma 0.75,
-          // 0.8 y 0.75, para que el cuero negro no se pierda en el azul) y se baja el brillo del metal
+          // cuerpo de los seis (tools/sin_brillo.py: filas 140-700, 140-700,
+          // 150-495, 22-690, 178-690 y 225-570) y se baja el brillo del metal
           // sin tocar el cincelado (tools/virola_mate.py, el resto de las filas). Los de calabaza van un poco más
           // abajo (el último número): la foto los muestra desde arriba y la
           // pata de adelante queda más abajo que el piso real.
           //   python tools/estudio_mates.py public/estudio-mates.png 1080 300 220 100 \
-          //     public/recortes/calabaza-simple.png:150:13 \
-          //     public/recortes/calabaza-repujado.png:150:14 \
-          //     public/recortes/calabaza-base-bolita.png:150:12 \
+          //     public/recortes/calabaza-simple.png:150:12 \
+          //     public/recortes/calabaza-repujado.png:150:10 \
+          //     public/recortes/calabaza-base-bolita.png:150:10 \
           //     public/recortes/algarrobo-camionero.png:132:0 \
           //     public/recortes/algarrobo-imperial.png:132:0 \
           //     public/recortes/algarrobo-imperial-con-base.png:140:0
