@@ -6,7 +6,7 @@ import { colors, fonts } from "./brand";
 // para cotizar sin miedo a quedar mal. Fondo azul y letras crema. Arriba el
 // título; al medio, a la izquierda, la boca de un mate grabado con "TU LOGO"
 // (la prueba de cómo queda) y a la derecha los datos duros (precio, mínimo,
-// grabado). Después, los seis modelos en fila (fotos del catálogo),
+// grabado). Después, los seis modelos en fila sobre una franja crema,
 // quiénes ya los eligieron y el llamado con una flecha hacia abajo. Las
 // letras del brandbook: Addington CF Medium para los titulares y Helvetica
 // LT Std para los textos.
@@ -40,14 +40,6 @@ export const HistoriaEmpresasLogo: React.FC<{
     letterSpacing: 3,
     textTransform: "uppercase",
     opacity: 0.75,
-  };
-  const filete: React.CSSProperties = {
-    position: "absolute",
-    left: margen,
-    right: margen,
-    height: 2,
-    background: colors.crema,
-    opacity: 0.3,
   };
   return (
     <AbsoluteFill
@@ -94,7 +86,7 @@ export const HistoriaEmpresasLogo: React.FC<{
           por su borde real. */}
       <Img
         src={staticFile(grabado.foto)}
-        style={{ position: "absolute", top: 606, left: margen, height: 470 }}
+        style={{ position: "absolute", top: 612, left: margen, height: 450 }}
       />
       {/* Los datos duros, al costado, uno debajo del otro. */}
       <div
@@ -121,11 +113,23 @@ export const HistoriaEmpresasLogo: React.FC<{
           </div>
         ))}
       </div>
-      {/* Los seis modelos, en fila. */}
+      {/* Los seis modelos, en fila, apoyados sobre una franja crema a todo el
+          ancho (como el fondo de estudio de las fotos del catálogo), cada uno
+          con su sombra de contacto. */}
       <div
         style={{
           position: "absolute",
-          top: 1290 - 150,
+          top: 1108,
+          left: 0,
+          right: 0,
+          height: 236,
+          background: colors.crema,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: 1306 - 150,
           left: margen + 20,
           right: margen + 20,
           height: 150 * conPie,
@@ -142,7 +146,6 @@ export const HistoriaEmpresasLogo: React.FC<{
           />
         ))}
       </div>
-      <div style={{ ...filete, top: 1370 }} />
       {/* Quiénes ya los eligieron: los logos en crema. */}
       <div
         style={{
