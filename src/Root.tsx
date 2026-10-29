@@ -459,7 +459,7 @@ export const RemotionRoot: React.FC = () => {
           //     public/recortes/calabaza-base-bolita.png:150:10 \
           //     public/recortes/algarrobo-camionero.png:132:0 \
           //     public/recortes/algarrobo-imperial.png:132:0 \
-          //     public/recortes/algarrobo-imperial-con-base.png:132:0
+          //     public/recortes/algarrobo-imperial-con-base.png:140:0
           estudio: "estudio-mates.png",
           confianza: "Ya nos eligieron",
           logos: [
