@@ -455,7 +455,7 @@ export const RemotionRoot: React.FC = () => {
           // pata de adelante queda más abajo que el piso real.
           //   python tools/estudio_mates.py public/estudio-mates.png 1080 300 220 100 \
           //     public/recortes/calabaza-simple.png:150:12 \
-          //     public/recortes/calabaza-repujado.png:150:15 \
+          //     public/recortes/calabaza-repujado.png:150:10 \
           //     public/recortes/calabaza-base-bolita.png:150:10 \
           //     public/recortes/algarrobo-camionero.png:132:0 \
           //     public/recortes/algarrobo-imperial.png:132:0 \
