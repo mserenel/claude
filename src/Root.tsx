@@ -434,7 +434,7 @@ export const RemotionRoot: React.FC = () => {
           titulo: ["Regalos", "empresariales"],
           bajada: [
             "Acompañá en cada momento del día",
-            "a ese cliente que confió en vos este año",
+            "a esa persona que confió en vos este año",
           ],
           grabado: {
             foto: "grabado-logo.png",
@@ -454,9 +454,9 @@ export const RemotionRoot: React.FC = () => {
           // abajo (el último número): la foto los muestra desde arriba y la
           // pata de adelante queda más abajo que el piso real.
           //   python tools/estudio_mates.py public/estudio-mates.png 1080 300 220 100 \
-          //     public/recortes/calabaza-simple.png:150:12 \
-          //     public/recortes/calabaza-repujado.png:150:10 \
-          //     public/recortes/calabaza-base-bolita.png:150:10 \
+          //     public/recortes/calabaza-simple.png:165:13 \
+          //     public/recortes/calabaza-repujado.png:165:11 \
+          //     public/recortes/calabaza-base-bolita.png:165:11 \
           //     public/recortes/algarrobo-camionero.png:132:0 \
           //     public/recortes/algarrobo-imperial.png:132:0 \
           //     public/recortes/algarrobo-imperial-con-base.png:140:0
