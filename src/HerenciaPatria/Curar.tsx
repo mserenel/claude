@@ -65,7 +65,7 @@ const pasos: Paso[] = [
   ...(
     [
       [0, 70, 0, "El de *algarrobo se cura con *grasa."],
-      [70, 160, 1, "Untá el interior con *manteca o *aceite neutro."],
+      [70, 160, 1, "Untá el interior con *manteca o aceite de *maíz o *girasol."],
       [160, 240, 2, "Dejalo absorber *6 *horas en un lugar seco."],
       [240, 320, 3, "Llenalo con yerba *nueva."],
       [320, 400, 4, "Humedecela con agua *tibia, nunca hirviendo."],
@@ -591,7 +591,7 @@ const EscenaAlgarrobo: React.FC = () => {
           transform={`translate(${unta * 0.3} ${110 + unta}) rotate(-10 130 120)`}
           opacity={pincel}
         >
-          <rect x={124} y={-60} width={12} height={150} rx={5} fill="#8A5A34" />
+          <rect x={124} y={20} width={12} height={70} rx={5} fill="#8A5A34" />
           <rect x={121} y={88} width={18} height={22} fill="url(#r-alpaca)" />
           <path
             d="M121,110 L139,110 C142,130 136,146 130,150 C124,146 118,130 121,110 Z"
