@@ -169,42 +169,94 @@ export const Patas: React.FC<{ readonly id: string; readonly c: Cuero }> = ({
   id,
   c,
 }) => {
-  const puntada = c === "negro" ? "#9A8F86" : "#F2C79B";
+  // Del mismo cuero que el mate: liso, sin costuras ni brillos.
+  const relleno = `url(#r-${c})`;
   return (
     <>
       <Superficie
         id={`${id}-pi`}
         d="M56,288 C50,336 44,380 30,414 L64,414 C68,380 70,340 74,296 Z"
-        relleno={`url(#r-${c})`}
-        brillo={[52, 350, 5, 40]}
+        relleno={relleno}
+        grano={false}
       />
       <Superficie
         id={`${id}-pd`}
         d="M204,288 C210,336 216,380 230,414 L196,414 C192,380 190,340 186,296 Z"
-        relleno={`url(#r-${c})`}
+        relleno={relleno}
+        grano={false}
       />
-
       <Superficie
         id={`${id}-pf`}
         d="M121,414 C122,394 122,374 124,356 C126,348 134,348 136,356 C138,374 138,394 139,414 Z"
-        relleno={`url(#r-cil-${c})`}
+        relleno={relleno}
         grano={false}
       />
-      {[
-        "M64,304 C60,346 55,382 46,408",
-        "M196,304 C200,346 205,382 214,408",
-      ].map((d) => (
-        <path
-          key={d}
-          d={d}
-          fill="none"
-          stroke={puntada}
-          strokeWidth={3}
-          strokeLinecap="round"
-          strokeDasharray="4 9"
-        />
-      ))}
     </>
+  );
+};
+
+// Guarda pampa cincelada en el fleje: rombos escalonados con una cruz al
+// centro, triangulitos arriba y abajo y doble filete en los bordes.
+const rombo = (cx: number, cy: number, s: number, n: number) => {
+  const pts: string[] = [`M${cx},${cy - n * s}`];
+  for (let i = 0; i < n; i++) pts.push(`h${s}`, `v${s}`);
+  for (let i = 0; i < n; i++) pts.push(`v${s}`, `h${-s}`);
+  for (let i = 0; i < n; i++) pts.push(`h${-s}`, `v${-s}`);
+  for (let i = 0; i < n; i++) pts.push(`v${-s}`, `h${s}`);
+  return pts.join(" ") + " Z";
+};
+
+export const GuardaPampa: React.FC<{
+  readonly x: number;
+  readonly y: number;
+  readonly w: number;
+  readonly h: number;
+}> = ({ x, y, w, h }) => {
+  const cy = y + h / 2;
+  const unidad = 46;
+  const n = Math.floor(w / unidad);
+  const x0 = x + (w - n * unidad) / 2;
+  const trazos: string[] = [
+    `M${x},${y + 5} H${x + w}`,
+    `M${x},${y + 9} H${x + w}`,
+    `M${x},${y + h - 5} H${x + w}`,
+    `M${x},${y + h - 9} H${x + w}`,
+  ];
+  for (let i = 0; i < n; i++) {
+    const cx = x0 + unidad * i + unidad / 2;
+    trazos.push(rombo(cx, cy, 4.5, 4), rombo(cx, cy, 4.5, 2));
+    trazos.push(`M${cx - 4},${cy} h8 M${cx},${cy - 4} v8`);
+  }
+  // Triangulitos entre rombos, contra los filetes.
+  for (let i = 0; i <= n; i++) {
+    const bx = x0 + unidad * i;
+    trazos.push(
+      `M${bx - 7},${y + 9} L${bx},${y + 17} L${bx + 7},${y + 9}`,
+      `M${bx - 7},${y + h - 9} L${bx},${y + h - 17} L${bx + 7},${y + h - 9}`,
+    );
+  }
+  const d = trazos.join(" ");
+  const id = `guarda-${x}-${y}`;
+  return (
+    <g clipPath={`url(#${id})`}>
+      <clipPath id={id}>
+        <rect x={x} y={y} width={w} height={h} />
+      </clipPath>
+      <path
+        d={d}
+        fill="none"
+        stroke="rgba(255,255,255,0.75)"
+        strokeWidth={1.6}
+        transform="translate(0.7 1)"
+      />
+      <path
+        d={d}
+        fill="none"
+        stroke="#4E4C47"
+        strokeWidth={1.8}
+        strokeLinejoin="round"
+      />
+    </g>
   );
 };
 
@@ -270,10 +322,13 @@ export const Torpedo: React.FC<{
   </Achatado>
 );
 
-// Virola recta, ancha y cincelada.
-const imperialCuerpo =
+// Virola (fleje) recta y ancha, cincelada con guarda pampa.
+export const imperialCuerpo =
   "M42,140 C20,190 18,260 34,310 C54,365 92,395 130,395 C168,395 206,365 226,310 C242,260 240,190 218,140 Z";
-export const Imperial: React.FC<{ readonly id: string }> = ({ id }) => (
+export const Imperial: React.FC<{
+  readonly id: string;
+  readonly hueco?: React.ReactNode;
+}> = ({ id, hueco }) => (
   <Achatado>
     <SombraPiso cx={130} cy={416} rx={130} />
     <Superficie
@@ -283,6 +338,7 @@ export const Imperial: React.FC<{ readonly id: string }> = ({ id }) => (
       brillo={[80, 210, 30, 70]}
       sombraDesde={140}
     />
+    {hueco}
     <Patas id={id} c="negro" />
     <Superficie
       id={`${id}-v`}
@@ -290,9 +346,8 @@ export const Imperial: React.FC<{ readonly id: string }> = ({ id }) => (
       relleno="url(#r-alpaca)"
       grano={false}
     />
-    <rect x={38} y={74} width={184} height={9} fill="url(#r-alpaca-v)" />
-    <rect x={38} y={135} width={184} height={9} fill="url(#r-alpaca-v)" />
-    <Cincelado x={56} y={112} n={6} />
+    <rect x={38} y={74} width={184} height={6} fill="url(#r-alpaca-v)" />
+    <GuardaPampa x={38} y={78} w={184} h={64} />
   </Achatado>
 );
 
