@@ -17,7 +17,7 @@ import {
   type Paso,
   Subtitulo,
 } from "./Cebar";
-import { DefsRealista, Torpedo } from "./Realista";
+import { DefsRealista, Torpedo, torpedoCuerpo } from "./Realista";
 
 // "Cómo curar tu mate": cuarto video explicativo animado (9:16, 22 s), mismo
 // estilo que los anteriores. El mate es el torpedo dibujado de "Tipos de
@@ -63,8 +63,12 @@ const TX = 540 - 130 * K;
 const TY = 314;
 const boca = { x: 540, y: TY + 100 * K };
 
-const interior =
-  "M78,150 C60,195 60,262 72,302 C86,342 108,362 130,362 C152,362 174,342 188,302 C200,262 200,195 182,150 Z";
+// Corte: el cuerpo es todo calabaza, forrado por un cuero muy fino. Se ve
+// el cuero apenas como un filo, la pared de calabaza y el hueco adentro.
+const enEscala = (k: number) =>
+  `translate(130 266) scale(${k}) translate(-130 -266)`;
+const PARED = enEscala(0.965);
+const HUECO = enEscala(0.86);
 
 const Escena: React.FC = () => {
   const f = useCurrentFrame();
@@ -90,7 +94,7 @@ const Escena: React.FC = () => {
       <DefsRealista />
       <defs>
         <clipPath id="curar-interior">
-          <path d={interior} />
+          <path d={torpedoCuerpo} transform={HUECO} />
         </clipPath>
       </defs>
 
@@ -146,7 +150,15 @@ const Escena: React.FC = () => {
           hueco={
             <>
               {/* Corte: se ve la calabaza por dentro */}
-              <path d={interior} fill="url(#r-pulpa)" />
+              <path d={torpedoCuerpo} transform={PARED} fill="#D3B07A" />
+              <path
+                d={torpedoCuerpo}
+                transform={PARED}
+                fill="#fff"
+                filter="url(#r-grano)"
+                opacity={0.35}
+              />
+              <path d={torpedoCuerpo} transform={HUECO} fill="url(#r-pulpa)" />
               <g clipPath="url(#curar-interior)">
                 <path
                   d={`M0,${nivel} C80,${nivel - 8} 180,${nivel + 8} 260,${nivel} L260,440 L0,440 Z`}
@@ -171,7 +183,8 @@ const Escena: React.FC = () => {
                 />
                 {/* Sombra interna del borde cortado */}
                 <path
-                  d={interior}
+                  d={torpedoCuerpo}
+                  transform={HUECO}
                   fill="none"
                   stroke="rgba(0,0,0,0.35)"
                   strokeWidth={14}
@@ -194,7 +207,13 @@ const Escena: React.FC = () => {
                 })}
               </g>
               {/* Borde del corte: el espesor de la calabaza */}
-              <path d={interior} fill="none" stroke="#E2C792" strokeWidth={3} />
+              <path
+                d={torpedoCuerpo}
+                transform={HUECO}
+                fill="none"
+                stroke="rgba(90,60,30,0.6)"
+                strokeWidth={2}
+              />
               {/* Cuchara raspando la pared */}
               <g
                 transform={`translate(0 ${raspa}) rotate(-8 170 150)`}
