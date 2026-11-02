@@ -50,7 +50,7 @@ const pasos: Paso[] = [
   {
     desde: 560,
     hasta: CURAR_FRAMES,
-    frase: p("Guardalo para cuando *compres tu mate."),
+    frase: p("Guardalo para cuando quieras *estrenar tu mate."),
   },
 ];
 
