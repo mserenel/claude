@@ -450,7 +450,9 @@ const Materiales: React.FC = () => {
                 opacity={f >= t0 ? Math.min(1, Math.max(0, s)) : 0}
                 transform={`translate(${cx} ${1000 + (1 - s) * 80}) scale(1.15) translate(-130 -420)`}
               >
-                <Mate m={m} id={`mat-${par}-${lado}`} />
+                <g transform="translate(0 392) scale(1 0.86) translate(0 -392)">
+                  <Mate m={m} id={`mat-${par}-${lado}`} />
+                </g>
               </g>
               <text
                 x={cx}

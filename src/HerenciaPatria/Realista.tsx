@@ -173,21 +173,16 @@ export const Patas: React.FC<{ readonly id: string; readonly c: Cuero }> = ({
     <>
       <Superficie
         id={`${id}-pi`}
-        d="M40,270 C34,330 26,390 14,426 L96,426 C80,392 72,340 74,300 Z"
+        d="M40,270 C34,330 26,390 12,434 L98,434 C80,396 72,340 74,300 Z"
         relleno={`url(#r-${c})`}
         brillo={[40, 340, 10, 50]}
       />
       <Superficie
         id={`${id}-pd`}
-        d="M220,270 C226,330 234,390 246,426 L164,426 C180,392 188,340 186,300 Z"
+        d="M220,270 C226,330 234,390 248,434 L162,434 C180,396 188,340 186,300 Z"
         relleno={`url(#r-${c})`}
       />
-      <Superficie
-        id={`${id}-base`}
-        d="M10,424 L250,424 L250,436 L10,436 Z"
-        relleno={`url(#r-cil-${c})`}
-        grano={false}
-      />
+
       <Superficie
         id={`${id}-pf`}
         d="M120,434 C118,400 118,360 121,330 C124,320 136,320 139,330 C142,360 142,400 140,434 Z"
@@ -228,6 +223,17 @@ export const SombraPiso: React.FC<{
   />
 );
 
+// Las fotos muestran mates más bajos y panzones que el dibujo base: se
+// achatan desde el piso.
+export const ACHATE = 0.84;
+const Achatado: React.FC<{ readonly children: React.ReactNode }> = ({
+  children,
+}) => (
+  <g transform={`translate(0 436) scale(1 ${ACHATE}) translate(0 -436)`}>
+    {children}
+  </g>
+);
+
 export const torpedoCuerpo =
   "M40,138 C10,175 10,260 30,310 C50,360 90,395 130,395 C170,395 210,360 230,310 C250,260 250,175 220,138 Z";
 export const torpedoVirola =
@@ -238,7 +244,7 @@ export const Torpedo: React.FC<{
   readonly id: string;
   readonly hueco?: React.ReactNode;
 }> = ({ id, hueco }) => (
-  <>
+  <Achatado>
     <SombraPiso cx={130} cy={436} rx={130} />
     <Superficie
       id={`${id}-c`}
@@ -260,14 +266,14 @@ export const Torpedo: React.FC<{
       fill="url(#r-alpaca-v)"
     />
     <Cincelado x={70} y={124} n={5} />
-  </>
+  </Achatado>
 );
 
 // Virola recta, ancha y cincelada.
 const imperialCuerpo =
   "M42,140 C20,190 18,260 34,310 C54,365 92,395 130,395 C168,395 206,365 226,310 C242,260 240,190 218,140 Z";
 export const Imperial: React.FC<{ readonly id: string }> = ({ id }) => (
-  <>
+  <Achatado>
     <SombraPiso cx={130} cy={436} rx={130} />
     <Superficie
       id={`${id}-c`}
@@ -286,14 +292,14 @@ export const Imperial: React.FC<{ readonly id: string }> = ({ id }) => (
     <rect x={38} y={74} width={184} height={9} fill="url(#r-alpaca-v)" />
     <rect x={38} y={135} width={184} height={9} fill="url(#r-alpaca-v)" />
     <Cincelado x={56} y={112} n={6} />
-  </>
+  </Achatado>
 );
 
 // La boca más ancha, de suela.
 const camioneroCuerpo =
   "M12,120 C2,190 10,270 40,320 C66,365 100,392 130,392 C160,392 194,365 220,320 C250,270 258,190 248,120 Z";
 export const Camionero: React.FC<{ readonly id: string }> = ({ id }) => (
-  <>
+  <Achatado>
     <SombraPiso cx={130} cy={436} rx={130} />
     <Superficie
       id={`${id}-c`}
@@ -312,5 +318,5 @@ export const Camionero: React.FC<{ readonly id: string }> = ({ id }) => (
     <ellipse cx={130} cy={108} rx={122} ry={20} fill="url(#r-alpaca-v)" />
     <ellipse cx={130} cy={109} rx={102} ry={13} fill="url(#r-hueco)" />
     <Cincelado x={48} y={134} n={7} paso={24} />
-  </>
+  </Achatado>
 );

@@ -84,11 +84,11 @@ export const iv = (
   });
 
 // Ubicación del mate en pantalla: su dibujo mide 600x700 y gira desde la base.
-const M = { x: 240, y: 430, k: 1, px: 300, py: 620 };
+const M = { x: 240, y: 430, k: 1, px: 300, py: 620, achate: 0.88 };
 const enPantalla = (x: number, y: number, ang: number) => {
   const r = (ang * Math.PI) / 180;
   const dx = x - M.px;
-  const dy = y - M.py;
+  const dy = (y - M.py) * M.achate;
   return [
     M.x + M.k * (M.px + dx * Math.cos(r) - dy * Math.sin(r)),
     M.y + M.k * (M.py + dx * Math.sin(r) + dy * Math.cos(r)),
@@ -199,7 +199,7 @@ const Escena: React.FC = () => {
       })}
 
       <g
-        transform={`translate(${M.x} ${M.y}) scale(${M.k}) translate(300 620) scale(${entra}) translate(-300 -620) rotate(${ang} ${M.px} ${M.py})`}
+        transform={`translate(${M.x} ${M.y}) scale(${M.k}) translate(300 620) scale(${entra}) translate(-300 -620) rotate(${ang} ${M.px} ${M.py}) translate(0 ${M.py}) scale(1 ${M.achate}) translate(0 ${-M.py})`}
       >
         <Superficie
           id="cebar-cuerpo"
