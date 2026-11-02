@@ -9,6 +9,7 @@ import {
 } from "./HerenciaPatria/TorpedoVenta";
 import { MateNegro, MATE_NEGRO_FRAMES } from "./HerenciaPatria/MateNegro";
 import { AnuncioEstatico, estaticos } from "./HerenciaPatria/Estaticos";
+import { Cebar, CEBAR_FRAMES } from "./HerenciaPatria/Cebar";
 import { RetargetingOpcion } from "./HerenciaPatria/RetargetingOpciones";
 import { Retargeting, RETARGETING_FRAMES } from "./HerenciaPatria/Retargeting";
 import {
@@ -224,6 +225,15 @@ export const RemotionRoot: React.FC = () => {
           )),
         ),
       )}
+      {/* npx remotion render HP-Cebar entregas/como-cebar-un-mate.mp4 */}
+      <Composition
+        id="HP-Cebar"
+        component={Cebar}
+        durationInFrames={CEBAR_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
       {/* npx remotion still HP-Bienvenida-Popup entregas/popup-tiendanube.png */}
       <Still
         id="HP-Bienvenida-Popup"
