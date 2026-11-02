@@ -74,7 +74,7 @@ const pasos: Paso[] = [
         "Untá el interior con *manteca o aceite de *maíz o *girasol.",
       ],
       [160, 240, 2, "Dejalo absorber *6 *horas en un lugar seco."],
-      [240, 320, 3, "Llenalo con yerba *nueva."],
+      [240, 320, 3, "Llenalo con yerba *usada."],
       [320, 400, 4, "Humedecela con agua *tibia, nunca hirviendo."],
       [400, 480, 5, "Dejalo reposar *12 *horas."],
       [480, 580, 6, "Vacialo y quitá la grasa con *papel *de *cocina."],
@@ -465,7 +465,7 @@ const EscenaAlgarrobo: React.FC = () => {
         </clipPath>
       </defs>
 
-      {/* Yerba nueva que cae (paso 3) */}
+      {/* Yerba usada que cae (paso 3) */}
       {new Array(30).fill(0).map((_, i) => {
         const t0 = 244 + i * 1.5;
         const y = iv(
