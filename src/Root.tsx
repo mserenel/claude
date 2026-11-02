@@ -11,6 +11,7 @@ import { MateNegro, MATE_NEGRO_FRAMES } from "./HerenciaPatria/MateNegro";
 import { AnuncioEstatico, estaticos } from "./HerenciaPatria/Estaticos";
 import { Cebar, CEBAR_FRAMES } from "./HerenciaPatria/Cebar";
 import { Temperatura, TEMPERATURA_FRAMES } from "./HerenciaPatria/Temperatura";
+import { TiposDeMate, TIPOS_FRAMES } from "./HerenciaPatria/TiposDeMate";
 import { RetargetingOpcion } from "./HerenciaPatria/RetargetingOpciones";
 import { Retargeting, RETARGETING_FRAMES } from "./HerenciaPatria/Retargeting";
 import {
@@ -231,6 +232,15 @@ export const RemotionRoot: React.FC = () => {
         id="HP-Temperatura"
         component={Temperatura}
         durationInFrames={TEMPERATURA_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      {/* npx remotion render HP-Tipos entregas/tipos-de-mate.mp4 */}
+      <Composition
+        id="HP-Tipos"
+        component={TiposDeMate}
+        durationInFrames={TIPOS_FRAMES}
         fps={30}
         width={1080}
         height={1920}

@@ -394,9 +394,12 @@ export const Subtitulo: React.FC<{
 export const Encabezado: React.FC<{
   readonly titulo: string;
   readonly hasta: number;
-}> = ({ titulo, hasta }) => {
+  readonly desde?: number;
+}> = ({ titulo, hasta, desde = 0 }) => {
   const f = useCurrentFrame();
-  const o = iv(f, [hasta - 15, hasta], [1, 0]);
+  const o =
+    iv(f, [hasta - 15, hasta], [1, 0]) *
+    (desde ? iv(f, [desde, desde + 12], [0, 1]) : 1);
   return (
     <div
       style={{
