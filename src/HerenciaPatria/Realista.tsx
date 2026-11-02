@@ -163,7 +163,8 @@ export const Cincelado: React.FC<{
   </>
 );
 
-// Patas de cuero cosidas (caja de 260x440).
+// Patas: tiras finas de cuero cosido que bajan por la calabaza hasta el
+// piso (caja de 260x440).
 export const Patas: React.FC<{ readonly id: string; readonly c: Cuero }> = ({
   id,
   c,
@@ -173,25 +174,25 @@ export const Patas: React.FC<{ readonly id: string; readonly c: Cuero }> = ({
     <>
       <Superficie
         id={`${id}-pi`}
-        d="M40,270 C34,330 26,390 12,434 L98,434 C80,396 72,340 74,300 Z"
+        d="M56,288 C50,336 44,380 30,414 L64,414 C68,380 70,340 74,296 Z"
         relleno={`url(#r-${c})`}
-        brillo={[40, 340, 10, 50]}
+        brillo={[52, 350, 5, 40]}
       />
       <Superficie
         id={`${id}-pd`}
-        d="M220,270 C226,330 234,390 248,434 L162,434 C180,396 188,340 186,300 Z"
+        d="M204,288 C210,336 216,380 230,414 L196,414 C192,380 190,340 186,296 Z"
         relleno={`url(#r-${c})`}
       />
 
       <Superficie
         id={`${id}-pf`}
-        d="M120,434 C118,400 118,360 121,330 C124,320 136,320 139,330 C142,360 142,400 140,434 Z"
+        d="M121,414 C122,394 122,374 124,356 C126,348 134,348 136,356 C138,374 138,394 139,414 Z"
         relleno={`url(#r-cil-${c})`}
         grano={false}
       />
       {[
-        "M66,306 C62,350 56,392 50,420",
-        "M194,306 C198,350 204,392 210,420",
+        "M64,304 C60,346 55,382 46,408",
+        "M196,304 C200,346 205,382 214,408",
       ].map((d) => (
         <path
           key={d}
@@ -229,7 +230,7 @@ export const ACHATE = 0.84;
 const Achatado: React.FC<{ readonly children: React.ReactNode }> = ({
   children,
 }) => (
-  <g transform={`translate(0 436) scale(1 ${ACHATE}) translate(0 -436)`}>
+  <g transform={`translate(0 414) scale(1 ${ACHATE}) translate(0 -414)`}>
     {children}
   </g>
 );
@@ -245,7 +246,7 @@ export const Torpedo: React.FC<{
   readonly hueco?: React.ReactNode;
 }> = ({ id, hueco }) => (
   <Achatado>
-    <SombraPiso cx={130} cy={436} rx={130} />
+    <SombraPiso cx={130} cy={416} rx={130} />
     <Superficie
       id={`${id}-c`}
       d={torpedoCuerpo}
@@ -274,7 +275,7 @@ const imperialCuerpo =
   "M42,140 C20,190 18,260 34,310 C54,365 92,395 130,395 C168,395 206,365 226,310 C242,260 240,190 218,140 Z";
 export const Imperial: React.FC<{ readonly id: string }> = ({ id }) => (
   <Achatado>
-    <SombraPiso cx={130} cy={436} rx={130} />
+    <SombraPiso cx={130} cy={416} rx={130} />
     <Superficie
       id={`${id}-c`}
       d={imperialCuerpo}
@@ -300,7 +301,7 @@ const camioneroCuerpo =
   "M12,120 C2,190 10,270 40,320 C66,365 100,392 130,392 C160,392 194,365 220,320 C250,270 258,190 248,120 Z";
 export const Camionero: React.FC<{ readonly id: string }> = ({ id }) => (
   <Achatado>
-    <SombraPiso cx={130} cy={436} rx={130} />
+    <SombraPiso cx={130} cy={416} rx={130} />
     <Superficie
       id={`${id}-c`}
       d={camioneroCuerpo}
