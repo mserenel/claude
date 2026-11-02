@@ -62,18 +62,18 @@ const pasos: Paso[] = [
   },
 ];
 
-const negro = "#211D1B";
-const negroBorde = "#36312E";
+export const negro = "#211D1B";
+export const negroBorde = "#36312E";
 const suela = "#B5652A";
 const suelaBorde = "#8A4A1D";
-const alpaca = "#D8D6D0";
+export const alpaca = "#D8D6D0";
 const cincel = "#9C9A94";
 
 // ---- Formas (cada dibujo en una caja de 260x440) ----
 
 // Base de patas de cuero cosidas, común a los tres: dos aletas a los
 // costados que abrazan el cuerpo, una al frente y la suela de apoyo.
-const Patas: React.FC<{ readonly c: string; readonly b: string }> = ({
+export const Patas: React.FC<{ readonly c: string; readonly b: string }> = ({
   c,
   b,
 }) => (
@@ -107,7 +107,7 @@ const Patas: React.FC<{ readonly c: string; readonly b: string }> = ({
   </>
 );
 
-const Cincelado: React.FC<{
+export const Cincelado: React.FC<{
   readonly x: number;
   readonly y: number;
   readonly n: number;
@@ -125,7 +125,7 @@ const Cincelado: React.FC<{
   </>
 );
 
-const Brillo: React.FC<{ readonly d: string }> = ({ d }) => (
+export const Brillo: React.FC<{ readonly d: string }> = ({ d }) => (
   <path
     d={d}
     stroke="rgba(255,255,255,0.13)"
@@ -135,19 +135,18 @@ const Brillo: React.FC<{ readonly d: string }> = ({ d }) => (
   />
 );
 
+export const torpedoCuerpo =
+  "M40,138 C10,175 10,260 30,310 C50,360 90,395 130,395 C170,395 210,360 230,310 C250,260 250,175 220,138 Z";
+export const torpedoVirola =
+  "M60,92 L200,92 C216,104 222,124 214,142 L46,142 C38,124 44,104 60,92 Z";
+
 // Ovalado, virola redondeada y boca más cerrada.
 const Torpedo: React.FC = () => (
   <>
-    <path
-      d="M40,138 C10,175 10,260 30,310 C50,360 90,395 130,395 C170,395 210,360 230,310 C250,260 250,175 220,138 Z"
-      fill={negro}
-    />
+    <path d={torpedoCuerpo} fill={negro} />
     <Patas c={negro} b={negroBorde} />
     <Brillo d="M52,180 C40,220 42,262 56,296" />
-    <path
-      d="M60,92 L200,92 C216,104 222,124 214,142 L46,142 C38,124 44,104 60,92 Z"
-      fill={alpaca}
-    />
+    <path d={torpedoVirola} fill={alpaca} />
     <Cincelado x={62} y={122} n={6} />
   </>
 );
