@@ -17,18 +17,11 @@ import {
   type Paso,
   Subtitulo,
 } from "./Cebar";
-import {
-  aguaAlpaca,
-  aguaNegro,
-  Patas,
-  torpedoCuerpo,
-  torpedoVirola,
-} from "./TiposDeMate";
-import { Arabescos, Linea, Sombra, TrazoFiltro } from "./Trazo";
+import { DefsRealista, Torpedo } from "./Realista";
 
 // "Cómo curar tu mate": cuarto video explicativo animado (9:16, 22 s), mismo
 // estilo que los anteriores. El mate es el torpedo dibujado de "Tipos de
-// mate", dibujado a mano y en corte para ver lo que pasa adentro.
+// mate", con volumen y en corte para ver lo que pasa adentro.
 
 export const CURAR_FRAMES = 650;
 
@@ -63,7 +56,6 @@ const pasos: Paso[] = [
 
 const yerba = "#8C9A56";
 const yerbaOscura = "#5E7038";
-const pulpa = "rgba(184,154,99,0.75)";
 
 // El torpedo (caja de 260x440) agrandado al centro de la pantalla.
 const K = 1.7;
@@ -77,7 +69,7 @@ const interior =
 const Escena: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const t = iv(f, [0, 30], [0, 1]);
+  const entra = Math.max(0, spring({ frame: f, fps, config: { damping: 14 } }));
   const sale = iv(f, [550, 568], [1, 0]);
 
   const nivel =
@@ -95,8 +87,8 @@ const Escena: React.FC = () => {
       height={1920}
       style={{ position: "absolute", inset: 0, opacity: sale }}
     >
+      <DefsRealista />
       <defs>
-        <TrazoFiltro id="trazo-curar" />
         <clipPath id="curar-interior">
           <path d={interior} />
         </clipPath>
@@ -147,68 +139,81 @@ const Escena: React.FC = () => {
       })}
 
       <g
-        transform={`translate(${TX} ${TY}) scale(${K})`}
-        filter="url(#trazo-curar)"
+        transform={`translate(${TX} ${TY}) scale(${K}) translate(130 434) scale(${entra}) translate(-130 -434)`}
       >
-        <Linea d={torpedoCuerpo} t={t} fill={aguaNegro} />
-        <Sombra d="M30,190 C22,230 26,268 40,300" t={t} n={2} />
-        <Patas t={t} agua={aguaNegro} />
-        {/* Corte: se ve la calabaza por dentro */}
-        <Linea d={interior} t={t} w={3.5} fill={pulpa} />
-        <g clipPath="url(#curar-interior)">
-          <path
-            d={`M0,${nivel} C80,${nivel - 8} 180,${nivel + 8} 260,${nivel} L260,440 L0,440 Z`}
-            fill={yerba}
-          />
-          <rect
-            x={0}
-            y={nivel}
-            width={260}
-            height={440}
-            fill={yerbaOscura}
-            opacity={0.75 * mojado}
-          />
-          {new Array(26).fill(0).map((_, i) => (
-            <circle
-              key={i}
-              cx={60 + random(`dx${i}`) * 140}
-              cy={nivel + 14 + random(`dy${i}`) * 190}
-              r={2.5 + random(`dr${i}`) * 2.5}
-              fill={yerbaOscura}
-              opacity={nivel < 375 ? 0.9 : 0}
-            />
-          ))}
-          {/* Lo que se desprende al raspar */}
-          {new Array(10).fill(0).map((_, i) => {
-            const t0 = 296 + i * 6;
-            return (
-              <rect
-                key={i}
-                x={140 + random(`fx${i}`) * 40}
-                y={iv(f, [t0, t0 + 20], [200 + raspa * 0.5, 356])}
-                width={6}
-                height={4}
-                fill="#8E7446"
-                opacity={f >= t0 && f < t0 + 20 ? 1 : 0}
-              />
-            );
-          })}
-        </g>
-        {/* Cuchara raspando la pared */}
-        <g
-          transform={`translate(0 ${raspa}) rotate(-8 170 150)`}
-          opacity={cuchara}
-        >
-          <Linea d="M158,100 L166,218 M166,100 L174,218" w={3} />
-          <Linea
-            d="M171,216 C186,216 186,264 171,264 C156,264 156,216 171,216 Z"
-            w={3}
-            fill={aguaAlpaca}
-          />
-        </g>
-        <Linea d={torpedoVirola} t={t} fill={aguaAlpaca} />
-        <Linea d="M62,96 C100,88 160,88 198,96" t={t} w={3} />
-        <Arabescos x={66} y={116} n={6} t={t} />
+        <Torpedo
+          id="curar"
+          hueco={
+            <>
+              {/* Corte: se ve la calabaza por dentro */}
+              <path d={interior} fill="url(#r-pulpa)" />
+              <g clipPath="url(#curar-interior)">
+                <path
+                  d={`M0,${nivel} C80,${nivel - 8} 180,${nivel + 8} 260,${nivel} L260,440 L0,440 Z`}
+                  fill={yerba}
+                />
+                <rect
+                  x={0}
+                  y={nivel}
+                  width={260}
+                  height={440}
+                  fill={yerbaOscura}
+                  opacity={0.75 * mojado}
+                />
+                <rect
+                  x={0}
+                  y={nivel}
+                  width={260}
+                  height={440}
+                  fill="#fff"
+                  filter="url(#r-grano)"
+                  opacity={nivel < 375 ? 0.6 : 0}
+                />
+                {/* Sombra interna del borde cortado */}
+                <path
+                  d={interior}
+                  fill="none"
+                  stroke="rgba(0,0,0,0.35)"
+                  strokeWidth={14}
+                  filter="url(#r-blur-s)"
+                />
+                {/* Lo que se desprende al raspar */}
+                {new Array(10).fill(0).map((_, i) => {
+                  const t0 = 296 + i * 6;
+                  return (
+                    <rect
+                      key={i}
+                      x={140 + random(`fx${i}`) * 40}
+                      y={iv(f, [t0, t0 + 20], [200 + raspa * 0.5, 356])}
+                      width={6}
+                      height={4}
+                      fill="#8E7446"
+                      opacity={f >= t0 && f < t0 + 20 ? 1 : 0}
+                    />
+                  );
+                })}
+              </g>
+              {/* Borde del corte: el espesor de la calabaza */}
+              <path d={interior} fill="none" stroke="#E2C792" strokeWidth={3} />
+              {/* Cuchara raspando la pared */}
+              <g
+                transform={`translate(0 ${raspa}) rotate(-8 170 150)`}
+                opacity={cuchara}
+              >
+                <path
+                  d="M160,100 L168,100 L174,218 L166,218 Z"
+                  fill="url(#r-alpaca)"
+                />
+                <path
+                  d="M171,214 C188,214 188,266 171,266 C154,266 154,214 171,214 Z"
+                  fill="url(#r-alpaca)"
+                  stroke="rgba(0,0,0,0.35)"
+                  strokeWidth={1.5}
+                />
+              </g>
+            </>
+          }
+        />
       </g>
 
       {/* Reloj: 24 horas (paso 2) */}

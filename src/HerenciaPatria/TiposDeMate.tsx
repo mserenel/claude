@@ -1,14 +1,17 @@
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import {
+  AbsoluteFill,
+  spring,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import { colors, fonts } from "./brand";
 import {
-  Arabescos,
-  copa,
-  Costura,
-  elipse,
-  Linea,
-  Sombra,
-  TrazoFiltro,
-} from "./Trazo";
+  Camionero,
+  DefsRealista,
+  Imperial,
+  SombraPiso,
+  Torpedo,
+} from "./Realista";
 import {
   Cierre,
   Encabezado,
@@ -21,8 +24,8 @@ import {
 
 // "Tipos de mate": tercer video explicativo animado (9:16, 25 s), mismo
 // estilo que los anteriores. Primero las formas (torpedo, imperial,
-// camionero), dibujadas a partir de las fotos de referencia de la marca, con
-// su base de patas de cuero; después los materiales, de a pares. La calabaza
+// camionero), dibujadas con volumen a partir de las fotos de referencia de
+// la marca, con su base de patas de cuero; después los materiales, de a pares. La calabaza
 // y el algarrobo arrancan mostrando de dónde salen.
 
 export const TIPOS_FRAMES = 750;
@@ -66,98 +69,9 @@ const pasos: Paso[] = [
   },
 ];
 
-// Aguadas debajo del trazo: cuero negro, suela y alpaca. Son opacas para
-// que las patas, adelante, tapen el borde del cuerpo.
-export const aguaNegro = "#0D121C";
-const aguaSuela = "#8C5226";
-export const aguaAlpaca = "#4E5A72";
+// ---- Formas (cada dibujo en una caja de 260x440), con volumen ----
 
-// ---- Formas (cada dibujo en una caja de 260x440), dibujadas a mano ----
-
-// Base de patas de cuero cosidas, común a los tres: dos aletas a los
-// costados que abrazan el cuerpo, una al frente y la suela de apoyo.
-export const Patas: React.FC<{ readonly t: number; readonly agua: string }> = ({
-  t,
-  agua,
-}) => (
-  <>
-    <Linea
-      d="M40,270 C34,330 26,390 14,426 L96,426 C80,392 72,340 74,300"
-      t={t}
-      fill={agua}
-    />
-    <Linea
-      d="M220,270 C226,330 234,390 246,426 L164,426 C180,392 188,340 186,300"
-      t={t}
-      fill={agua}
-    />
-    <Linea d="M10,426 L250,426 L250,436 L10,436 Z" t={t} fill={agua} />
-    <Linea
-      d="M120,432 C118,400 118,360 121,330 C124,320 136,320 139,330 C142,360 142,400 140,432"
-      t={t}
-      fill={agua}
-    />
-    <Costura d="M66,306 C62,350 56,392 50,420" t={t} />
-    <Costura d="M194,306 C198,350 204,392 210,420" t={t} />
-  </>
-);
-
-export const torpedoCuerpo =
-  "M40,138 C10,175 10,260 30,310 C50,360 90,395 130,395 C170,395 210,360 230,310 C250,260 250,175 220,138 Z";
-export const torpedoVirola =
-  "M60,92 L200,92 C216,104 222,124 214,142 L46,142 C38,124 44,104 60,92 Z";
-
-// Ovalado, virola redondeada y boca más cerrada.
-export const Torpedo: React.FC<{ readonly t: number }> = ({ t }) => (
-  <>
-    <Linea d={torpedoCuerpo} t={t} fill={aguaNegro} />
-    <Sombra d="M34,190 C26,232 32,276 50,312" t={t} />
-    <Patas t={t} agua={aguaNegro} />
-    <Linea d={torpedoVirola} t={t} fill={aguaAlpaca} />
-    <Linea d="M62,96 C100,88 160,88 198,96" t={t} w={3} />
-    <Arabescos x={66} y={116} n={6} t={t} />
-  </>
-);
-
-// Virola recta, ancha y cincelada.
-const Imperial: React.FC<{ readonly t: number }> = ({ t }) => (
-  <>
-    <Linea
-      d="M42,140 C20,190 18,260 34,310 C54,365 92,395 130,395 C168,395 206,365 226,310 C242,260 240,190 218,140 Z"
-      t={t}
-      fill={aguaNegro}
-    />
-    <Sombra d="M38,190 C30,232 36,276 54,312" t={t} />
-    <Patas t={t} agua={aguaNegro} />
-    <Linea d="M38,74 L222,74 L222,144 L38,144 Z" t={t} fill={aguaAlpaca} />
-    <Linea d="M38,86 L222,86" t={t} w={3} />
-    <Linea d="M38,132 L222,132" t={t} w={3} />
-    <Arabescos x={56} y={106} n={6} t={t} />
-  </>
-);
-
-// La boca más ancha, de suela.
-const Camionero: React.FC<{ readonly t: number }> = ({ t }) => (
-  <>
-    <Linea
-      d="M12,120 C2,190 10,270 40,320 C66,365 100,392 130,392 C160,392 194,365 220,320 C250,270 258,190 248,120"
-      t={t}
-      fill={aguaSuela}
-    />
-    <Sombra d="M30,170 C26,214 34,256 52,290" t={t} />
-    <Patas t={t} agua={aguaSuela} />
-    <Linea
-      d="M8,108 L8,130 C60,146 200,146 252,130 L252,108"
-      t={t}
-      fill={aguaAlpaca}
-    />
-    <Linea d={elipse(130, 108, 122, 20)} t={t} fill={aguaAlpaca} />
-    <Linea d={elipse(130, 109, 102, 13)} t={t} w={3} fill="rgba(0,0,0,0.35)" />
-    <Arabescos x={52} y={104} n={6} t={t} />
-  </>
-);
-
-const formas: [string, React.FC<{ readonly t: number }>, number][] = [
+const formas: [string, React.FC<{ readonly id: string }>, number][] = [
   ["TORPEDO", Torpedo, 60],
   ["IMPERIAL", Imperial, 150],
   ["CAMIONERO", Camionero, 240],
@@ -165,6 +79,7 @@ const formas: [string, React.FC<{ readonly t: number }>, number][] = [
 
 const Formas: React.FC = () => {
   const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
   const sale = iv(f, [318, 332], [1, 0]);
   if (sale <= 0) return null;
   return (
@@ -173,24 +88,23 @@ const Formas: React.FC = () => {
       height={1920}
       style={{ position: "absolute", inset: 0, opacity: sale }}
     >
-      <defs>
-        <TrazoFiltro id="trazo-formas" />
-      </defs>
+      <DefsRealista />
       {formas.map(([nombre, Dibujo, desde], i) => {
-        const t = iv(f, [i * 8, i * 8 + 30], [0, 1]);
+        const entra = Math.max(
+          0,
+          spring({ frame: f - i * 5, fps, config: { damping: 14 } }),
+        );
         const activo = f >= desde && f < desde + 90;
-        const foco = f < 60 ? 1 : activo ? 1 : 0.3;
-        const k = 1 + (activo ? 0.1 : 0);
+        const foco = f < 60 ? 1 : activo ? 1 : 0.35;
+        const k = (1 + (activo ? 0.1 : 0)) * entra;
         const cx = 210 + i * 280;
         return (
           <g
             key={nombre}
-            opacity={foco}
+            opacity={Math.min(1, entra) * foco}
             transform={`translate(${cx} 1000) scale(${k}) translate(-130 -440)`}
           >
-            <g filter="url(#trazo-formas)">
-              <Dibujo t={t} />
-            </g>
+            <Dibujo id={`forma-${i}`} />
             <text
               x={130}
               y={500}
@@ -200,7 +114,6 @@ const Formas: React.FC = () => {
               fontSize={30}
               letterSpacing={5}
               fill={colors.crema}
-              opacity={t}
             >
               {nombre}
             </text>
@@ -211,7 +124,7 @@ const Formas: React.FC = () => {
   );
 };
 
-// ---- Materiales (de a pares), también a mano ----
+// ---- Materiales (de a pares), también con volumen ----
 
 const calabaza =
   "M80,40 C70,100 20,140 20,230 C20,330 80,380 130,380 C180,380 240,330 240,230 C240,140 190,100 180,40 Z";
@@ -221,81 +134,169 @@ const vaso =
 type Material = {
   readonly nombre: string;
   readonly forma: string;
-  readonly agua: string;
-  readonly vetas?: boolean;
+  readonly colores: [string, string, string];
+  readonly metal?: boolean;
+  readonly vetas?: string;
   readonly yerba?: boolean;
   readonly franja?: boolean;
+  readonly vidrio?: boolean;
 };
 
 const materiales: Material[] = [
   {
     nombre: "Calabaza",
     forma: calabaza,
-    agua: "rgba(188,143,87,0.65)",
-    vetas: true,
+    colores: ["#EBCB92", "#BC8F57", "#6E4A22"],
+    vetas: "rgba(110,74,34,0.35)",
   },
   {
     nombre: "Algarrobo",
     forma: calabaza,
-    agua: "rgba(122,69,40,0.75)",
-    vetas: true,
+    colores: ["#A9663C", "#74401F", "#341808"],
+    vetas: "rgba(40,18,6,0.45)",
   },
-  { nombre: "Acero", forma: vaso, agua: "rgba(195,200,207,0.35)" },
+  {
+    nombre: "Acero",
+    forma: vaso,
+    colores: ["#EEF1F4", "#A9B0B8", "#5E656D"],
+    metal: true,
+  },
   {
     nombre: "Cerámica",
     forma: calabaza,
-    agua: "rgba(243,235,221,0.3)",
+    colores: ["#FFFCF4", "#EADFCB", "#A89B84"],
     franja: true,
   },
   {
     nombre: "Vidrio",
     forma: vaso,
-    agua: "rgba(191,224,240,0.12)",
+    colores: ["#DFF1FA", "#BFE0F0", "#8BB5CA"],
+    vidrio: true,
     yerba: true,
   },
-  { nombre: "Plástico", forma: vaso, agua: "rgba(78,138,116,0.6)" },
+  {
+    nombre: "Plástico",
+    forma: vaso,
+    colores: ["#9AD3BC", "#4E8A74", "#244A3C"],
+  },
 ];
 
-const Mate: React.FC<{ readonly m: Material; readonly t: number }> = ({
+const Mate: React.FC<{ readonly m: Material; readonly id: string }> = ({
   m,
-  t,
+  id,
 }) => (
   <>
+    <defs>
+      {m.metal ? (
+        <linearGradient id={`${id}-g`} x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stopColor={m.colores[2]} />
+          <stop offset="0.22" stopColor={m.colores[0]} />
+          <stop offset="0.45" stopColor={m.colores[1]} />
+          <stop offset="0.7" stopColor={m.colores[0]} />
+          <stop offset="1" stopColor={m.colores[2]} />
+        </linearGradient>
+      ) : (
+        <radialGradient id={`${id}-g`} cx="0.32" cy="0.35" r="0.8">
+          <stop offset="0" stopColor={m.colores[0]} />
+          <stop offset="0.45" stopColor={m.colores[1]} />
+          <stop offset="1" stopColor={m.colores[2]} />
+        </radialGradient>
+      )}
+      <clipPath id={`${id}-clip`}>
+        <path d={m.forma} />
+      </clipPath>
+    </defs>
+    <SombraPiso cx={130} cy={392} rx={115} />
     {m.yerba ? (
-      <path
-        d="M50,170 L210,170 L205,370 C204,385 195,390 180,390 L80,390 C65,390 56,385 55,370 Z"
-        fill="rgba(140,154,86,0.75)"
-        opacity={t}
-      />
+      <g clipPath={`url(#${id}-clip)`}>
+        <rect x={0} y={170} width={260} height={240} fill="#7F8F4A" />
+        <rect
+          x={0}
+          y={170}
+          width={260}
+          height={240}
+          fill="#fff"
+          filter="url(#r-grano)"
+          opacity={0.5}
+        />
+      </g>
     ) : null}
-    <Linea d={m.forma} t={t} fill={m.agua} />
-    {m.forma === calabaza ? (
-      <Linea d={elipse(130, 42, 50, 9)} t={t} w={3} fill="rgba(0,0,0,0.35)" />
-    ) : (
-      <Linea d={elipse(130, 40, 85, 10)} t={t} w={3} />
-    )}
-    {m.vetas
-      ? [0, 1, 2].map((i) => (
-          <Linea
-            key={i}
-            d={`M${85 + i * 45},70 C${70 + i * 45},170 ${100 + i * 45},270 ${85 + i * 45},360`}
-            t={t}
-            w={2.5}
-            o={0.45}
+    <path d={m.forma} fill={`url(#${id}-g)`} opacity={m.vidrio ? 0.28 : 1} />
+    <g clipPath={`url(#${id}-clip)`}>
+      {m.vetas
+        ? [0, 1, 2, 3, 4].map((i) => (
+            <path
+              key={i}
+              d={`M${40 + i * 45},40 C${25 + i * 45},170 ${55 + i * 45},280 ${40 + i * 45},400`}
+              stroke={m.vetas}
+              strokeWidth={4}
+              fill="none"
+              filter="url(#r-blur-s)"
+            />
+          ))
+        : null}
+      {m.vidrio ? null : (
+        <rect
+          x={0}
+          y={0}
+          width={260}
+          height={400}
+          fill="#fff"
+          filter="url(#r-grano)"
+          opacity={m.metal ? 0.12 : 0.3}
+        />
+      )}
+      {m.franja ? (
+        <>
+          <rect x={0} y={200} width={260} height={46} fill={colors.verde} />
+          <rect
+            x={0}
+            y={200}
+            width={260}
+            height={46}
+            fill="url(#r-sombra-boca)"
+            opacity={0.4}
           />
-        ))
-      : null}
-    {m.franja ? (
-      <>
-        <Linea d="M22,205 C90,215 170,215 238,205" t={t} w={3} />
-        <Linea d="M22,245 C90,255 170,255 238,245" t={t} w={3} />
-      </>
-    ) : null}
-    {m.yerba ? <Linea d="M50,170 L210,170" t={t} w={3} o={0.7} /> : null}
-    <Sombra
-      d={m.forma === vaso ? "M66,90 L74,350" : "M42,170 C30,220 34,280 54,330"}
-      t={t}
+        </>
+      ) : null}
+      {/* Brillo */}
+      <ellipse
+        cx={m.forma === vaso ? 80 : 75}
+        cy={170}
+        rx={m.metal || m.vidrio ? 14 : 26}
+        ry={95}
+        fill="#fff"
+        opacity={m.vidrio || m.franja ? 0.55 : 0.25}
+        filter="url(#r-blur-s)"
+      />
+    </g>
+    <path
+      d={m.forma}
+      fill="none"
+      stroke={m.vidrio ? "rgba(255,255,255,0.75)" : "rgba(0,0,0,0.4)"}
+      strokeWidth={m.vidrio ? 3 : 2}
     />
+    {m.forma === calabaza ? (
+      <>
+        <ellipse cx={130} cy={42} rx={50} ry={10} fill={m.colores[0]} />
+        <ellipse cx={130} cy={43} rx={42} ry={7} fill="url(#r-hueco)" />
+      </>
+    ) : (
+      <>
+        <ellipse
+          cx={130}
+          cy={40}
+          rx={85}
+          ry={11}
+          fill={m.vidrio ? "rgba(255,255,255,0.25)" : m.colores[0]}
+          stroke={m.vidrio ? "rgba(255,255,255,0.75)" : "none"}
+          strokeWidth={3}
+        />
+        {m.vidrio ? null : (
+          <ellipse cx={130} cy={41} rx={76} ry={8} fill="url(#r-hueco)" />
+        )}
+      </>
+    )}
   </>
 );
 
@@ -304,52 +305,98 @@ const Mate: React.FC<{ readonly m: Material; readonly t: number }> = ({
 const porongo =
   "M48,30 C46,80 52,110 38,140 C-5,175 -15,280 30,315 C50,330 70,330 90,315 C135,280 125,175 82,140 C68,110 74,80 72,30 Z";
 
-const Planta: React.FC<{ readonly t: number }> = ({ t }) => (
+const Planta: React.FC<{ readonly id: string }> = ({ id }) => (
   <>
-    <Linea d="M0,40 C80,20 180,30 260,60" t={t} w={6} />
+    <defs>
+      <radialGradient id={`${id}-p`} cx="0.35" cy="0.6" r="0.75">
+        <stop offset="0" stopColor="#F3E9C2" />
+        <stop offset="0.5" stopColor="#CFC08A" />
+        <stop offset="1" stopColor="#7F7444" />
+      </radialGradient>
+      <radialGradient id={`${id}-h`} cx="0.4" cy="0.35" r="0.8">
+        <stop offset="0" stopColor="#9C8B55" />
+        <stop offset="1" stopColor="#4F4423" />
+      </radialGradient>
+    </defs>
+    <path
+      d="M0,40 C80,20 180,30 260,60"
+      stroke="#5C4A2E"
+      strokeWidth={8}
+      strokeLinecap="round"
+      fill="none"
+    />
     {[
       [20, 70, -20],
       [200, 90, 25],
       [130, 30, 10],
     ].map(([x, y, a], i) => (
-      <g key={i} transform={`rotate(${a} ${x} ${y})`}>
-        <Linea
-          d={`M${x - 28},${y} C${x - 10},${y - 16} ${x + 10},${y - 16} ${x + 28},${y} C${x + 10},${y + 16} ${x - 10},${y + 16} ${x - 28},${y} Z`}
-          t={t}
-          w={3}
-          fill="rgba(122,106,62,0.6)"
-        />
-      </g>
+      <ellipse
+        key={i}
+        cx={x}
+        cy={y}
+        rx={30}
+        ry={13}
+        fill={`url(#${id}-h)`}
+        transform={`rotate(${a} ${x} ${y})`}
+      />
     ))}
     {[
       [80, 1],
       [185, 0.8],
     ].map(([x, k], i) => (
       <g key={i} transform={`translate(${x} 34) scale(${k}) translate(-60 0)`}>
-        <Linea d="M60,0 L60,30" t={t} w={4} />
-        <Linea d={porongo} t={t} fill="rgba(216,203,154,0.6)" />
-        <Sombra d="M12,190 C2,230 8,270 28,296" t={t} n={2} paso={12} />
+        <path d="M60,0 L60,30" stroke="#5C4A2E" strokeWidth={5} />
+        <path d={porongo} fill={`url(#${id}-p)`} />
+        <ellipse
+          cx={30}
+          cy={230}
+          rx={14}
+          ry={50}
+          fill="#fff"
+          opacity={0.3}
+          filter="url(#r-blur-s)"
+        />
       </g>
     ))}
   </>
 );
 
-const Arbol: React.FC<{ readonly t: number }> = ({ t }) => (
+const Arbol: React.FC<{ readonly id: string }> = ({ id }) => (
   <>
-    <Linea
-      d="M112,424 C120,380 104,340 116,300 C100,280 70,250 50,215 M124,276 C130,250 128,220 120,190 M140,282 C160,252 186,232 214,214 M156,424 C146,380 158,340 152,300"
-      t={t}
-      w={5}
+    <defs>
+      <radialGradient id={`${id}-copa`} cx="0.4" cy="0.3" r="0.8">
+        <stop offset="0" stopColor="#A3B566" />
+        <stop offset="0.55" stopColor="#6F8240" />
+        <stop offset="1" stopColor="#3E4C22" />
+      </radialGradient>
+      <linearGradient id={`${id}-tronco`} x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0" stopColor="#3A2414" />
+        <stop offset="0.4" stopColor="#7A5233" />
+        <stop offset="1" stopColor="#2E1C10" />
+      </linearGradient>
+    </defs>
+    <ellipse cx={130} cy={428} rx={150} ry={10} fill="#B9A66A" opacity={0.8} />
+    <path
+      d="M112,424 C120,380 104,340 116,300 C100,280 70,250 50,215 L62,208 C84,236 110,262 124,276 C130,250 128,220 120,190 L134,188 C142,220 144,250 140,280 C160,252 186,232 214,214 L222,226 C196,244 168,270 152,300 C158,340 146,380 156,424 Z"
+      fill={`url(#${id}-tronco)`}
     />
-    <Linea
-      d="M112,424 C120,380 104,340 116,300 L152,300 C158,340 146,380 156,424 Z"
-      t={t}
-      w={0.1}
-      fill="rgba(92,58,34,0.8)"
-    />
-    <Linea d={copa(130, 150, 130, 80, 16)} t={t} fill="rgba(127,145,74,0.6)" />
-    <Sombra d="M40,190 C70,215 150,222 220,195" t={t} n={2} paso={0} />
-    <Linea d="M-10,424 L270,424" t={t} w={4} />
+    {[
+      [130, 140, 125, 62],
+      [42, 190, 62, 42],
+      [218, 186, 62, 42],
+      [86, 108, 72, 46],
+      [180, 100, 76, 46],
+      [130, 198, 96, 38],
+    ].map(([x, y, rx, ry], i) => (
+      <ellipse
+        key={i}
+        cx={x}
+        cy={y}
+        rx={rx}
+        ry={ry}
+        fill={`url(#${id}-copa)`}
+      />
+    ))}
   </>
 );
 
@@ -362,11 +409,10 @@ const MATE_EN = 60; // en el primer par, cuándo pasa del origen al mate
 
 const Materiales: React.FC = () => {
   const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
   return (
     <svg width={1080} height={1920} style={{ position: "absolute", inset: 0 }}>
-      <defs>
-        <TrazoFiltro id="trazo-materiales" />
-      </defs>
+      <DefsRealista />
       {pares.map(({ desde, hasta }, par) => {
         if (f < desde || f >= hasta) return null;
         const sale = iv(f, [hasta - 10, hasta], [1, 0]);
@@ -375,21 +421,36 @@ const Materiales: React.FC = () => {
         return [0, 1].map((lado) => {
           const m = materiales[par * 2 + lado];
           const cx = lado ? 720 : 340;
-          const tOrigen = iv(f - desde - lado * 6, [0, 30], [0, 1]);
-          const fueraOrigen = iv(f, [t0 - 12, t0], [1, 0]);
-          const t = iv(f - t0 - lado * 6, [0, 28], [0, 1]);
+          const sOrigen = spring({
+            frame: f - desde - lado * 6,
+            fps,
+            config: { damping: 13 },
+          });
+          const fueraOrigen = iv(f, [t0 - 14, t0], [1, 0]);
+          const s = spring({
+            frame: f - t0 - lado * 6,
+            fps,
+            config: { damping: 13 },
+          });
           return (
             <g key={m.nombre} opacity={sale}>
+              {conOrigen && f < t0 ? (
+                <g
+                  opacity={Math.min(1, Math.max(0, sOrigen)) * fueraOrigen}
+                  transform={`translate(${cx} ${1000 + (1 - sOrigen) * 80}) scale(1.15) translate(-130 -420)`}
+                >
+                  {lado ? (
+                    <Arbol id={`arbol-${lado}`} />
+                  ) : (
+                    <Planta id={`planta-${lado}`} />
+                  )}
+                </g>
+              ) : null}
               <g
-                transform={`translate(${cx} 1000) scale(1.15) translate(-130 -420)`}
-                filter="url(#trazo-materiales)"
+                opacity={f >= t0 ? Math.min(1, Math.max(0, s)) : 0}
+                transform={`translate(${cx} ${1000 + (1 - s) * 80}) scale(1.15) translate(-130 -420)`}
               >
-                {conOrigen && f < t0 ? (
-                  <g opacity={fueraOrigen}>
-                    {lado ? <Arbol t={tOrigen} /> : <Planta t={tOrigen} />}
-                  </g>
-                ) : null}
-                {f >= t0 ? <Mate m={m} t={t} /> : null}
+                <Mate m={m} id={`mat-${par}-${lado}`} />
               </g>
               <text
                 x={cx}
@@ -400,7 +461,7 @@ const Materiales: React.FC = () => {
                 fontSize={34}
                 letterSpacing={5}
                 fill={colors.crema}
-                opacity={conOrigen ? tOrigen : t}
+                opacity={Math.min(1, Math.max(0, sOrigen))}
               >
                 {m.nombre.toUpperCase()}
               </text>

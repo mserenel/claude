@@ -10,7 +10,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { colors, fonts } from "./brand";
-import { Arabescos, Linea, Sombra, TrazoFiltro } from "./Trazo";
+import { Cincelado, DefsRealista, Superficie } from "./Realista";
 
 // "Cómo cebar un buen mate": video explicativo animado (9:16, 19 s), al estilo
 // de los reels educativos con ilustración plana y subtítulo palabra por
@@ -22,7 +22,6 @@ export const CEBAR_FRAMES = 570;
 const yerba = "#8C9A56";
 const yerbaOscura = "#5E7038";
 export const agua = "#9CC3E0";
-const alpaca = "#4E5A72";
 
 export type Palabra = { readonly t: string; readonly k?: boolean };
 export type Paso = {
@@ -135,7 +134,7 @@ const Escena: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const entra = iv(f, [0, 28], [0, 1]);
+  const entra = Math.max(0, spring({ frame: f, fps, config: { damping: 14 } }));
   const sale = iv(f, [490, 515], [1, 0]);
   const ang = iv(f, [155, 190], [0, -26]) + iv(f, [395, 425], [0, 26]);
   const nivel = iv(f, [65, 140], [620, 295], Easing.out(Easing.quad));
@@ -149,7 +148,7 @@ const Escena: React.FC = () => {
   const termo = spring({ frame: f - 425, fps, config: { damping: 11 } });
 
   const [bx, by] = enPantalla(300, 620, 0);
-  const [hx, hy] = enPantalla(395, yR + 6, ang);
+  const [hx, hy] = enPantalla(468, yR + 4, ang);
   const [ox, oy] = enPantalla(330, 130, ang);
 
   return (
@@ -158,8 +157,8 @@ const Escena: React.FC = () => {
       height={1920}
       style={{ position: "absolute", inset: 0, opacity: sale }}
     >
+      <DefsRealista />
       <defs>
-        <TrazoFiltro id="trazo-cebar" />
         <clipPath id="interior">
           <path d={interior} />
         </clipPath>
@@ -200,54 +199,109 @@ const Escena: React.FC = () => {
       })}
 
       <g
-        transform={`translate(${M.x} ${M.y}) scale(${M.k}) rotate(${ang} ${M.px} ${M.py})`}
-        filter="url(#trazo-cebar)"
+        transform={`translate(${M.x} ${M.y}) scale(${M.k}) translate(300 620) scale(${entra}) translate(-300 -620) rotate(${ang} ${M.px} ${M.py})`}
       >
-        <Linea d={cuerpo} t={entra} w={6} fill={colors.madera} />
-        <Sombra d="M112,260 C92,330 92,420 116,490" t={entra} paso={16} />
-        <Linea d={interior} t={entra} w={4} fill="#3A2214" />
+        <Superficie
+          id="cebar-cuerpo"
+          d={cuerpo}
+          relleno="url(#r-suela)"
+          brillo={[170, 330, 50, 130]}
+          sombraDesde={140}
+        />
+        {/* Corte: se ve el interior */}
+        <path d={interior} fill="#2A180D" />
         <g clipPath="url(#interior)">
           <path
             d={`M0,${yL} C200,${yL - 10} 380,${(yL + yR) / 2} 600,${yR} L600,700 L0,700 Z`}
             fill={yerba}
           />
-          {new Array(40).fill(0).map((_, i) => (
-            <circle
-              key={i}
-              cx={130 + random(`px${i}`) * 340}
-              cy={nivel + 20 + random(`py${i}`) * 260}
-              r={3 + random(`pr${i}`) * 3}
-              fill={yerbaOscura}
-              opacity={nivel < 580 ? 0.8 : 0}
-            />
-          ))}
-          <ellipse
-            cx={395}
-            cy={yR + 30}
-            rx={70}
-            ry={45}
+          <rect
+            x={0}
+            y={0}
+            width={600}
+            height={700}
+            fill="#fff"
+            filter="url(#r-grano)"
+            opacity={nivel < 580 ? 0.55 : 0}
+          />
+          {/* La primera mojada: contra la pared, del lado del hueco */}
+          <path
+            d={`M${470},${yR - 4} C${430},${yR + 4} ${405},${yR + 40} ${410},${yR + 90} C${414},${yR + 140} ${450},${yR + 160} ${490},${yR + 150} L${520},${yR - 10} Z`}
             fill={yerbaOscura}
-            opacity={mojado}
+            opacity={0.9 * mojado}
+            filter="url(#r-blur-s)"
+          />
+          <path
+            d={interior}
+            fill="none"
+            stroke="rgba(0,0,0,0.45)"
+            strokeWidth={22}
+            filter="url(#r-blur-s)"
           />
         </g>
-        {/* Bombilla */}
-        <g transform={`translate(0 ${bombilla})`} opacity={f > 318 ? 1 : 0}>
-          <Linea d="M395,470 L395,40 C395,10 410,-5 440,-10" w={12} />
-          <Linea
-            d="M378,450 C378,438 412,438 412,450 L412,490 C412,502 378,502 378,490 Z"
-            w={5}
-            fill={alpaca}
+        <path d={interior} fill="none" stroke="#C9935E" strokeWidth={4} />
+        {/* Bombilla de alpaca: caño, anillo, pico curvo y paleta con
+            agujeritos abajo. Se clava en la parte mojada. */}
+        <g
+          transform={`translate(440 ${470 + bombilla}) rotate(7)`}
+          opacity={f > 318 ? 1 : 0}
+        >
+          <rect x={-7} y={-400} width={14} height={382} fill="url(#r-alpaca)" />
+          <path
+            d="M-7,-398 C-7,-428 12,-442 44,-444 L46,-430 C20,-428 7,-420 7,-398 Z"
+            fill="url(#r-alpaca-v)"
           />
+          <rect
+            x={38}
+            y={-449}
+            width={22}
+            height={14}
+            rx={6}
+            fill="url(#r-alpaca)"
+          />
+          <rect
+            x={-11}
+            y={-350}
+            width={22}
+            height={16}
+            rx={3}
+            fill="url(#r-alpaca)"
+            stroke="rgba(0,0,0,0.35)"
+          />
+          <path
+            d="M-7,-22 C-28,-12 -30,40 0,64 C30,40 28,-12 7,-22 Z"
+            fill="url(#r-alpaca)"
+            stroke="rgba(0,0,0,0.4)"
+            strokeWidth={1.5}
+          />
+          {[0, 1, 2, 3].map((r) =>
+            [-1, 0, 1].map((c) => (
+              <circle
+                key={`${r}${c}`}
+                cx={c * 9}
+                cy={-4 + r * 12}
+                r={2.2}
+                fill="#3C3B37"
+              />
+            )),
+          )}
         </g>
         {/* Virola */}
-        <Linea
+        <Superficie
+          id="cebar-virola"
           d="M140,112 L460,112 L452,152 L148,152 Z"
-          t={entra}
-          w={6}
-          fill={alpaca}
+          relleno="url(#r-alpaca)"
+          grano={false}
         />
-        <Linea d="M142,124 L458,124" t={entra} w={3} />
-        <Arabescos x={170} y={136} n={10} t={entra} />
+        <rect
+          x={140}
+          y={110}
+          width={320}
+          height={10}
+          rx={4}
+          fill="url(#r-alpaca-v)"
+        />
+        <Cincelado x={168} y={136} n={10} />
       </g>
 
       {/* Agua tibia en el hueco (paso 3) */}
