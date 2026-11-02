@@ -18,19 +18,17 @@ import {
   Subtitulo,
 } from "./Cebar";
 import {
-  alpaca,
-  Brillo,
-  Cincelado,
-  negro,
-  negroBorde,
+  aguaAlpaca,
+  aguaNegro,
   Patas,
   torpedoCuerpo,
   torpedoVirola,
 } from "./TiposDeMate";
+import { Arabescos, Linea, Sombra, TrazoFiltro } from "./Trazo";
 
 // "Cómo curar tu mate": cuarto video explicativo animado (9:16, 22 s), mismo
 // estilo que los anteriores. El mate es el torpedo dibujado de "Tipos de
-// mate", en corte para ver lo que pasa adentro.
+// mate", dibujado a mano y en corte para ver lo que pasa adentro.
 
 export const CURAR_FRAMES = 650;
 
@@ -65,7 +63,7 @@ const pasos: Paso[] = [
 
 const yerba = "#8C9A56";
 const yerbaOscura = "#5E7038";
-const pulpa = "#B89A63";
+const pulpa = "rgba(184,154,99,0.75)";
 
 // El torpedo (caja de 260x440) agrandado al centro de la pantalla.
 const K = 1.7;
@@ -79,7 +77,7 @@ const interior =
 const Escena: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const entra = spring({ frame: f, fps, config: { damping: 14 } });
+  const t = iv(f, [0, 30], [0, 1]);
   const sale = iv(f, [550, 568], [1, 0]);
 
   const nivel =
@@ -98,6 +96,7 @@ const Escena: React.FC = () => {
       style={{ position: "absolute", inset: 0, opacity: sale }}
     >
       <defs>
+        <TrazoFiltro id="trazo-curar" />
         <clipPath id="curar-interior">
           <path d={interior} />
         </clipPath>
@@ -148,14 +147,14 @@ const Escena: React.FC = () => {
       })}
 
       <g
-        transform={`translate(${TX} ${TY}) scale(${K}) translate(130 434) scale(${entra}) translate(-130 -434)`}
+        transform={`translate(${TX} ${TY}) scale(${K})`}
+        filter="url(#trazo-curar)"
       >
-        <ellipse cx={130} cy={438} rx={130} ry={12} fill="rgba(0,0,0,0.35)" />
-        <path d={torpedoCuerpo} fill={negro} />
-        <Patas c={negro} b={negroBorde} />
-        <Brillo d="M30,190 C22,230 26,268 38,300" />
+        <Linea d={torpedoCuerpo} t={t} fill={aguaNegro} />
+        <Sombra d="M30,190 C22,230 26,268 40,300" t={t} n={2} />
+        <Patas t={t} agua={aguaNegro} />
         {/* Corte: se ve la calabaza por dentro */}
-        <path d={interior} fill={pulpa} />
+        <Linea d={interior} t={t} w={3.5} fill={pulpa} />
         <g clipPath="url(#curar-interior)">
           <path
             d={`M0,${nivel} C80,${nivel - 8} 180,${nivel + 8} 260,${nivel} L260,440 L0,440 Z`}
@@ -200,16 +199,16 @@ const Escena: React.FC = () => {
           transform={`translate(0 ${raspa}) rotate(-8 170 150)`}
           opacity={cuchara}
         >
-          <path
-            d="M162,100 L170,220"
-            stroke={alpaca}
-            strokeWidth={9}
-            strokeLinecap="round"
+          <Linea d="M158,100 L166,218 M166,100 L174,218" w={3} />
+          <Linea
+            d="M171,216 C186,216 186,264 171,264 C156,264 156,216 171,216 Z"
+            w={3}
+            fill={aguaAlpaca}
           />
-          <ellipse cx={171} cy={240} rx={13} ry={24} fill={alpaca} />
         </g>
-        <path d={torpedoVirola} fill={alpaca} />
-        <Cincelado x={62} y={122} n={6} />
+        <Linea d={torpedoVirola} t={t} fill={aguaAlpaca} />
+        <Linea d="M62,96 C100,88 160,88 198,96" t={t} w={3} />
+        <Arabescos x={66} y={116} n={6} t={t} />
       </g>
 
       {/* Reloj: 24 horas (paso 2) */}

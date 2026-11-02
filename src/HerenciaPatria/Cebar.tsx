@@ -10,6 +10,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { colors, fonts } from "./brand";
+import { Arabescos, Linea, Sombra, TrazoFiltro } from "./Trazo";
 
 // "Cómo cebar un buen mate": video explicativo animado (9:16, 19 s), al estilo
 // de los reels educativos con ilustración plana y subtítulo palabra por
@@ -21,7 +22,7 @@ export const CEBAR_FRAMES = 570;
 const yerba = "#8C9A56";
 const yerbaOscura = "#5E7038";
 export const agua = "#9CC3E0";
-const alpaca = "#D8D6D0";
+const alpaca = "#4E5A72";
 
 export type Palabra = { readonly t: string; readonly k?: boolean };
 export type Paso = {
@@ -134,7 +135,7 @@ const Escena: React.FC = () => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const entra = spring({ frame: f, fps, config: { damping: 14 } });
+  const entra = iv(f, [0, 28], [0, 1]);
   const sale = iv(f, [490, 515], [1, 0]);
   const ang = iv(f, [155, 190], [0, -26]) + iv(f, [395, 425], [0, 26]);
   const nivel = iv(f, [65, 140], [620, 295], Easing.out(Easing.quad));
@@ -158,6 +159,7 @@ const Escena: React.FC = () => {
       style={{ position: "absolute", inset: 0, opacity: sale }}
     >
       <defs>
+        <TrazoFiltro id="trazo-cebar" />
         <clipPath id="interior">
           <path d={interior} />
         </clipPath>
@@ -198,18 +200,12 @@ const Escena: React.FC = () => {
       })}
 
       <g
-        transform={`translate(${M.x} ${M.y}) scale(${M.k}) translate(300 620) scale(${entra}) translate(-300 -620) rotate(${ang} ${M.px} ${M.py})`}
+        transform={`translate(${M.x} ${M.y}) scale(${M.k}) rotate(${ang} ${M.px} ${M.py})`}
+        filter="url(#trazo-cebar)"
       >
-        <path d={cuerpo} fill={colors.madera} />
-        {/* Brillo del cuero */}
-        <path
-          d="M140,260 C115,330 110,420 135,490"
-          stroke="rgba(255,255,255,0.14)"
-          strokeWidth={22}
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path d={interior} fill="#3A2214" />
+        <Linea d={cuerpo} t={entra} w={6} fill={colors.madera} />
+        <Sombra d="M112,260 C92,330 92,420 116,490" t={entra} paso={16} />
+        <Linea d={interior} t={entra} w={4} fill="#3A2214" />
         <g clipPath="url(#interior)">
           <path
             d={`M0,${yL} C200,${yL - 10} 380,${(yL + yR) / 2} 600,${yR} L600,700 L0,700 Z`}
@@ -236,18 +232,22 @@ const Escena: React.FC = () => {
         </g>
         {/* Bombilla */}
         <g transform={`translate(0 ${bombilla})`} opacity={f > 318 ? 1 : 0}>
-          <path
-            d="M395,470 L395,40 C395,10 410,-5 440,-10"
-            stroke={alpaca}
-            strokeWidth={14}
-            strokeLinecap="round"
-            fill="none"
+          <Linea d="M395,470 L395,40 C395,10 410,-5 440,-10" w={12} />
+          <Linea
+            d="M378,450 C378,438 412,438 412,450 L412,490 C412,502 378,502 378,490 Z"
+            w={5}
+            fill={alpaca}
           />
-          <rect x={378} y={440} width={34} height={60} rx={10} fill={alpaca} />
         </g>
         {/* Virola */}
-        <path d="M140,120 L460,120 L452,152 L148,152 Z" fill={alpaca} />
-        <rect x={140} y={112} width={320} height={10} rx={5} fill="#F0EEE8" />
+        <Linea
+          d="M140,112 L460,112 L452,152 L148,152 Z"
+          t={entra}
+          w={6}
+          fill={alpaca}
+        />
+        <Linea d="M142,124 L458,124" t={entra} w={3} />
+        <Arabescos x={170} y={136} n={10} t={entra} />
       </g>
 
       {/* Agua tibia en el hueco (paso 3) */}
