@@ -22,6 +22,7 @@ import {
   DefsRealista,
   Imperial,
   imperialCuerpo,
+  GuardaPampa,
   SombraPiso,
   Superficie,
 } from "./Realista";
@@ -392,17 +393,17 @@ const Escena: React.FC = () => {
 
 // ---- Mate de algarrobo (cuadros locales, desde ALG) ----
 
-// Madera torneada, en corte: pared gruesa y el hueco abierto a la boca.
+// El de algarrobo de la tienda: madera torneada, panza arriba, cintura y pie
+// abierto, con fleje ancho de guarda pampa y borde volcado. En corte: pared
+// gruesa de madera y el hueco debajo del fleje.
 const madera =
-  "M80,40 C70,100 20,140 20,230 C20,330 80,380 130,380 C180,380 240,330 240,230 C240,140 190,100 180,40 Z";
+  "M20,184 C14,205 12,226 16,250 C22,296 40,320 46,338 C46,348 38,356 40,368 C42,378 46,381 60,382 L200,382 C214,381 218,378 220,368 C222,356 214,348 214,338 C220,320 238,296 244,250 C248,226 246,205 240,184 Z";
 const huecoMadera =
-  "M96,40 C90,100 48,140 48,230 C48,318 98,352 130,352 C162,352 212,318 212,230 C212,140 170,100 164,40 Z";
-// Más bajo y panzón, como los de calabaza: se achata desde el piso (384).
-const K2 = 1.85;
-const ACH2 = 0.85;
+  "M38,150 L222,150 L224,190 C232,222 228,258 212,288 C198,310 170,322 130,322 C90,322 62,310 48,288 C32,258 28,222 36,190 Z";
+const K2 = 2;
 const TX2 = 540 - 130 * K2;
 const TY2 = 1060 - 384 * K2;
-const boca2 = { x: 540, y: TY2 + (384 - 344 * ACH2) * K2 };
+const boca2 = { x: 540, y: TY2 + 108 * K2 };
 
 const EscenaAlgarrobo: React.FC = () => {
   const f = useCurrentFrame();
@@ -415,15 +416,15 @@ const EscenaAlgarrobo: React.FC = () => {
 
   const grasa = iv(f, [80, 150], [0, 1]) - iv(f, [535, 575], [0, 0.6]);
   const pincel = f >= 75 && f < 155 ? 1 : 0;
-  const unta = Math.sin((f - 75) / 4) * 70;
+  const unta = Math.sin((f - 75) / 4) * 40;
   const nivel =
-    iv(f, [245, 300], [360, 110], Easing.out(Easing.quad)) +
-    iv(f, [488, 525], [0, 250]);
+    iv(f, [245, 300], [330, 192], Easing.out(Easing.quad)) +
+    iv(f, [488, 525], [0, 140]);
   const mojado = iv(f, [330, 380], [0, 1]);
   const cuchara = f >= 485 && f < 530 ? 1 : 0;
-  const saca = Math.sin((f - 485) / 5) * 60;
+  const saca = Math.sin((f - 485) / 5) * 35;
   const papel = f >= 532 && f < 578 ? 1 : 0;
-  const pasa = Math.sin((f - 532) / 4) * 80;
+  const pasa = Math.sin((f - 532) / 4) * 40;
   const reloj6 = iv(f, [168, 232], [0, 1], Easing.inOut(Easing.quad));
   const en6 = iv(f, [160, 172], [0, 1]) * iv(f, [232, 240], [1, 0]);
   const reloj12 = iv(f, [408, 472], [0, 1], Easing.inOut(Easing.quad));
@@ -440,13 +441,13 @@ const EscenaAlgarrobo: React.FC = () => {
       <DefsRealista />
       <defs>
         <radialGradient id="alg-madera" cx="0.32" cy="0.35" r="0.8">
-          <stop offset="0" stopColor="#A9663C" />
-          <stop offset="0.45" stopColor="#74401F" />
-          <stop offset="1" stopColor="#341808" />
+          <stop offset="0" stopColor="#E3A468" />
+          <stop offset="0.45" stopColor="#B36D35" />
+          <stop offset="1" stopColor="#6A3714" />
         </radialGradient>
         <radialGradient id="alg-corte" cx="0.5" cy="0.4" r="0.7">
-          <stop offset="0" stopColor="#C88E5E" />
-          <stop offset="1" stopColor="#8E5530" />
+          <stop offset="0" stopColor="#E2AE78" />
+          <stop offset="1" stopColor="#B07440" />
         </radialGradient>
         <radialGradient id="alg-hueco" cx="0.5" cy="0.4" r="0.7">
           <stop offset="0" stopColor="#7A4526" />
@@ -502,9 +503,9 @@ const EscenaAlgarrobo: React.FC = () => {
       })}
 
       <g
-        transform={`translate(${TX2} ${TY2}) scale(${K2}) translate(130 384) scale(${entra}) scale(1 ${ACH2}) translate(-130 -384)`}
+        transform={`translate(${TX2} ${TY2}) scale(${K2}) translate(130 384) scale(${entra}) translate(-130 -384)`}
       >
-        <SombraPiso cx={130} cy={384} rx={120} />
+        <SombraPiso cx={130} cy={384} rx={100} />
         <Superficie
           id="alg-cuerpo"
           d={madera}
@@ -514,16 +515,20 @@ const EscenaAlgarrobo: React.FC = () => {
         {/* Corte de la madera, con sus vetas */}
         <path
           d={madera}
-          transform="translate(130 215) scale(0.95) translate(-130 -215)"
+          transform="translate(130 280) scale(0.95) translate(-130 -280)"
           fill="url(#alg-corte)"
         />
         <g clipPath="url(#alg-cuerpo)">
+          {/* Vetas: los anillos de la madera torneada */}
           {[0, 1, 2, 3, 4, 5].map((i) => (
-            <path
+            <ellipse
               key={i}
-              d={`M${30 + i * 40},40 C${15 + i * 40},170 ${45 + i * 40},280 ${30 + i * 40},400`}
-              stroke="rgba(70,35,15,0.35)"
-              strokeWidth={3}
+              cx={95}
+              cy={262}
+              rx={18 + i * 22}
+              ry={12 + i * 16}
+              stroke="rgba(90,45,15,0.28)"
+              strokeWidth={2.5}
               fill="none"
             />
           ))}
@@ -570,13 +575,20 @@ const EscenaAlgarrobo: React.FC = () => {
             filter="url(#r-blur-s)"
           />
         </g>
-        {/* Boca */}
-        <ellipse cx={130} cy={40} rx={50} ry={9} fill="#C88E5E" />
-        <ellipse cx={130} cy={41} rx={34} ry={6} fill="#2A1508" />
+        {/* Fleje de guarda pampa y borde volcado */}
+        <Superficie
+          id="alg-fleje"
+          d="M16,114 L244,114 L240,186 L20,186 Z"
+          relleno="url(#r-alpaca)"
+          grano={false}
+        />
+        <GuardaPampa x={18} y={118} w={224} h={66} />
+        <ellipse cx={130} cy={110} rx={126} ry={11} fill="url(#r-alpaca-v)" />
+        <ellipse cx={130} cy={110} rx={112} ry={7} fill="url(#r-hueco)" />
 
         {/* Pincel con grasa (paso 1) */}
         <g
-          transform={`translate(${unta * 0.3} ${unta}) rotate(-10 130 120)`}
+          transform={`translate(${unta * 0.3} ${110 + unta}) rotate(-10 130 120)`}
           opacity={pincel}
         >
           <rect x={124} y={-60} width={12} height={150} rx={5} fill="#8A5A34" />
@@ -588,7 +600,7 @@ const EscenaAlgarrobo: React.FC = () => {
         </g>
         {/* Cuchara que vacía (paso 6) */}
         <g
-          transform={`translate(0 ${saca}) rotate(-8 170 150)`}
+          transform={`translate(0 ${70 + saca}) rotate(-8 170 150)`}
           opacity={cuchara}
         >
           <path d="M158,40 L170,40 L176,180 L164,180 Z" fill="url(#r-alpaca)" />
@@ -601,7 +613,7 @@ const EscenaAlgarrobo: React.FC = () => {
         </g>
         {/* Papel de cocina (paso 6) */}
         <g
-          transform={`translate(${pasa * 0.4} ${pasa}) rotate(12 130 200)`}
+          transform={`translate(${pasa * 0.6} ${50 + pasa * 0.5}) rotate(12 130 200)`}
           opacity={papel}
         >
           <path
