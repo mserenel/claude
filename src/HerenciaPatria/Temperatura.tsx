@@ -27,7 +27,7 @@ const pasos: Paso[] = [
   {
     desde: 75,
     hasta: 180,
-    frase: p("Si *hierve, quema la yerba y el mate sale *amargo."),
+    frase: p("Si *hierve, el mate sale *amargo y se *lava enseguida."),
   },
   {
     desde: 180,
