@@ -12,7 +12,7 @@ import { AnuncioEstatico, estaticos } from "./HerenciaPatria/Estaticos";
 import { Cebar, CEBAR_FRAMES } from "./HerenciaPatria/Cebar";
 import { Temperatura, TEMPERATURA_FRAMES } from "./HerenciaPatria/Temperatura";
 import { TiposDeMate, TIPOS_FRAMES } from "./HerenciaPatria/TiposDeMate";
-import { Curar, CURAR_FRAMES } from "./HerenciaPatria/Curar";
+import { Curar, CURAR_FRAMES, PortadaCurar } from "./HerenciaPatria/Curar";
 import { RetargetingOpcion } from "./HerenciaPatria/RetargetingOpciones";
 import { Retargeting, RETARGETING_FRAMES } from "./HerenciaPatria/Retargeting";
 import {
@@ -252,6 +252,13 @@ export const RemotionRoot: React.FC = () => {
         component={Curar}
         durationInFrames={CURAR_FRAMES}
         fps={30}
+        width={1080}
+        height={1920}
+      />
+      {/* npx remotion still HP-Curar-Portada entregas/portada-como-curar.jpg */}
+      <Still
+        id="HP-Curar-Portada"
+        component={PortadaCurar}
         width={1080}
         height={1920}
       />

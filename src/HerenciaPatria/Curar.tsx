@@ -1,9 +1,11 @@
 import {
   AbsoluteFill,
   Easing,
+  Img,
   random,
   Sequence,
   spring,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
@@ -65,7 +67,12 @@ const pasos: Paso[] = [
   ...(
     [
       [0, 70, 0, "El de *algarrobo se cura con *grasa."],
-      [70, 160, 1, "Untá el interior con *manteca o aceite de *maíz o *girasol."],
+      [
+        70,
+        160,
+        1,
+        "Untá el interior con *manteca o aceite de *maíz o *girasol.",
+      ],
       [160, 240, 2, "Dejalo absorber *6 *horas en un lugar seco."],
       [240, 320, 3, "Llenalo con yerba *nueva."],
       [320, 400, 4, "Humedecela con agua *tibia, nunca hirviendo."],
@@ -664,5 +671,118 @@ export const Curar: React.FC = () => (
       <Cierre desde={675} />
     </Sequence>
     <Subtitulo pasos={pasos} total={CURAR_FRAMES} />
+  </AbsoluteFill>
+);
+
+// ---- Portada del reel ----
+
+// El de algarrobo entero (sin corte), para la portada.
+const AlgarroboEntero: React.FC = () => (
+  <>
+    <defs>
+      <radialGradient id="port-madera" cx="0.32" cy="0.35" r="0.8">
+        <stop offset="0" stopColor="#E3A468" />
+        <stop offset="0.45" stopColor="#B36D35" />
+        <stop offset="1" stopColor="#6A3714" />
+      </radialGradient>
+    </defs>
+    <SombraPiso cx={130} cy={384} rx={110} />
+    <Superficie
+      id="port-alg"
+      d={madera}
+      relleno="url(#port-madera)"
+      brillo={[70, 250, 22, 60]}
+    />
+    <g clipPath="url(#port-alg)">
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <ellipse
+          key={i}
+          cx={30}
+          cy={280}
+          rx={40 + i * 30}
+          ry={26 + i * 20}
+          stroke="rgba(90,45,15,0.2)"
+          strokeWidth={2.5}
+          fill="none"
+        />
+      ))}
+    </g>
+    <Superficie
+      id="port-fleje"
+      d="M16,114 L244,114 L240,186 L20,186 Z"
+      relleno="url(#r-alpaca)"
+      grano={false}
+    />
+    <GuardaPampa x={18} y={118} w={224} h={66} />
+    <ellipse cx={130} cy={110} rx={126} ry={11} fill="url(#r-alpaca-v)" />
+    <ellipse cx={130} cy={110} rx={112} ry={7} fill="url(#r-hueco)" />
+  </>
+);
+
+// Portada 9:16 con lo importante dentro del recorte 3:4 de la grilla del
+// perfil (de 240 a 1680 de alto).
+export const PortadaCurar: React.FC = () => (
+  <AbsoluteFill>
+    <Fondo />
+    <div
+      style={{
+        position: "absolute",
+        top: 330,
+        left: 0,
+        right: 0,
+        textAlign: "center",
+        color: colors.crema,
+        fontFamily: fonts.serif,
+        lineHeight: 1.02,
+        textShadow: "0 4px 24px rgba(0,0,0,0.45)",
+      }}
+    >
+      <div style={{ fontWeight: 700, fontSize: 136 }}>Cómo curar</div>
+      <div style={{ fontStyle: "italic", fontWeight: 600, fontSize: 136 }}>
+        tu mate
+      </div>
+    </div>
+    <svg width={1080} height={1920} style={{ position: "absolute", inset: 0 }}>
+      <DefsRealista />
+      {/* Los dos apoyados en la misma línea de piso (y = 1250). */}
+      <g
+        transform={`translate(${300 - 130 * 1.5} ${1250 - 414 * 1.5}) scale(1.5)`}
+      >
+        <Imperial id="port-imperial" />
+      </g>
+      <g
+        transform={`translate(${780 - 130 * 1.5} ${1250 - 384 * 1.5}) scale(1.5)`}
+      >
+        <AlgarroboEntero />
+      </g>
+      {[
+        [300, "CALABAZA"],
+        [780, "ALGARROBO"],
+      ].map(([x, t]) => (
+        <text
+          key={t}
+          x={x}
+          y={1330}
+          textAnchor="middle"
+          fontFamily={fonts.sans}
+          fontWeight={700}
+          fontSize={36}
+          letterSpacing={6}
+          fill={colors.crema}
+        >
+          {t}
+        </text>
+      ))}
+    </svg>
+    <Img
+      src={staticFile("logo-herencia-patria.png")}
+      style={{
+        position: "absolute",
+        width: 150,
+        height: 150,
+        left: 465,
+        top: 1420,
+      }}
+    />
   </AbsoluteFill>
 );
