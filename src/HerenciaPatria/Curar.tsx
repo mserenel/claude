@@ -67,8 +67,8 @@ const boca = { x: 540, y: TY + 100 * K };
 // el cuero apenas como un filo, la pared de calabaza y el hueco adentro.
 const enEscala = (k: number) =>
   `translate(130 266) scale(${k}) translate(-130 -266)`;
-const PARED = enEscala(0.965);
-const HUECO = enEscala(0.86);
+const PARED = enEscala(0.94);
+const HUECO = enEscala(0.87);
 
 const Escena: React.FC = () => {
   const f = useCurrentFrame();
@@ -150,7 +150,9 @@ const Escena: React.FC = () => {
           hueco={
             <>
               {/* Corte: se ve la calabaza por dentro */}
-              <path d={torpedoCuerpo} transform={PARED} fill="#D3B07A" />
+              {/* Cuero negro, fino, por fuera */}
+              <path d={torpedoCuerpo} fill="#141110" />
+              <path d={torpedoCuerpo} transform={PARED} fill="#E3C68E" />
               <path
                 d={torpedoCuerpo}
                 transform={PARED}
