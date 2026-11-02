@@ -45,12 +45,12 @@ const pasos: Paso[] = [
     desde: 460,
     hasta: 560,
     num: 5,
-    frase: p("Dejalo *secar bien y nunca lo guardes con yerba."),
+    frase: p("Dejalo *secar bien en un ambiente *ventilado."),
   },
   {
     desde: 560,
     hasta: CURAR_FRAMES,
-    frase: p("Guardalo para cuando *estrenes tu mate."),
+    frase: p("Guardalo para cuando *compres tu mate."),
   },
 ];
 
@@ -222,11 +222,11 @@ const Escena: React.FC = () => {
                 opacity={cuchara}
               >
                 <path
-                  d="M160,100 L168,100 L174,218 L166,218 Z"
+                  d="M158,100 L170,100 L176,200 L164,200 Z"
                   fill="url(#r-alpaca)"
                 />
                 <path
-                  d="M171,214 C188,214 188,266 171,266 C154,266 154,214 171,214 Z"
+                  d="M170,192 C198,192 200,276 170,276 C140,276 142,192 170,192 Z"
                   fill="url(#r-alpaca)"
                   stroke="rgba(0,0,0,0.35)"
                   strokeWidth={1.5}
