@@ -20,18 +20,18 @@ export const CEBAR_FRAMES = 570;
 
 const yerba = "#8C9A56";
 const yerbaOscura = "#5E7038";
-const agua = "#9CC3E0";
+export const agua = "#9CC3E0";
 const alpaca = "#D8D6D0";
 
-type Palabra = { readonly t: string; readonly k?: boolean };
-type Paso = {
+export type Palabra = { readonly t: string; readonly k?: boolean };
+export type Paso = {
   readonly desde: number;
   readonly hasta: number;
   readonly num?: number;
   readonly frase: Palabra[];
 };
 
-const p = (s: string): Palabra[] =>
+export const p = (s: string): Palabra[] =>
   s
     .split(" ")
     .map((t) => (t.startsWith("*") ? { t: t.slice(1), k: true } : { t }));
@@ -71,10 +71,10 @@ const pasos: Paso[] = [
   },
 ];
 
-const iv = (
+export const iv = (
   f: number,
-  de: [number, number],
-  a: [number, number],
+  de: number[],
+  a: number[],
   ease = Easing.inOut(Easing.cubic),
 ) =>
   interpolate(f, de, a, {
@@ -100,7 +100,7 @@ const cuerpo =
 const interior =
   "M175,150 C150,230 115,305 115,400 C115,520 200,585 300,585 C400,585 485,520 485,400 C485,305 450,230 425,150 Z";
 
-const Fondo: React.FC = () => {
+export const Fondo: React.FC = () => {
   const f = useCurrentFrame();
   return (
     <AbsoluteFill
@@ -314,13 +314,18 @@ const Escena: React.FC = () => {
   );
 };
 
-const Subtitulo: React.FC = () => {
+// Subtítulo palabra por palabra; la última frase (el cierre) queda fija más
+// arriba, bajo el logo.
+export const Subtitulo: React.FC<{
+  readonly pasos: Paso[];
+  readonly total: number;
+}> = ({ pasos, total }) => {
   const f = useCurrentFrame();
   const paso = pasos.find((s) => f >= s.desde && f < s.hasta);
   if (!paso) return null;
   const local = f - paso.desde;
   const fuera =
-    paso.hasta === CEBAR_FRAMES
+    paso.hasta === total
       ? 1
       : iv(
           local,
@@ -333,7 +338,7 @@ const Subtitulo: React.FC = () => {
         position: "absolute",
         left: 120,
         right: 120,
-        top: paso.hasta === CEBAR_FRAMES ? 1010 : 1110,
+        top: paso.hasta === total ? 1010 : 1110,
         textAlign: "center",
         opacity: fuera,
       }}
@@ -386,10 +391,12 @@ const Subtitulo: React.FC = () => {
   );
 };
 
-const Encabezado: React.FC = () => {
+export const Encabezado: React.FC<{
+  readonly titulo: string;
+  readonly hasta: number;
+}> = ({ titulo, hasta }) => {
   const f = useCurrentFrame();
-  // Se va antes de la pava, que ocupa la parte de arriba.
-  const o = iv(f, [385, 400], [1, 0]);
+  const o = iv(f, [hasta - 15, hasta], [1, 0]);
   return (
     <div
       style={{
@@ -422,16 +429,16 @@ const Encabezado: React.FC = () => {
           marginTop: 10,
         }}
       >
-        Cómo cebar un buen mate
+        {titulo}
       </div>
     </div>
   );
 };
 
-const Cierre: React.FC = () => {
+export const Cierre: React.FC<{ readonly desde: number }> = ({ desde }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const s = spring({ frame: f - 505, fps, config: { damping: 13 } });
+  const s = spring({ frame: f - desde, fps, config: { damping: 13 } });
   return (
     <Img
       src={staticFile("logo-herencia-patria.png")}
@@ -451,9 +458,10 @@ const Cierre: React.FC = () => {
 export const Cebar: React.FC = () => (
   <AbsoluteFill>
     <Fondo />
-    <Encabezado />
+    {/* El título se va antes de la pava, que ocupa la parte de arriba. */}
+    <Encabezado titulo="Cómo cebar un buen mate" hasta={400} />
     <Escena />
-    <Cierre />
-    <Subtitulo />
+    <Cierre desde={505} />
+    <Subtitulo pasos={pasos} total={CEBAR_FRAMES} />
   </AbsoluteFill>
 );
