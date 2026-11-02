@@ -401,7 +401,7 @@ export const Encabezado: React.FC<{
     <div
       style={{
         position: "absolute",
-        top: 290,
+        top: 320,
         left: 0,
         right: 0,
         textAlign: "center",
@@ -411,22 +411,10 @@ export const Encabezado: React.FC<{
     >
       <div
         style={{
-          fontFamily: fonts.sans,
-          fontWeight: 700,
-          fontSize: 28,
-          letterSpacing: 9,
-          opacity: 0.65,
-        }}
-      >
-        CULTURA MATERA
-      </div>
-      <div
-        style={{
           fontFamily: fonts.serif,
           fontWeight: 700,
           fontSize: 76,
           lineHeight: 1.1,
-          marginTop: 10,
         }}
       >
         {titulo}
