@@ -1,5 +1,6 @@
 import { Composition, Still } from "remotion";
 import { conMarca } from "./HerenciaPatria/brand";
+import { CafeReal } from "./Cafe/CafeReal";
 import { CAFE_FRAMES, CafeTikTok } from "./Cafe/CafeTikTok";
 import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
 import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
@@ -261,6 +262,15 @@ export const RemotionRoot: React.FC = () => {
       <Still
         id="HP-Curar-Portada"
         component={conMarca(PortadaCurar)}
+        width={1080}
+        height={1920}
+      />
+      {/* bash tools/clips_cafe.sh && npx remotion render Cafe-Real entregas/cafe-tiktok-real.mp4 */}
+      <Composition
+        id="Cafe-Real"
+        component={CafeReal}
+        durationInFrames={CAFE_FRAMES}
+        fps={30}
         width={1080}
         height={1920}
       />

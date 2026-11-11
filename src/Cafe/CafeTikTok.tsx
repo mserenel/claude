@@ -20,7 +20,7 @@ import {
 
 export const CAFE_FRAMES = 600;
 
-const c = {
+export const c = {
   fondo: "#1C120C",
   brillo: "#3B2417",
   crema: "#F4E9DC",
@@ -32,8 +32,8 @@ const c = {
   metal: "#C9CDD3",
 };
 
-const titular = '"Anton", sans-serif';
-const texto = '"Archivo", sans-serif';
+export const titular = '"Anton", sans-serif';
+export const texto = '"Archivo", sans-serif';
 
 // ---- Tipografías ----
 const fuentes: [string, string, string][] = [
@@ -58,7 +58,7 @@ Promise.all(
   .catch((err) => cancelRender(err));
 
 // ---- Utilidades ----
-const iv = (
+export const iv = (
   f: number,
   de: number[],
   a: number[],
@@ -77,7 +77,7 @@ const useSp = (desde: number, damping = 12) => {
 };
 
 // Bloques del video.
-const B = {
+export const B = {
   gancho: [0, 60],
   e1: [60, 220],
   e2: [220, 380],
@@ -127,7 +127,7 @@ const Fondo: React.FC = () => {
 };
 
 // ---- Barra de progreso (3 errores) ----
-const Progreso: React.FC = () => {
+export const Progreso: React.FC = () => {
   const f = useCurrentFrame();
   const tramos = [B.e1, B.e2, B.e3];
   const o = iv(f, [50, 62], [0, 1]) * iv(f, [540, 552], [1, 0]);
@@ -168,7 +168,7 @@ const Progreso: React.FC = () => {
 };
 
 // ---- Títulos ----
-const TituloError: React.FC<{
+export const TituloError: React.FC<{
   readonly n: number;
   readonly titulo: string;
   readonly desde: number;
@@ -242,7 +242,7 @@ const lineas: Linea[] = [
   { desde: 548, hasta: CAFE_FRAMES, t: "¿Cuál cometías *vos?" },
 ];
 
-const Subtitulos: React.FC = () => {
+export const Subtitulos: React.FC = () => {
   const f = useCurrentFrame();
   const l = lineas.find((x) => f >= x.desde && f < x.hasta);
   if (!l) return null;
@@ -293,7 +293,7 @@ const Subtitulos: React.FC = () => {
 };
 
 // ---- Sellos de mal / bien ----
-const Sello: React.FC<{
+export const Sello: React.FC<{
   readonly bien: boolean;
   readonly desde: number;
   readonly hasta: number;
