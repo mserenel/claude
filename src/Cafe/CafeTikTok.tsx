@@ -127,10 +127,15 @@ const Fondo: React.FC = () => {
 };
 
 // ---- Barra de progreso (3 errores) ----
-export const Progreso: React.FC = () => {
+type Tramo = readonly [number, number];
+export const Progreso: React.FC<{ readonly tramos?: readonly Tramo[] }> = ({
+  tramos = [B.e1, B.e2, B.e3],
+}) => {
   const f = useCurrentFrame();
-  const tramos = [B.e1, B.e2, B.e3];
-  const o = iv(f, [50, 62], [0, 1]) * iv(f, [540, 552], [1, 0]);
+  const fin = tramos[tramos.length - 1][1];
+  const o =
+    iv(f, [tramos[0][0] - 10, tramos[0][0] + 2], [0, 1]) *
+    iv(f, [fin, fin + 12], [1, 0]);
   return (
     <div
       style={{
@@ -170,10 +175,11 @@ export const Progreso: React.FC = () => {
 // ---- Títulos ----
 export const TituloError: React.FC<{
   readonly n: number;
+  readonly etiqueta?: string;
   readonly titulo: string;
   readonly desde: number;
   readonly hasta: number;
-}> = ({ n, titulo, desde, hasta }) => {
+}> = ({ n, etiqueta = "ERROR", titulo, desde, hasta }) => {
   const f = useCurrentFrame();
   const s = useSp(desde, 11);
   if (f < desde || f >= hasta) return null;
@@ -203,7 +209,7 @@ export const TituloError: React.FC<{
           transform: `scale(${s})`,
         }}
       >
-        ERROR {n}/3
+        {etiqueta} {n}/3
       </div>
       <div
         style={{
@@ -225,7 +231,7 @@ export const TituloError: React.FC<{
 };
 
 // ---- Subtítulos palabra por palabra (estilo TikTok) ----
-type Linea = {
+export type Linea = {
   readonly desde: number;
   readonly hasta: number;
   readonly t: string;
@@ -242,14 +248,17 @@ const lineas: Linea[] = [
   { desde: 548, hasta: CAFE_FRAMES, t: "¿Cuál cometías *vos?" },
 ];
 
-export const Subtitulos: React.FC = () => {
+export const Subtitulos: React.FC<{
+  readonly lineas?: Linea[];
+  readonly total?: number;
+}> = ({ lineas: ls = lineas, total = CAFE_FRAMES }) => {
   const f = useCurrentFrame();
-  const l = lineas.find((x) => f >= x.desde && f < x.hasta);
+  const l = ls.find((x) => f >= x.desde && f < x.hasta);
   if (!l) return null;
   const local = f - l.desde;
   const palabras = l.t.split(" ");
   const sale =
-    l.hasta === CAFE_FRAMES
+    l.hasta === total
       ? 1
       : iv(local, [l.hasta - l.desde - 5, l.hasta - l.desde], [1, 0]);
   return (

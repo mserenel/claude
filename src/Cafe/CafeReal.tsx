@@ -26,7 +26,7 @@ import {
 // Mixkit (licencia libre para uso comercial). Las tomas pesan mucho y no se
 // suben al repositorio: tools/clips_cafe.sh las baja a public/cafe/clips/.
 
-type Toma = {
+export type Toma = {
   readonly desde: number;
   readonly hasta: number;
   readonly id: string;
@@ -45,7 +45,7 @@ const tomas: Toma[] = [
   { desde: 540, hasta: CAFE_FRAMES, id: "41859", inicio: 3, x: 42 }, // latte art
 ];
 
-const Clip: React.FC<{ readonly t: Toma }> = ({ t }) => {
+export const Clip: React.FC<{ readonly t: Toma }> = ({ t }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const largo = t.hasta - t.desde;
