@@ -9,6 +9,7 @@ import {
   granoATaza,
   ProcesoCafe,
 } from "./Cafe/CafeCapuchino";
+import { CafeMolienda, MOLIENDA_FRAMES } from "./Cafe/CafeMolienda";
 import { CafeReal } from "./Cafe/CafeReal";
 import { CafeTostado, TOSTADO_FRAMES } from "./Cafe/CafeTostado";
 import { CAFE_FRAMES, CafeTikTok } from "./Cafe/CafeTikTok";
@@ -284,6 +285,15 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ r: capuchino }}
+      />
+      {/* bash tools/clips_cafe.sh && npx remotion render Cafe-Molienda entregas/cafe-tipos-de-molienda.mp4 */}
+      <Composition
+        id="Cafe-Molienda"
+        component={CafeMolienda}
+        durationInFrames={MOLIENDA_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
       />
       {/* bash tools/clips_cafe.sh && npx remotion render Cafe-Grano entregas/cafe-del-grano-a-la-taza.mp4 */}
       <Composition
