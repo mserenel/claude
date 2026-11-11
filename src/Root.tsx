@@ -5,6 +5,8 @@ import {
   CAPUCHINO_FRAMES,
   chemex,
   CHEMEX_FRAMES,
+  GRANO_FRAMES,
+  granoATaza,
   ProcesoCafe,
 } from "./Cafe/CafeCapuchino";
 import { CafeReal } from "./Cafe/CafeReal";
@@ -282,6 +284,16 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{ r: capuchino }}
+      />
+      {/* bash tools/clips_cafe.sh && npx remotion render Cafe-Grano entregas/cafe-del-grano-a-la-taza.mp4 */}
+      <Composition
+        id="Cafe-Grano"
+        component={ProcesoCafe}
+        durationInFrames={GRANO_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ r: granoATaza }}
       />
       {/* bash tools/clips_cafe.sh && npx remotion render Cafe-Chemex entregas/cafe-chemex.mp4 */}
       <Composition

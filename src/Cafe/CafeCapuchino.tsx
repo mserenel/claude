@@ -78,6 +78,34 @@ export const chemex: Receta = {
   ],
 };
 
+// Del grano a la taza: tostado, granos, molienda, extracción y servido.
+export const GRANO_FRAMES = 450;
+
+export const granoATaza: Receta = {
+  total: GRANO_FRAMES,
+  titulo: "DEL GRANO",
+  subtitulo: "a tu taza",
+  pregunta: ["¿Cuántos tomás ", "por día?"],
+  tomas: [
+    { desde: 0, hasta: 36, id: "100263", inicio: 1, x: 50 }, // granos cayendo a la bolsa
+    { desde: 36, hasta: 96, id: "4676", inicio: 2, x: 58 }, // tostado al fuego
+    { desde: 96, hasta: 141, id: "100239", inicio: 1, x: 50 }, // recién tostados
+    { desde: 141, hasta: 186, id: "100247", inicio: 2, x: 42 }, // la bolsa
+    { desde: 186, hasta: 231, id: "3575", inicio: 2, x: 22 }, // molinillo
+    { desde: 231, hasta: 261, id: "3572", inicio: 1, x: 24 }, // dosis
+    { desde: 261, hasta: 321, id: "41865", inicio: 3, x: 50 }, // extracción
+    { desde: 321, hasta: 366, id: "236", inicio: 3, x: 47 }, // a la taza
+    { desde: 366, hasta: GRANO_FRAMES, id: "43935", inicio: 2, x: 52 },
+  ],
+  pasos: [
+    [36, 141, "Tostar el grano"],
+    [141, 186, "Granos recién tostados"],
+    [186, 231, "Molerlos al momento"],
+    [231, 321, "Extraer el espresso"],
+    [321, 366, "A la taza"],
+  ],
+};
+
 const sombra = "0 6px 0 rgba(0,0,0,0.5), 0 10px 40px rgba(0,0,0,0.7)";
 
 const Gancho: React.FC<{ readonly r: Receta }> = ({ r }) => {
