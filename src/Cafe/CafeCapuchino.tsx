@@ -9,34 +9,78 @@ import {
 import { Clip, type Toma } from "./CafeReal";
 import { c, iv, texto, titular } from "./CafeTikTok";
 
-// "Tu capuchino, de principio a fin": un barista lo prepara paso a paso, en
-// tomas reales (Mixkit). Formato de proceso, casi sin texto: arranca con el
-// resultado (el latte art) para enganchar y después muestra cómo se llega.
+// Videos de proceso ("Tu capuchino, de principio a fin", "Café de Chemex"):
+// alguien prepara un café paso a paso, en tomas reales (Mixkit). Casi sin
+// texto: arranca con el resultado para enganchar y después muestra cómo se
+// llega.
+
+// Cada video de proceso es una receta: tomas, pasos, título y pregunta final.
+// El cierre arranca donde termina el último paso.
+export type Receta = {
+  readonly total: number;
+  readonly tomas: Toma[];
+  readonly pasos: [number, number, string][];
+  readonly titulo: string;
+  readonly subtitulo: string;
+  readonly pregunta: [string, string]; // texto normal + parte resaltada
+};
 
 export const CAPUCHINO_FRAMES = 450;
 
-const tomas: Toma[] = [
-  { desde: 0, hasta: 36, id: "41859", inicio: 4, x: 42 }, // el resultado
-  { desde: 36, hasta: 81, id: "3575", inicio: 2, x: 22 }, // molinillo
-  { desde: 81, hasta: 126, id: "3572", inicio: 1, x: 24 }, // dosis en el portafiltro
-  { desde: 126, hasta: 186, id: "41865", inicio: 3, x: 50 }, // extracción
-  { desde: 186, hasta: 231, id: "3574", inicio: 2, x: 64 }, // vaporizador
-  { desde: 231, hasta: 276, id: "3576", inicio: 2, x: 35 }, // leche cremosa
-  { desde: 276, hasta: 366, id: "810", inicio: 6, x: 45 }, // latte art
-  { desde: 366, hasta: CAPUCHINO_FRAMES, id: "41859", inicio: 7, x: 42 }, // servido
-];
+export const capuchino: Receta = {
+  total: CAPUCHINO_FRAMES,
+  titulo: "TU CAPUCHINO",
+  subtitulo: "de principio a fin",
+  pregunta: ["¿Del 1 al 10, ", "cuánto le das?"],
+  tomas: [
+    { desde: 0, hasta: 36, id: "41859", inicio: 4, x: 42 }, // el resultado
+    { desde: 36, hasta: 81, id: "3575", inicio: 2, x: 22 }, // molinillo
+    { desde: 81, hasta: 126, id: "3572", inicio: 1, x: 24 }, // dosis
+    { desde: 126, hasta: 186, id: "41865", inicio: 3, x: 50 }, // extracción
+    { desde: 186, hasta: 231, id: "3574", inicio: 2, x: 64 }, // vaporizador
+    { desde: 231, hasta: 276, id: "3576", inicio: 2, x: 35 }, // leche
+    { desde: 276, hasta: 366, id: "810", inicio: 6, x: 45 }, // latte art
+    { desde: 366, hasta: CAPUCHINO_FRAMES, id: "41859", inicio: 7, x: 42 },
+  ],
+  pasos: [
+    [36, 81, "Moler el café"],
+    [81, 126, "Dosificar y compactar"],
+    [126, 186, "Extraer el espresso"],
+    [186, 276, "Vaporizar la leche"],
+    [276, 366, "Hacer el latte art"],
+  ],
+};
 
-const pasos: [number, number, string][] = [
-  [36, 81, "Moler el café"],
-  [81, 126, "Dosificar y compactar"],
-  [126, 186, "Extraer el espresso"],
-  [186, 276, "Vaporizar la leche"],
-  [276, 366, "Hacer el latte art"],
-];
+// Café de Chemex: todas las tomas de la misma mesa (Mixkit).
+export const CHEMEX_FRAMES = 450;
+
+export const chemex: Receta = {
+  total: CHEMEX_FRAMES,
+  titulo: "CAFÉ DE CHEMEX",
+  subtitulo: "como en una cafetería",
+  pregunta: ["¿Chemex o ", "espresso?"],
+  tomas: [
+    { desde: 0, hasta: 36, id: "100344", inicio: 8, x: 50 }, // agua cayendo
+    { desde: 36, hasta: 81, id: "4985", inicio: 0, x: 36 }, // molinillo
+    { desde: 81, hasta: 141, id: "100256", inicio: 3, x: 53 }, // la mesa
+    { desde: 141, hasta: 186, id: "100343", inicio: 3, x: 50 }, // al filtro
+    { desde: 186, hasta: 246, id: "100344", inicio: 2, x: 50 }, // bloom
+    { desde: 246, hasta: 321, id: "100345", inicio: 4, x: 50 }, // vertido
+    { desde: 321, hasta: 366, id: "43941", inicio: 3, x: 52 }, // servir
+    { desde: 366, hasta: CHEMEX_FRAMES, id: "43935", inicio: 2, x: 52 },
+  ],
+  pasos: [
+    [36, 81, "Moler grueso"],
+    [81, 186, "Café al filtro"],
+    [186, 246, "Mojar y esperar 30 s"],
+    [246, 321, "Verter de a poco"],
+    [321, 366, "Servir"],
+  ],
+};
 
 const sombra = "0 6px 0 rgba(0,0,0,0.5), 0 10px 40px rgba(0,0,0,0.7)";
 
-const Gancho: React.FC = () => {
+const Gancho: React.FC<{ readonly r: Receta }> = ({ r }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const s = Math.max(0, spring({ frame: f + 6, fps, config: { damping: 10 } }));
@@ -62,7 +106,7 @@ const Gancho: React.FC = () => {
           color: c.caramelo,
         }}
       >
-        TU CAPUCHINO
+        {r.titulo}
       </div>
       <div
         style={{
@@ -72,19 +116,19 @@ const Gancho: React.FC = () => {
           color: c.crema,
         }}
       >
-        de principio a fin
+        {r.subtitulo}
       </div>
     </div>
   );
 };
 
 // Etiqueta de cada paso, abajo: número y nombre.
-const Paso: React.FC = () => {
+const Paso: React.FC<{ readonly r: Receta }> = ({ r }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const i = pasos.findIndex(([a, b]) => f >= a && f < b);
+  const i = r.pasos.findIndex(([a, b]) => f >= a && f < b);
   if (i < 0) return null;
-  const [a, b, nombre] = pasos[i];
+  const [a, b, nombre] = r.pasos[i];
   const s = Math.max(0, spring({ frame: f - a, fps, config: { damping: 12 } }));
   return (
     <div
@@ -141,18 +185,19 @@ const Paso: React.FC = () => {
   );
 };
 
-const Cierre: React.FC = () => {
+const Cierre: React.FC<{ readonly r: Receta }> = ({ r }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const fin = r.pasos[r.pasos.length - 1][1];
   const s = Math.max(
     0,
-    spring({ frame: f - 372, fps, config: { damping: 12 } }),
+    spring({ frame: f - fin - 6, fps, config: { damping: 12 } }),
   );
   const s2 = Math.max(
     0,
-    spring({ frame: f - 395, fps, config: { damping: 12 } }),
+    spring({ frame: f - fin - 29, fps, config: { damping: 12 } }),
   );
-  if (f < 366) return null;
+  if (f < fin) return null;
   return (
     <>
       <div
@@ -189,15 +234,18 @@ const Cierre: React.FC = () => {
           textShadow: sombra,
         }}
       >
-        ¿Del 1 al 10, <span style={{ color: c.caramelo }}>cuánto le das?</span>
+        {r.pregunta[0]}
+        <span style={{ color: c.caramelo }}>{r.pregunta[1]}</span>
       </div>
     </>
   );
 };
 
 // Barra fina de avance arriba: muestra que falta poco para el resultado.
-const Avance: React.FC = () => {
+const Avance: React.FC<{ readonly r: Receta }> = ({ r }) => {
   const f = useCurrentFrame();
+  const ini = r.pasos[0][0];
+  const fin = r.pasos[r.pasos.length - 1][1];
   return (
     <div
       style={{
@@ -209,12 +257,13 @@ const Avance: React.FC = () => {
         borderRadius: 5,
         background: "rgba(244,233,220,0.2)",
         overflow: "hidden",
-        opacity: iv(f, [30, 40], [0, 1]) * iv(f, [360, 370], [1, 0]),
+        opacity:
+          iv(f, [ini - 6, ini + 4], [0, 1]) * iv(f, [fin - 6, fin + 4], [1, 0]),
       }}
     >
       <div
         style={{
-          width: `${iv(f, [36, 366], [0, 100], Easing.linear)}%`,
+          width: `${iv(f, [ini, fin], [0, 100], Easing.linear)}%`,
           height: "100%",
           background: c.caramelo,
         }}
@@ -223,9 +272,9 @@ const Avance: React.FC = () => {
   );
 };
 
-export const CafeCapuchino: React.FC = () => (
+export const ProcesoCafe: React.FC<{ readonly r: Receta }> = ({ r }) => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
-    {tomas.map((t) => (
+    {r.tomas.map((t) => (
       <Sequence
         key={t.desde}
         from={t.desde}
@@ -240,9 +289,9 @@ export const CafeCapuchino: React.FC = () => (
           "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 28%, rgba(0,0,0,0) 56%, rgba(0,0,0,0.65) 78%, rgba(0,0,0,0.4) 100%)",
       }}
     />
-    <Gancho />
-    <Avance />
-    <Paso />
-    <Cierre />
+    <Gancho r={r} />
+    <Avance r={r} />
+    <Paso r={r} />
+    <Cierre r={r} />
   </AbsoluteFill>
 );

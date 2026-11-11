@@ -1,6 +1,12 @@
 import { Composition, Still } from "remotion";
 import { conMarca } from "./HerenciaPatria/brand";
-import { CafeCapuchino, CAPUCHINO_FRAMES } from "./Cafe/CafeCapuchino";
+import {
+  capuchino,
+  CAPUCHINO_FRAMES,
+  chemex,
+  CHEMEX_FRAMES,
+  ProcesoCafe,
+} from "./Cafe/CafeCapuchino";
 import { CafeReal } from "./Cafe/CafeReal";
 import { CafeTostado, TOSTADO_FRAMES } from "./Cafe/CafeTostado";
 import { CAFE_FRAMES, CafeTikTok } from "./Cafe/CafeTikTok";
@@ -270,11 +276,22 @@ export const RemotionRoot: React.FC = () => {
       {/* bash tools/clips_cafe.sh && npx remotion render Cafe-Capuchino entregas/cafe-capuchino.mp4 */}
       <Composition
         id="Cafe-Capuchino"
-        component={CafeCapuchino}
+        component={ProcesoCafe}
         durationInFrames={CAPUCHINO_FRAMES}
         fps={30}
         width={1080}
         height={1920}
+        defaultProps={{ r: capuchino }}
+      />
+      {/* bash tools/clips_cafe.sh && npx remotion render Cafe-Chemex entregas/cafe-chemex.mp4 */}
+      <Composition
+        id="Cafe-Chemex"
+        component={ProcesoCafe}
+        durationInFrames={CHEMEX_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ r: chemex }}
       />
       {/* bash tools/clips_cafe.sh && npx remotion render Cafe-08-Tostado entregas/cafe-08-tostado-cafeina.mp4 */}
       <Composition
