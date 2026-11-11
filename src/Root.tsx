@@ -1,4 +1,6 @@
 import { Composition, Still } from "remotion";
+import { conMarca } from "./HerenciaPatria/brand";
+import { CAFE_FRAMES, CafeTikTok } from "./Cafe/CafeTikTok";
 import { Ad, AD_FRAMES } from "./HerenciaPatria/Ad";
 import { Crudo, CRUDO_FRAMES, CRUDO_FRAMES_20 } from "./HerenciaPatria/Crudo";
 import { Camionero, CAMIONERO_FRAMES } from "./HerenciaPatria/Camionero";
@@ -46,7 +48,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Reel-A out/herencia-patria-A.mp4 */}
       <Composition
         id="HP-Reel-A"
-        component={Ad}
+        component={conMarca(Ad)}
         durationInFrames={AD_FRAMES}
         fps={30}
         width={1080}
@@ -55,7 +57,7 @@ export const RemotionRoot: React.FC = () => {
       />
       <Composition
         id="HP-Reel-B"
-        component={Ad}
+        component={conMarca(Ad)}
         durationInFrames={AD_FRAMES}
         fps={30}
         width={1080}
@@ -67,7 +69,7 @@ export const RemotionRoot: React.FC = () => {
         <Composition
           key={hook}
           id={`HP-Crudo-${hook}`}
-          component={Crudo}
+          component={conMarca(Crudo)}
           durationInFrames={CRUDO_FRAMES}
           fps={30}
           width={1080}
@@ -81,7 +83,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Torpedo-Retargeting entregas/torpedo-retargeting.mp4 */}
       <Composition
         id="HP-Torpedo-Retargeting"
-        component={Retargeting}
+        component={conMarca(Retargeting)}
         durationInFrames={RETARGETING_FRAMES}
         fps={30}
         width={1080}
@@ -90,7 +92,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Torpedo-Venta entregas/torpedo-venta.mp4 */}
       <Composition
         id="HP-Torpedo-Venta"
-        component={TorpedoVenta}
+        component={conMarca(TorpedoVenta)}
         durationInFrames={TORPEDO_VENTA_FRAMES}
         fps={30}
         width={1080}
@@ -99,7 +101,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Torpedo-Venta-4x5 entregas/torpedo-venta-4x5.mp4 */}
       <Composition
         id="HP-Torpedo-Venta-4x5"
-        component={TorpedoVenta}
+        component={conMarca(TorpedoVenta)}
         durationInFrames={TORPEDO_VENTA_FRAMES}
         fps={30}
         width={1080}
@@ -108,7 +110,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Crudo-A-20s out/herencia-patria-crudo-A-20s.mp4 */}
       <Composition
         id="HP-Crudo-A-20s"
-        component={Crudo}
+        component={conMarca(Crudo)}
         durationInFrames={CRUDO_FRAMES_20}
         fps={30}
         width={1080}
@@ -121,7 +123,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion still HP-Portada-Raiz entregas/portada-reel-raiz.jpg */}
       <Still
         id="HP-Portada-Raiz"
-        component={Portada}
+        component={conMarca(Portada)}
         width={1080}
         height={1920}
         defaultProps={{
@@ -131,7 +133,7 @@ export const RemotionRoot: React.FC = () => {
       />
       <Still
         id="HP-Portada-Tronco"
-        component={Portada}
+        component={conMarca(Portada)}
         width={1080}
         height={1920}
         defaultProps={{
@@ -144,7 +146,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Camionero entregas/herencia-patria-camionero.mp4 */}
       <Composition
         id="HP-Camionero"
-        component={Camionero}
+        component={conMarca(Camionero)}
         durationInFrames={CAMIONERO_FRAMES}
         fps={30}
         width={1080}
@@ -154,7 +156,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-MateNegro entregas/herencia-patria-mate-negro.mp4 */}
       <Composition
         id="HP-MateNegro"
-        component={MateNegro}
+        component={conMarca(MateNegro)}
         durationInFrames={MATE_NEGRO_FRAMES}
         fps={30}
         width={1080}
@@ -164,7 +166,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Balcon entregas/herencia-patria-balcon.mp4 */}
       <Composition
         id="HP-Balcon"
-        component={Balcon}
+        component={conMarca(Balcon)}
         durationInFrames={BALCON_FRAMES}
         fps={30}
         width={1080}
@@ -174,7 +176,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-DonPatricio-Bombilla entregas/don-patricio-bombilla.mp4 */}
       <Composition
         id="HP-DonPatricio-Bombilla"
-        component={DonPatricio}
+        component={conMarca(DonPatricio)}
         durationInFrames={episodioFrames(bombilla)}
         fps={30}
         width={1080}
@@ -184,7 +186,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-DonPatricio-Agua entregas/don-patricio-agua.mp4 */}
       <Composition
         id="HP-DonPatricio-Agua"
-        component={DonPatricio}
+        component={conMarca(DonPatricio)}
         durationInFrames={episodioFrames(agua)}
         fps={30}
         width={1080}
@@ -202,7 +204,7 @@ export const RemotionRoot: React.FC = () => {
           <Still
             key={`${nombre}-${formato}`}
             id={`HP-Estatico-${nombre}-${formato}`}
-            component={AnuncioEstatico}
+            component={conMarca(AnuncioEstatico)}
             width={1080}
             height={alto}
             defaultProps={props}
@@ -220,7 +222,7 @@ export const RemotionRoot: React.FC = () => {
             <Still
               key={`${estilo}-${foto}-${formato}`}
               id={`HP-RT-${estilo}-${foto}-${formato}`}
-              component={RetargetingOpcion}
+              component={conMarca(RetargetingOpcion)}
               width={1080}
               height={alto}
               defaultProps={{ estilo, foto }}
@@ -231,7 +233,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Temperatura entregas/temperatura-del-agua.mp4 */}
       <Composition
         id="HP-Temperatura"
-        component={Temperatura}
+        component={conMarca(Temperatura)}
         durationInFrames={TEMPERATURA_FRAMES}
         fps={30}
         width={1080}
@@ -240,7 +242,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Tipos entregas/tipos-de-mate.mp4 */}
       <Composition
         id="HP-Tipos"
-        component={TiposDeMate}
+        component={conMarca(TiposDeMate)}
         durationInFrames={TIPOS_FRAMES}
         fps={30}
         width={1080}
@@ -249,7 +251,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion render HP-Curar entregas/como-curar-un-mate.mp4 */}
       <Composition
         id="HP-Curar"
-        component={Curar}
+        component={conMarca(Curar)}
         durationInFrames={CURAR_FRAMES}
         fps={30}
         width={1080}
@@ -258,14 +260,23 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion still HP-Curar-Portada entregas/portada-como-curar.jpg */}
       <Still
         id="HP-Curar-Portada"
-        component={PortadaCurar}
+        component={conMarca(PortadaCurar)}
+        width={1080}
+        height={1920}
+      />
+      {/* npx remotion render Cafe-TikTok entregas/cafe-tiktok.mp4 */}
+      <Composition
+        id="Cafe-TikTok"
+        component={CafeTikTok}
+        durationInFrames={CAFE_FRAMES}
+        fps={30}
         width={1080}
         height={1920}
       />
       {/* npx remotion render HP-Cebar entregas/como-cebar-un-mate.mp4 */}
       <Composition
         id="HP-Cebar"
-        component={Cebar}
+        component={conMarca(Cebar)}
         durationInFrames={CEBAR_FRAMES}
         fps={30}
         width={1080}
@@ -274,7 +285,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion still HP-Bienvenida-Popup entregas/popup-tiendanube.png */}
       <Still
         id="HP-Bienvenida-Popup"
-        component={BienvenidaPopup}
+        component={conMarca(BienvenidaPopup)}
         width={1035}
         height={570}
         defaultProps={bienvenida}
@@ -282,7 +293,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion still HP-Bienvenida-Vertical entregas/bienvenida-celular.png */}
       <Still
         id="HP-Bienvenida-Vertical"
-        component={BienvenidaVertical}
+        component={conMarca(BienvenidaVertical)}
         width={1080}
         height={1350}
         defaultProps={bienvenida}
@@ -290,7 +301,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion still HP-Bienvenida-Horizontal entregas/bienvenida-compu.png */}
       <Still
         id="HP-Bienvenida-Horizontal"
-        component={BienvenidaHorizontal}
+        component={conMarca(BienvenidaHorizontal)}
         width={1536}
         height={1024}
         defaultProps={bienvenida}
@@ -298,7 +309,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion still HP-Portada-Feed entregas/portada-reel-feed.jpg */}
       <Still
         id="HP-Portada-Feed"
-        component={PortadaFeed}
+        component={conMarca(PortadaFeed)}
         width={1080}
         height={1920}
         defaultProps={{
@@ -313,7 +324,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion still HP-Portada-Camionero entregas/portada-camionero.png */}
       <Still
         id="HP-Portada-Camionero"
-        component={PortadaFeed}
+        component={conMarca(PortadaFeed)}
         width={1080}
         height={1920}
         defaultProps={{
@@ -328,7 +339,7 @@ export const RemotionRoot: React.FC = () => {
       {/* npx remotion still HP-Portada-Camionero-Volcado entregas/portada-camionero-volcado.png */}
       <Still
         id="HP-Portada-Camionero-Volcado"
-        component={PortadaFeed}
+        component={conMarca(PortadaFeed)}
         width={1080}
         height={1920}
         defaultProps={{

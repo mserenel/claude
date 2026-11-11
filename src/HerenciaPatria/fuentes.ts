@@ -28,15 +28,26 @@ const lista: [family: string, file: string, weight: string, style: string][] = [
   ["Acumin", "AcuminVariableConcept.otf", "100 900", "normal"],
 ];
 
-const espera = delayRender("Tipografías de la marca");
-Promise.all(
-  lista.map(([family, file, weight, style]) => {
-    const font = new FontFace(family, `url(${staticFile(`fonts/${file}`)})`, {
-      weight,
-      style,
-    });
-    return font.load().then(() => document.fonts.add(font));
-  }),
-)
-  .then(() => continueRender(espera))
-  .catch((err) => cancelRender(err));
+// Se cargan una sola vez, recién cuando se muestra una composición de la
+// marca (así los videos de otros proyectos no dependen de estas fuentes).
+let carga: Promise<void> | null = null;
+
+export const cargarFuentesMarca = () => {
+  if (!carga) {
+    const espera = delayRender("Tipografías de la marca");
+    carga = Promise.all(
+      lista.map(([family, file, weight, style]) => {
+        const font = new FontFace(
+          family,
+          `url(${staticFile(`fonts/${file}`)})`,
+          { weight, style },
+        );
+        return font.load().then(() => {
+          document.fonts.add(font);
+        });
+      }),
+    )
+      .then(() => continueRender(espera))
+      .catch((err) => cancelRender(err));
+  }
+};

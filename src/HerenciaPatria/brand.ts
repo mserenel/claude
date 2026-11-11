@@ -1,4 +1,5 @@
-import "./fuentes";
+import React from "react";
+import { cargarFuentesMarca } from "./fuentes";
 
 export const colors = {
   azul: "#14233B",
@@ -22,4 +23,25 @@ export const safe = {
   bottom: 420,
   left: 80,
   right: 160,
+};
+
+// Envuelve una composición de la marca para que cargue sus tipografías.
+const envueltas = new Map<
+  React.ComponentType<never>,
+  React.ComponentType<never>
+>();
+export const conMarca = <P extends object>(
+  C: React.ComponentType<P>,
+): React.ComponentType<P> => {
+  const previa = envueltas.get(C as React.ComponentType<never>);
+  if (previa) return previa as React.ComponentType<P>;
+  const Envuelta: React.FC<P> = (props) => {
+    cargarFuentesMarca();
+    return React.createElement(C, props);
+  };
+  envueltas.set(
+    C as React.ComponentType<never>,
+    Envuelta as React.ComponentType<never>,
+  );
+  return Envuelta;
 };
