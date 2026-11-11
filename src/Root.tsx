@@ -1,5 +1,6 @@
 import { Composition, Still } from "remotion";
 import { conMarca } from "./HerenciaPatria/brand";
+import { CafeCapuchino, CAPUCHINO_FRAMES } from "./Cafe/CafeCapuchino";
 import { CafeReal } from "./Cafe/CafeReal";
 import { CafeTostado, TOSTADO_FRAMES } from "./Cafe/CafeTostado";
 import { CAFE_FRAMES, CafeTikTok } from "./Cafe/CafeTikTok";
@@ -263,6 +264,15 @@ export const RemotionRoot: React.FC = () => {
       <Still
         id="HP-Curar-Portada"
         component={conMarca(PortadaCurar)}
+        width={1080}
+        height={1920}
+      />
+      {/* bash tools/clips_cafe.sh && npx remotion render Cafe-Capuchino entregas/cafe-capuchino.mp4 */}
+      <Composition
+        id="Cafe-Capuchino"
+        component={CafeCapuchino}
+        durationInFrames={CAPUCHINO_FRAMES}
+        fps={30}
         width={1080}
         height={1920}
       />
