@@ -1,5 +1,6 @@
 import { Composition, Still } from "remotion";
 import { conMarca } from "./HerenciaPatria/brand";
+import { CODO_FRAMES, CodoAquasystem } from "./Demos/CodoAquasystem";
 import {
   capuchino,
   CAPUCHINO_FRAMES,
@@ -329,6 +330,15 @@ export const RemotionRoot: React.FC = () => {
         id="Cafe-Real"
         component={CafeReal}
         durationInFrames={CAFE_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      {/* npx remotion render Demo-Codo-20 entregas/demo-codo-20.mp4 */}
+      <Composition
+        id="Demo-Codo-20"
+        component={CodoAquasystem}
+        durationInFrames={CODO_FRAMES}
         fps={30}
         width={1080}
         height={1920}
