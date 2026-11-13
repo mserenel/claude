@@ -1,5 +1,6 @@
 import { Composition, Still } from "remotion";
 import { conMarca } from "./HerenciaPatria/brand";
+import { Codo3D, CODO3D_FRAMES } from "./Demos/Codo3D";
 import { CODO_FRAMES, CodoAquasystem } from "./Demos/CodoAquasystem";
 import {
   capuchino,
@@ -330,6 +331,15 @@ export const RemotionRoot: React.FC = () => {
         id="Cafe-Real"
         component={CafeReal}
         durationInFrames={CAFE_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      {/* npx remotion render Demo-Codo-20-3D entregas/demo-codo-20-realista.mp4 --gl=swangle */}
+      <Composition
+        id="Demo-Codo-20-3D"
+        component={Codo3D}
+        durationInFrames={CODO3D_FRAMES}
         fps={30}
         width={1080}
         height={1920}
