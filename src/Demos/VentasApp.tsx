@@ -10,12 +10,12 @@ import {
   useVideoConfig,
 } from "remotion";
 import { iv, texto, titular } from "../Cafe/CafeTikTok";
-import { AppCierre, AppVentas } from "./AppHerencia";
+import { AppMes, AppSolucion } from "./AppDemo";
 
 // Video de 30 s para mostrar la app de carga de ventas, armado sobre el guion
 // (gancho, dolor, solución, resultado y cierre). Arranca con un lío de papeles
-// y lo resuelve la app de gestión de Herencia Patria, replicada con su diseño
-// real pero con datos de prueba (AppHerencia.tsx). Si hay
+// y lo resuelve una interfaz de ejemplo de una app de gestión (AppDemo.tsx):
+// vender con control de stock, stock, reponer, gastos y el cierre del mes. Si hay
 // grabaciones reales de la pantalla, se pasan en las props (archivos en
 // public/ventas/) y reemplazan a la app y a la planilla de ejemplo.
 
@@ -598,7 +598,7 @@ export const VentasApp: React.FC<VentasProps> = ({
       durationInFrames={B.solucion[1] - B.solucion[0]}
     >
       <Celular src={grabacionApp}>
-        <AppVentas />
+        <AppSolucion />
       </Celular>
     </Sequence>
     <Sequence
@@ -606,10 +606,13 @@ export const VentasApp: React.FC<VentasProps> = ({
       durationInFrames={B.resultado[1] - B.resultado[0]}
     >
       <Celular src={grabacionPlanilla}>
-        <AppCierre />
+        <AppMes />
       </Celular>
     </Sequence>
-    <Rotulo t="ASÍ LO HAGO YO" desde={B.solucion[0]} hasta={B.solucion[1]} />
+    <Rotulo t="ASÍ LO HAGO YO" desde={B.solucion[0]} hasta={490} />
+    <Rotulo t="EL STOCK, AL DÍA" desde={490} hasta={530} />
+    <Rotulo t="QUÉ REPONER" desde={530} hasta={565} />
+    <Rotulo t="Y LOS GASTOS" desde={565} hasta={B.solucion[1]} />
     <Rotulo t="A FIN DE MES" desde={B.resultado[0]} hasta={B.resultado[1]} />
     <Cierre />
     <Subtitulo />
