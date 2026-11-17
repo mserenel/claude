@@ -15,3 +15,6 @@ public/mate-crudo-4k-lento.mp4
 
 # Tomas de stock del TikTok de café (tools/clips_cafe.sh)
 public/cafe/clips/
+
+# Tomas de stock del video de la app de ventas (tools/clips_ventas.sh)
+public/ventas/clips/

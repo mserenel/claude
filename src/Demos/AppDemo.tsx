@@ -16,8 +16,8 @@ import { iv } from "../Cafe/CafeTikTok";
 // Se dibuja a 924 px de ancho y se achica para entrar en el celular.
 
 const W = 924;
-export const ESCALA = 624 / W;
-const H = Math.round(1144 / ESCALA);
+export const ESCALA = 568 / W;
+const H = Math.round(1040 / ESCALA);
 
 const ui = {
   fondo: "#F3F5F9",
@@ -141,8 +141,8 @@ const Encabezado: React.FC<{
           width: 96,
           height: 96,
           borderRadius: 28,
-          background: ui.tinta,
-          color: "#fff",
+          background: "#E2E8F0",
+          color: ui.tinta,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -150,14 +150,14 @@ const Encabezado: React.FC<{
           fontWeight: 800,
         }}
       >
-        TN
+        MT
       </div>
       <div>
         <div style={{ fontSize: 50, fontWeight: 800, letterSpacing: -1 }}>
           {titulo}
         </div>
         <div style={{ fontSize: 30, fontWeight: 500, color: ui.gris }}>
-          {sub ?? "Tu Negocio · Martes 17/11"}
+          {sub ?? "Mi Tienda · Martes 17/11"}
         </div>
       </div>
     </div>
@@ -222,7 +222,7 @@ const Pestanas: React.FC<{ readonly activa: number }> = ({ activa }) => (
       zIndex: 3,
     }}
   >
-    {["Vender", "Stock", "Reponer", "Gastos", "Mes"].map((n, i) => {
+    {["Vender", "Inventario", "Compras", "Gastos", "Reportes"].map((n, i) => {
       const c = i === activa ? ui.verde : ui.claro;
       return (
         <div
@@ -299,39 +299,23 @@ const Toque: React.FC<{
 }> = ({ x, y, t }) => {
   const f = useCurrentFrame();
   const l = f - t;
-  if (l < -6 || l > 16) return null;
+  if (l < -5 || l > 10) return null;
   return (
-    <>
-      <div
-        style={{
-          position: "absolute",
-          left: x - 60,
-          top: y - 60,
-          width: 120,
-          height: 120,
-          borderRadius: "50%",
-          background: "rgba(15,23,42,0.18)",
-          border: "5px solid rgba(15,23,42,0.35)",
-          transform: `scale(${iv(l, [-6, 0, 6], [1.3, 0.85, 1])})`,
-          opacity: iv(l, [-6, -2, 8, 16], [0, 1, 1, 0]),
-          zIndex: 10,
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          left: x - 60,
-          top: y - 60,
-          width: 120,
-          height: 120,
-          borderRadius: "50%",
-          border: `6px solid ${ui.verde}`,
-          transform: `scale(${iv(l, [0, 14], [1, 2.4])})`,
-          opacity: iv(l, [0, 14], [0.9, 0]),
-          zIndex: 10,
-        }}
-      />
-    </>
+    <div
+      style={{
+        position: "absolute",
+        left: x - 46,
+        top: y - 46,
+        width: 92,
+        height: 92,
+        borderRadius: "50%",
+        background: "rgba(15,23,42,0.22)",
+        boxShadow: "0 0 0 2px rgba(255,255,255,0.6)",
+        transform: `scale(${iv(l, [-5, 0, 10], [1.15, 0.9, 1.05])})`,
+        opacity: iv(l, [-5, -1, 5, 10], [0, 1, 1, 0]),
+        zIndex: 10,
+      }}
+    />
   );
 };
 
@@ -499,9 +483,22 @@ const Vender: React.FC = () => {
                     width: 70,
                     height: 70,
                     borderRadius: 20,
-                    background: p.color,
+                    background: "#F1F5F9",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
-                />
+                >
+                  <svg width={44} height={44} viewBox="0 0 48 48">
+                    <path
+                      d="M16,6 L8,12 L4,22 L11,25 L13,20 V42 H35 V20 L37,25 L44,22 L40,12 L32,6 C30,10 18,10 16,6 Z"
+                      fill="none"
+                      stroke="#64748B"
+                      strokeWidth={3}
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
                 {n > 0 ? (
                   <div
                     style={{
