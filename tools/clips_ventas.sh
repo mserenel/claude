@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../public/ventas"
 mkdir -p clips
-for id in 45922 45923 34126 25595 4526 48714; do
+for id in 45926 25595 22827 46977 20847 34125; do
   [ -f "clips/$id.mp4" ] && continue
   curl -sSfL -o "clips/$id.mp4" "https://assets.mixkit.co/videos/$id/$id-1080.mp4" ||
     curl -sSfL -o "clips/$id.mp4" "https://assets.mixkit.co/videos/$id/$id-720.mp4"

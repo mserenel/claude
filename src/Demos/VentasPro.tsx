@@ -8,13 +8,13 @@ import {
   useVideoConfig,
 } from "remotion";
 import { iv } from "../Cafe/CafeTikTok";
-import { AppMes, AppSolucion, pesos } from "./AppDemo";
+import { AppMaterial } from "./AppMaterial";
 
-// Video de 30 s para ofrecer una app de gestión a comercios chicos, con
-// estética de producto: tomas reales (Mixkit) del problema —papeles, cuentas a
-// mano— y después la app de ejemplo en un celular, con títulos sobrios,
-// movimientos suaves y datos de prueba. Sin marcas ni productos reales.
-// Las tomas se bajan con tools/clips_ventas.sh a public/ventas/clips/.
+// Video de 30 s para ofrecer una app de gestión a comercios chicos. Primero
+// muestra, sobre tomas reales de objetos (manos, cuaderno, calculadora,
+// tickets; sin personas), todos los problemas que resuelve; después la app de
+// ejemplo en Material Design (AppMaterial.tsx) dentro de un Android, y cierra
+// con el llamado. Datos de prueba, sin marcas. Tomas: tools/clips_ventas.sh.
 
 export const VENTAS_FRAMES = 900;
 
@@ -39,12 +39,12 @@ type Toma = {
 };
 
 const tomas: Toma[] = [
-  { desde: 0, hasta: 48, id: "45922", inicio: 1, x: 42 }, // tapado de papeles
-  { desde: 48, hasta: 96, id: "45923", inicio: 2, x: 45 }, // pila de hojas
-  { desde: 96, hasta: 150, id: "34126", inicio: 3, x: 50 }, // cuaderno y calculadora
-  { desde: 150, hasta: 196, id: "25595", inicio: 2, x: 55 }, // anotando a mano
-  { desde: 196, hasta: 244, id: "4526", inicio: 3, x: 48 }, // tira los papeles
-  { desde: 780, hasta: VENTAS_FRAMES, id: "48714", inicio: 2, x: 50 }, // la dueña, tranquila
+  { desde: 0, hasta: 75, id: "45926", inicio: 1, x: 50 }, // papeles revueltos
+  { desde: 75, hasta: 126, id: "25595", inicio: 2, x: 55 }, // anotar a mano
+  { desde: 126, hasta: 177, id: "22827", inicio: 2, x: 40 }, // planillas
+  { desde: 177, hasta: 228, id: "46977", inicio: 1, x: 50 }, // lupa sobre números
+  { desde: 228, hasta: 279, id: "20847", inicio: 3, x: 45 }, // tickets
+  { desde: 279, hasta: 336, id: "34125", inicio: 2, x: 55 }, // calculadora
 ];
 
 const Toma: React.FC<{ readonly t: Toma }> = ({ t }) => {
@@ -136,19 +136,19 @@ const Titular: React.FC<{
 
 // Subtítulos de la voz (tal como dice el guion), sobrios, abajo.
 const voz: [number, number, string][] = [
-  [100, 168, "Anotás en un cuaderno, después lo pasás al Excel…"],
-  [168, 240, "…y a fin de mes los números no dan."],
   [
-    246,
-    320,
-    "Esto lo uso en mi negocio. Cargo la venta desde el celular en segundos,",
+    366,
+    530,
+    "Cargás la venta desde el celular: si no hay stock te avisa, y la factura sale sola.",
   ],
-  [320, 390, "el sistema me frena si no hay stock"],
-  [390, 600, "y todo se registra solo."],
-  [606, 700, "Y al final del mes ya sé cuánto vendí y cuánto gané de verdad."],
-  [700, 780, "Sin pasar nada a mano."],
   [
-    792,
+    530,
+    690,
+    "El stock se actualiza solo, te dice qué comprar y cargás los gastos en un toque.",
+  ],
+  [690, 752, "Y a fin de mes ves cuánto ganaste de verdad."],
+  [
+    758,
     VENTAS_FRAMES,
     "Escribime “ventas” y te muestro cómo quedaría con tus productos.",
   ],
@@ -194,16 +194,20 @@ const Subtitulo: React.FC = () => {
   );
 };
 
-// ---- Celular ----
+// ---- Celular (Android) ----
 const Celular: React.FC<{
   readonly children: React.ReactNode;
   readonly entra: number;
-}> = ({ children, entra }) => {
+  readonly sale?: number;
+}> = ({ children, entra, sale: hasta }) => {
   const f = useCurrentFrame();
   const e = iv(f, [entra, entra + 22], [0, 1], sale);
-  // Leve giro en 3D que se acomoda, y una deriva lenta.
-  const giroY = -16 * (1 - e) + Math.sin(f / 60) * 2.5;
-  const giroX = 6 * (1 - e) + Math.cos(f / 70) * 1.2;
+  const fuera =
+    hasta === undefined
+      ? 0
+      : iv(f, [hasta, hasta + 16], [0, 1], Easing.in(Easing.cubic));
+  const giroY = -14 * (1 - e) + Math.sin(f / 60) * 2;
+  const giroX = 5 * (1 - e) + Math.cos(f / 70) * 1;
   return (
     <AbsoluteFill
       style={{ alignItems: "center", paddingTop: 300, perspective: 2400 }}
@@ -212,14 +216,14 @@ const Celular: React.FC<{
         style={{
           width: 600,
           height: 1072,
-          borderRadius: 86,
+          borderRadius: 64,
           padding: 16,
           background:
-            "linear-gradient(145deg, #4B5563 0%, #1F2937 35%, #111827 70%, #374151 100%)",
+            "linear-gradient(150deg, #2B2F36 0%, #15181D 50%, #2B2F36 100%)",
           boxShadow:
-            "0 60px 120px rgba(0,0,0,0.55), 0 0 0 2px rgba(255,255,255,0.08), inset 0 0 0 3px rgba(255,255,255,0.06)",
-          transform: `translateY(${(1 - e) * 120}px) rotateY(${giroY}deg) rotateX(${giroX}deg)`,
-          opacity: e,
+            "0 60px 120px rgba(0,0,0,0.55), 0 0 0 2px rgba(255,255,255,0.07)",
+          transform: `translateY(${(1 - e) * 120 + fuera * 60}px) rotateY(${giroY}deg) rotateX(${giroX}deg) scale(${1 - fuera * 0.08})`,
+          opacity: e * (1 - fuera),
         }}
       >
         <div
@@ -227,34 +231,32 @@ const Celular: React.FC<{
             position: "relative",
             width: "100%",
             height: "100%",
-            borderRadius: 70,
+            borderRadius: 50,
             overflow: "hidden",
             background: "#000",
           }}
         >
           {children}
-          {/* Isla de la cámara */}
+          {/* Cámara frontal */}
           <div
             style={{
               position: "absolute",
               left: "50%",
-              top: 18,
-              width: 150,
-              height: 42,
-              marginLeft: -75,
-              borderRadius: 21,
+              top: 14,
+              width: 26,
+              height: 26,
+              marginLeft: -13,
+              borderRadius: "50%",
               background: "#000",
               zIndex: 20,
             }}
           />
-          {/* Reflejo del vidrio */}
           <div
             style={{
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(115deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 32%)",
-              pointerEvents: "none",
+                "linear-gradient(115deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 30%)",
               zIndex: 20,
             }}
           />
@@ -283,40 +285,86 @@ const Estudio: React.FC = () => {
   );
 };
 
-// Tarjetas con cifras que flotan al lado del celular en el resultado.
-const Cifra: React.FC<{
-  readonly x: number;
-  readonly y: number;
-  readonly desde: number;
-  readonly titulo: string;
-  readonly valor: number;
-  readonly color: string;
-}> = ({ x, y, desde, titulo, valor, color }) => {
+// Cada problema: número y frase, sobre la toma.
+const problemas: [number, number, string, string][] = [
+  [75, 126, "Anotás las ventas", "a mano."],
+  [126, 177, "Vendés algo", "que ya no tenías."],
+  [177, 228, "No sabés qué reponer", "ni cuánto gastar."],
+  [228, 279, "Los gastos y tickets", "se pierden."],
+  [279, 336, "Y a fin de mes,", "¿cuánto ganaste?"],
+];
+
+const Problema: React.FC = () => {
   const f = useCurrentFrame();
-  if (f >= 780) return null;
-  const e = iv(f, [desde, desde + 16], [0, 1], sale);
-  const cuenta = iv(f, [desde, desde + 40], [0, 1], sale);
+  const i = problemas.findIndex(([a, b]) => f >= a && f < b);
+  if (i < 0) return null;
+  const [a, b, l1, l2] = problemas[i];
+  const e = iv(f, [a, a + 10], [0, 1], sale);
+  const o = e * iv(f, [b - 5, b], [1, 0]);
   return (
     <div
       style={{
         position: "absolute",
-        left: x,
-        top: y,
-        padding: "26px 34px",
-        borderRadius: 28,
-        background: "rgba(255,255,255,0.92)",
-        boxShadow: "0 30px 60px rgba(0,0,0,0.35)",
+        left: 70,
+        right: 70,
+        top: 1080,
         fontFamily: fuente,
-        opacity: e,
-        transform: `translateY(${(1 - e) * 30}px)`,
-        zIndex: 30,
+        color: k.blanco,
+        opacity: o,
       }}
     >
-      <div style={{ fontSize: 26, fontWeight: 600, color: "#64748B" }}>
-        {titulo}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          marginBottom: 18,
+        }}
+      >
+        <div
+          style={{
+            width: 64,
+            height: 64,
+            borderRadius: 32,
+            background: k.alerta,
+            color: "#1F0A0A",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 34,
+            fontWeight: 800,
+          }}
+        >
+          {i + 1}
+        </div>
+        {/* Avance: cinco rayitas */}
+        <div style={{ display: "flex", gap: 8 }}>
+          {problemas.map((_, j) => (
+            <div
+              key={j}
+              style={{
+                width: 46,
+                height: 6,
+                borderRadius: 3,
+                background: j <= i ? k.alerta : "rgba(255,255,255,0.3)",
+              }}
+            />
+          ))}
+        </div>
       </div>
-      <div style={{ fontSize: 56, fontWeight: 800, color, letterSpacing: -1 }}>
-        {pesos(valor * cuenta)}
+      <div
+        style={{
+          fontSize: 80,
+          fontWeight: 800,
+          lineHeight: 1.05,
+          letterSpacing: -2,
+          transform: `translateY(${(1 - e) * 24}px)`,
+          textShadow: "0 4px 30px rgba(0,0,0,0.5)",
+        }}
+      >
+        {l1}
+        <br />
+        <span style={{ color: k.alerta }}>{l2}</span>
       </div>
     </div>
   );
@@ -325,33 +373,38 @@ const Cifra: React.FC<{
 // Botón del cierre.
 const Llamado: React.FC = () => {
   const f = useCurrentFrame();
-  const e = iv(f, [806, 822], [0, 1], sale);
+  const e = iv(f, [784, 800], [0, 1], sale);
   return (
     <div
       style={{
         position: "absolute",
         left: 0,
         right: 0,
-        top: 1010,
+        top: 1050,
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 34,
         opacity: e,
         transform: `translateY(${(1 - e) * 20}px)`,
+        fontFamily: fuente,
       }}
     >
       <div
         style={{
           padding: "28px 56px",
           borderRadius: 60,
-          background: k.blanco,
-          color: "#0F172A",
-          fontFamily: fuente,
+          background: k.acento,
+          color: "#03261A",
           fontSize: 50,
           fontWeight: 800,
-          boxShadow: "0 20px 50px rgba(0,0,0,0.35)",
+          boxShadow: "0 20px 50px rgba(52,211,153,0.3)",
         }}
       >
         Escribime “VENTAS”
+      </div>
+      <div style={{ fontSize: 36, fontWeight: 500, color: k.suave }}>
+        Se adapta a tus productos y tu forma de vender
       </div>
     </div>
   );
@@ -359,7 +412,7 @@ const Llamado: React.FC = () => {
 
 export const VentasPro: React.FC = () => (
   <AbsoluteFill style={{ backgroundColor: "black" }}>
-    {/* Problema: tomas reales */}
+    {/* Problemas, sobre objetos reales */}
     {tomas.map((t) => (
       <Sequence
         key={t.desde}
@@ -369,94 +422,65 @@ export const VentasPro: React.FC = () => (
         <Toma t={t} />
       </Sequence>
     ))}
-    {/* Sombra para leer el texto sobre las tomas */}
-    <Sequence durationInFrames={244}>
+    <Sequence durationInFrames={336}>
       <AbsoluteFill
         style={{
           background:
-            "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.05) 35%, rgba(0,0,0,0.1) 55%, rgba(0,0,0,0.7) 100%)",
+            "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.8) 100%)",
         }}
       />
     </Sequence>
-    <Titular desde={-12} hasta={92} top={300}>
-      ¿Todavía controlás
+    <Titular desde={-12} hasta={75} top={1040} tam={86}>
+      ¿Todavía llevás
       <br />
-      las ventas <span style={{ color: k.alerta }}>en papel?</span>
+      tu negocio <span style={{ color: k.alerta }}>en papel?</span>
     </Titular>
-    <Titular desde={176} hasta={242} top={300} tam={76}>
-      Vendés lo que <span style={{ color: k.alerta }}>no tenés.</span>
-      <br />
-      No sabés <span style={{ color: k.alerta }}>cuánto ganás.</span>
-    </Titular>
+    <Problema />
 
-    {/* Solución: la app */}
-    <Sequence from={240} durationInFrames={540}>
+    {/* La app */}
+    <Sequence from={330} durationInFrames={570}>
       <Estudio />
     </Sequence>
-    <Sequence from={240} durationInFrames={360}>
-      <Celular entra={0}>
-        <AppSolucion />
+    <Titular desde={336} hasta={366} top={760} tam={84}>
+      Hay una forma
+      <br />
+      <span style={{ color: k.acento }}>más simple.</span>
+    </Titular>
+    <Sequence from={360} durationInFrames={410}>
+      <Celular entra={0} sale={392}>
+        <AppMaterial />
       </Celular>
     </Sequence>
-    <Sequence from={600} durationInFrames={180}>
-      <Celular entra={-30}>
-        <AppMes />
-      </Celular>
-    </Sequence>
-    <Titular desde={244} hasta={318} top={165} tam={58} kicker="VENDER">
+    <Titular desde={366} hasta={418} top={165} tam={58} kicker="VENDER">
       Una venta en segundos
     </Titular>
     <Titular
-      desde={318}
-      hasta={390}
+      desde={418}
+      hasta={462}
       top={165}
       tam={58}
       kicker="CONTROL DE STOCK"
     >
-      Si no hay, <span style={{ color: k.alerta }}>no te deja vender</span>
+      Si no hay, <span style={{ color: k.alerta }}>te avisa</span>
     </Titular>
-    <Titular desde={390} hasta={440} top={165} tam={58} kicker="VENDER">
-      Sumás productos en un toque
+    <Titular desde={462} hasta={530} top={165} tam={58} kicker="FACTURA">
+      Sale sola, numerada
     </Titular>
-    <Titular desde={440} hasta={490} top={165} tam={58} kicker="FACTURA">
-      Se genera sola
+    <Titular desde={530} hasta={585} top={165} tam={58} kicker="INVENTARIO">
+      El stock, siempre al día
     </Titular>
-    <Titular desde={490} hasta={530} top={165} tam={58} kicker="INVENTARIO">
-      El stock se actualiza solo
-    </Titular>
-    <Titular desde={530} hasta={600} top={165} tam={58} kicker="COMPRAS">
+    <Titular desde={585} hasta={640} top={165} tam={58} kicker="COMPRAS">
       Te dice qué reponer
     </Titular>
-    <Titular desde={600} hasta={780} top={165} tam={58} kicker="REPORTES">
-      Cuánto vendiste y <span style={{ color: k.acento }}>cuánto ganaste</span>
+    <Titular desde={640} hasta={690} top={165} tam={58} kicker="GASTOS">
+      Cargados en un toque
     </Titular>
-    <Cifra
-      x={40}
-      y={560}
-      desde={612}
-      titulo="Vendiste"
-      valor={412300}
-      color="#0F172A"
-    />
-    <Cifra
-      x={600}
-      y={980}
-      desde={632}
-      titulo="Ganancia"
-      valor={128800}
-      color="#059669"
-    />
+    <Titular desde={690} hasta={752} top={165} tam={58} kicker="REPORTES">
+      Tu <span style={{ color: k.acento }}>ganancia real</span>, al día
+    </Titular>
 
-    {/* Cierre: la dueña del local, tranquila */}
-    <Sequence from={780} durationInFrames={120}>
-      <AbsoluteFill
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0.65))",
-        }}
-      />
-    </Sequence>
-    <Titular desde={786} hasta={VENTAS_FRAMES + 1} top={620} tam={88}>
+    {/* Cierre */}
+    <Titular desde={762} hasta={VENTAS_FRAMES + 1} top={700} tam={92}>
       ¿Querés esto
       <br />
       para <span style={{ color: k.acento }}>tu negocio?</span>
