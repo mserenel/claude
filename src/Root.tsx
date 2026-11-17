@@ -1,6 +1,7 @@
 import { Composition, Still } from "remotion";
 import { conMarca } from "./HerenciaPatria/brand";
 import { Codo3D, CODO3D_FRAMES } from "./Demos/Codo3D";
+import { VENTAS_FRAMES, VentasApp } from "./Demos/VentasApp";
 import { CODO_FRAMES, CodoAquasystem } from "./Demos/CodoAquasystem";
 import {
   capuchino,
@@ -334,6 +335,16 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
+      />
+      {/* npx remotion render Ventas-App entregas/ventas-app.mp4 (con las grabaciones en public/ventas/, pasar --props) */}
+      <Composition
+        id="Ventas-App"
+        component={VentasApp}
+        durationInFrames={VENTAS_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{}}
       />
       {/* npx remotion render Demo-Codo-20-3D entregas/demo-codo-20-realista.mp4 --gl=swangle */}
       <Composition
