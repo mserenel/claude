@@ -1,6 +1,7 @@
 import { Composition, Still } from "remotion";
 import { conMarca } from "./HerenciaPatria/brand";
 import { Codo3D, CODO3D_FRAMES } from "./Demos/Codo3D";
+import { VULK_FRAMES, VulkDeserve } from "./Demos/VulkDeserve";
 import { VENTAS_FRAMES, VentasPro } from "./Demos/VentasPro";
 import { CODO_FRAMES, CodoAquasystem } from "./Demos/CodoAquasystem";
 import {
@@ -345,6 +346,15 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={{}}
+      />
+      {/* npx remotion render ML-Vulk-Deserve entregas/ml-vulk-deserve.mp4 */}
+      <Composition
+        id="ML-Vulk-Deserve"
+        component={VulkDeserve}
+        durationInFrames={VULK_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
       />
       {/* npx remotion render Demo-Codo-20-3D entregas/demo-codo-20-realista.mp4 --gl=swangle */}
       <Composition
