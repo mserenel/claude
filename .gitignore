@@ -18,3 +18,6 @@ public/cafe/clips/
 
 # Tomas de stock del video de la app de ventas (tools/clips_ventas.sh)
 public/ventas/clips/
+
+# Material del mate personalizado (video original del cliente, pesado)
+public/hp-personalizado/
