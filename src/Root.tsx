@@ -1,5 +1,9 @@
 import { Composition, Still } from "remotion";
 import { conMarca } from "./HerenciaPatria/brand";
+import {
+  MatePersonalizado,
+  PERSONALIZADO_FRAMES,
+} from "./HerenciaPatria/Personalizado";
 import { Codo3D, CODO3D_FRAMES } from "./Demos/Codo3D";
 import { VULK_FRAMES, VulkDeserve } from "./Demos/VulkDeserve";
 import { VENTAS_FRAMES, VentasPro } from "./Demos/VentasPro";
@@ -392,6 +396,21 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
       />
+      {/* npx remotion render HP-Personalizado-A-9x16 entregas/personalizado-A-emocional-9x16.mp4 */}
+      {(["A", "B", "C"] as const).map((version) =>
+        (["9x16", "4x5"] as const).map((formato) => (
+          <Composition
+            key={`${version}-${formato}`}
+            id={`HP-Personalizado-${version}-${formato}`}
+            component={conMarca(MatePersonalizado)}
+            durationInFrames={PERSONALIZADO_FRAMES}
+            fps={30}
+            width={1080}
+            height={formato === "9x16" ? 1920 : 1350}
+            defaultProps={{ version, formato }}
+          />
+        )),
+      )}
       {/* npx remotion still HP-Bienvenida-Popup entregas/popup-tiendanube.png */}
       <Still
         id="HP-Bienvenida-Popup"
