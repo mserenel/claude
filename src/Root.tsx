@@ -411,6 +411,21 @@ export const RemotionRoot: React.FC = () => {
           />
         )),
       )}
+      {/* Igual, con tipografías provisorias (mientras no estén las de la marca) */}
+      {(["A", "B", "C"] as const).map((version) =>
+        (["9x16", "4x5"] as const).map((formato) => (
+          <Composition
+            key={`prov-${version}-${formato}`}
+            id={`HP-Personalizado-${version}-${formato}-provisoria`}
+            component={MatePersonalizado}
+            durationInFrames={PERSONALIZADO_FRAMES}
+            fps={30}
+            width={1080}
+            height={formato === "9x16" ? 1920 : 1350}
+            defaultProps={{ version, formato, provisoria: true }}
+          />
+        )),
+      )}
       {/* npx remotion still HP-Bienvenida-Popup entregas/popup-tiendanube.png */}
       <Still
         id="HP-Bienvenida-Popup"

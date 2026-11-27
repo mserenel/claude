@@ -1,5 +1,8 @@
 import {
   AbsoluteFill,
+  cancelRender,
+  continueRender,
+  delayRender,
   Easing,
   Img,
   interpolate,
@@ -22,6 +25,66 @@ export type Version = "A" | "B" | "C";
 export type Formato = "9x16" | "4x5";
 
 export const PERSONALIZADO_FRAMES = 450; // 15 s
+
+// Tipografías: las de la marca, o provisorias mientras no estén en esta
+// máquina (Libre Caslon en lugar de Addington, Inter en lugar de Helvetica
+// Neue; ambas de licencia libre). Se elige con la prop `provisoria`.
+type Tipos = {
+  readonly serif: string;
+  readonly sans: string;
+  readonly cursiva: number;
+};
+const tiposMarca: Tipos = {
+  serif: fonts.serif,
+  sans: fonts.sans,
+  cursiva: 500,
+};
+const tiposProvisorios: Tipos = {
+  serif: '"Libre Caslon Text", serif',
+  sans: '"Inter", sans-serif',
+  cursiva: 400,
+};
+
+let cargaProvisoria: Promise<void> | null = null;
+const cargarProvisoria = () => {
+  if (cargaProvisoria) return;
+  const espera = delayRender("Tipografías provisorias");
+  const archivos: [string, string, string, string][] = [
+    [
+      "Libre Caslon Text",
+      "provisoria/libre-caslon-text-latin-400-normal.woff2",
+      "400",
+      "normal",
+    ],
+    [
+      "Libre Caslon Text",
+      "provisoria/libre-caslon-text-latin-400-italic.woff2",
+      "400",
+      "italic",
+    ],
+    [
+      "Libre Caslon Text",
+      "provisoria/libre-caslon-text-latin-700-normal.woff2",
+      "700",
+      "normal",
+    ],
+    ["Inter", "ventas/fonts/inter-latin-500-normal.woff2", "500", "normal"],
+    ["Inter", "ventas/fonts/inter-latin-700-normal.woff2", "700", "normal"],
+  ];
+  cargaProvisoria = Promise.all(
+    archivos.map(([family, file, weight, style]) => {
+      const font = new FontFace(family, `url(${staticFile(file)})`, {
+        weight,
+        style,
+      });
+      return font.load().then(() => {
+        document.fonts.add(font);
+      });
+    }),
+  )
+    .then(() => continueRender(espera))
+    .catch((err) => cancelRender(err));
+};
 
 // Tomas del video original (segundos) y su encuadre: zoom y punto de foco
 // en % del cuadro (el mate está centrado, un poco arriba).
@@ -160,7 +223,8 @@ const Texto: React.FC<{
   readonly dur: number;
   readonly top: number;
   readonly gancho?: boolean;
-}> = ({ paso, dur, top, gancho }) => {
+  readonly tp: Tipos;
+}> = ({ paso, dur, top, gancho, tp }) => {
   const f = useCurrentFrame();
   if (!paso.texto) return null;
   const e = interpolate(f, gancho ? [-10, 2] : [4, 18], [0, 1], {
@@ -189,7 +253,7 @@ const Texto: React.FC<{
       {paso.kicker ? (
         <div
           style={{
-            fontFamily: fonts.sans,
+            fontFamily: tp.sans,
             fontWeight: 500,
             fontSize: 30,
             letterSpacing: 8,
@@ -202,7 +266,7 @@ const Texto: React.FC<{
       ) : null}
       <div
         style={{
-          fontFamily: fonts.serif,
+          fontFamily: tp.serif,
           fontWeight: 700,
           fontSize: 84,
           lineHeight: 1.05,
@@ -213,9 +277,9 @@ const Texto: React.FC<{
       {paso.cursiva ? (
         <div
           style={{
-            fontFamily: fonts.serif,
+            fontFamily: tp.serif,
             fontStyle: "italic",
-            fontWeight: 500,
+            fontWeight: tp.cursiva,
             fontSize: 84,
             lineHeight: 1.1,
           }}
@@ -231,7 +295,8 @@ const Texto: React.FC<{
 const Cierre: React.FC<{
   readonly version: Version;
   readonly formato: Formato;
-}> = ({ version, formato }) => {
+  readonly tp: Tipos;
+}> = ({ version, formato, tp }) => {
   const f = useCurrentFrame();
   const e = (a: number) =>
     interpolate(f, [a, a + 16], [0, 1], {
@@ -281,7 +346,7 @@ const Cierre: React.FC<{
         >
           <div
             style={{
-              fontFamily: fonts.serif,
+              fontFamily: tp.serif,
               fontWeight: 700,
               fontSize: alto ? 76 : 66,
               lineHeight: 1.05,
@@ -291,9 +356,9 @@ const Cierre: React.FC<{
           </div>
           <div
             style={{
-              fontFamily: fonts.serif,
+              fontFamily: tp.serif,
               fontStyle: "italic",
-              fontWeight: 500,
+              fontWeight: tp.cursiva,
               fontSize: alto ? 76 : 66,
               lineHeight: 1.1,
             }}
@@ -308,7 +373,7 @@ const Cierre: React.FC<{
             borderRadius: 60,
             background: colors.crema,
             color: colors.azul,
-            fontFamily: fonts.sans,
+            fontFamily: tp.sans,
             fontWeight: 700,
             fontSize: alto ? 40 : 36,
             opacity: e(30),
@@ -322,7 +387,7 @@ const Cierre: React.FC<{
           <div
             style={{
               marginTop: 18,
-              fontFamily: fonts.sans,
+              fontFamily: tp.sans,
               fontWeight: 500,
               fontSize: alto ? 30 : 28,
               opacity: e(40) * 0.9,
@@ -339,7 +404,10 @@ const Cierre: React.FC<{
 export const MatePersonalizado: React.FC<{
   readonly version: Version;
   readonly formato: Formato;
-}> = ({ version, formato }) => {
+  readonly provisoria?: boolean;
+}> = ({ version, formato, provisoria }) => {
+  if (provisoria) cargarProvisoria();
+  const tp = provisoria ? tiposProvisorios : tiposMarca;
   const pasos = guiones[version];
   const alto = formato === "9x16";
   // Texto arriba del mate, dentro de la zona segura (Reels: 270–1250).
@@ -375,9 +443,15 @@ export const MatePersonalizado: React.FC<{
             ) : null}
             <Sequence from={i ? FUNDIDO : 0} layout="none">
               {ultimo ? (
-                <Cierre version={version} formato={formato} />
+                <Cierre version={version} formato={formato} tp={tp} />
               ) : (
-                <Texto paso={p} dur={p.dur} top={top} gancho={i === 0} />
+                <Texto
+                  paso={p}
+                  dur={p.dur}
+                  top={top}
+                  gancho={i === 0}
+                  tp={tp}
+                />
               )}
             </Sequence>
           </Sequence>
