@@ -122,7 +122,8 @@ const rotulos: Record<Version, Rotulo[]> = {
       desde: en(4.4),
       hasta: en(6.2),
       kicker: "CINCELADO A MANO",
-      texto: "Alrededor de cada dije",
+      texto: "Alrededor",
+      cursiva: "de cada dije.",
     },
     {
       desde: en(6.3),
@@ -223,6 +224,61 @@ const Clip: React.FC<{ readonly formato: Formato }> = ({ formato }) => {
   );
 };
 
+// Animación de los textos: cada palabra sube desde atrás de una línea
+// invisible (como una máscara), una después de la otra, y se enfoca. El
+// kicker se cierra de espaciado y se dibuja una línea fina debajo. Todo
+// sobrio: sin rebotes ni efectos llamativos.
+const sube = Easing.bezier(0.16, 1, 0.3, 1);
+const PASO_PALABRA = 4;
+const DUR_PALABRA = 20;
+
+const Palabras: React.FC<{
+  readonly texto: string;
+  readonly desde: number;
+  readonly estilo: React.CSSProperties;
+}> = ({ texto, desde, estilo }) => {
+  const f = useCurrentFrame();
+  return (
+    <div style={estilo}>
+      {texto.split(" ").map((w, i) => {
+        const t = interpolate(
+          f,
+          [desde + i * PASO_PALABRA, desde + i * PASO_PALABRA + DUR_PALABRA],
+          [0, 1],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: sube },
+        );
+        return (
+          <span
+            key={i}
+            style={{
+              display: "inline-block",
+              overflow: "hidden",
+              verticalAlign: "top",
+              // Margen para que la máscara no corte acentos ni descendentes.
+              padding: "0.08em 0.04em 0.14em",
+              margin: "-0.08em 0 -0.14em",
+            }}
+          >
+            <span
+              style={{
+                display: "inline-block",
+                transform: `translateY(${(1 - t) * 105}%)`,
+                filter: `blur(${(1 - t) * 6}px)`,
+                opacity: interpolate(t, [0, 0.4], [0, 1], {
+                  extrapolateRight: "clamp",
+                }),
+              }}
+            >
+              {w}
+            </span>
+            {i < texto.split(" ").length - 1 ? "\u00a0" : null}
+          </span>
+        );
+      })}
+    </div>
+  );
+};
+
 const Texto: React.FC<{
   readonly paso: Rotulo;
   readonly dur: number;
@@ -232,14 +288,26 @@ const Texto: React.FC<{
 }> = ({ paso, dur, top, gancho, tp }) => {
   const f = useCurrentFrame();
   if (!paso.texto) return null;
-  const e = interpolate(f, gancho ? [-10, 2] : [0, 16], [0, 1], {
+  // El gancho ya está casi entero en el primer cuadro.
+  const base = gancho ? -12 : 2;
+  const k = interpolate(f, [base, base + 26], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
-    easing: Easing.out(Easing.cubic),
+    easing: sube,
   });
-  const s = interpolate(f, [dur - 12, dur], [1, 0], {
+  const linea = interpolate(f, [base + 6, base + 34], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
+    easing: sube,
+  });
+  const conKicker = paso.kicker ? 8 : 0;
+  const palabrasTexto = paso.texto.split(" ").length;
+  const desdeCursiva = base + conKicker + palabrasTexto * PASO_PALABRA + 4;
+  // Salida: se desvanece, sube apenas y se desenfoca.
+  const s = interpolate(f, [dur - 14, dur], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.in(Easing.cubic),
   });
   return (
     <div
@@ -250,47 +318,65 @@ const Texto: React.FC<{
         top,
         textAlign: "center",
         color: colors.crema,
-        opacity: e * s,
-        transform: `translateY(${(1 - e) * 18}px)`,
+        opacity: 1 - s,
+        transform: `translateY(${-s * 14}px)`,
+        filter: s > 0 ? `blur(${s * 5}px)` : undefined,
         textShadow: "0 3px 24px rgba(0,0,0,0.55)",
       }}
     >
       {paso.kicker ? (
         <div
           style={{
-            fontFamily: tp.sans,
-            fontWeight: 500,
-            fontSize: 30,
-            letterSpacing: 8,
-            marginBottom: 14,
-            opacity: 0.9,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginBottom: 18,
           }}
         >
-          {paso.kicker}
+          <div
+            style={{
+              fontFamily: tp.sans,
+              fontWeight: 500,
+              fontSize: 30,
+              letterSpacing: 8 + (1 - k) * 16,
+              opacity: 0.9 * k,
+            }}
+          >
+            {paso.kicker}
+          </div>
+          <div
+            style={{
+              marginTop: 12,
+              width: 120 * linea,
+              height: 2,
+              background: colors.crema,
+              opacity: 0.75,
+            }}
+          />
         </div>
       ) : null}
-      <div
-        style={{
+      <Palabras
+        texto={paso.texto}
+        desde={base + conKicker}
+        estilo={{
           fontFamily: tp.serif,
           fontWeight: 700,
           fontSize: 84,
           lineHeight: 1.05,
         }}
-      >
-        {paso.texto}
-      </div>
+      />
       {paso.cursiva ? (
-        <div
-          style={{
+        <Palabras
+          texto={paso.cursiva}
+          desde={desdeCursiva}
+          estilo={{
             fontFamily: tp.serif,
             fontStyle: "italic",
             fontWeight: tp.cursiva,
             fontSize: 84,
             lineHeight: 1.1,
           }}
-        >
-          {paso.cursiva}
-        </div>
+        />
       ) : null}
     </div>
   );
@@ -307,7 +393,7 @@ const Cierre: React.FC<{
     interpolate(f, [a, a + 24], [0, 1], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
-      easing: Easing.out(Easing.cubic),
+      easing: sube,
     });
   const c = cierre[version];
   const alto = formato === "9x16";
@@ -340,37 +426,31 @@ const Cierre: React.FC<{
             width: alto ? 150 : 120,
             height: alto ? 150 : 120,
             opacity: e(4),
+            transform: `translateY(${(1 - e(4)) * 14}px)`,
             marginBottom: alto ? 22 : 14,
           }}
         />
-        <div
-          style={{
-            opacity: e(14),
-            transform: `translateY(${(1 - e(14)) * 16}px)`,
+        <Palabras
+          texto={c.titulo}
+          desde={14}
+          estilo={{
+            fontFamily: tp.serif,
+            fontWeight: 700,
+            fontSize: alto ? 76 : 66,
+            lineHeight: 1.05,
           }}
-        >
-          <div
-            style={{
-              fontFamily: tp.serif,
-              fontWeight: 700,
-              fontSize: alto ? 76 : 66,
-              lineHeight: 1.05,
-            }}
-          >
-            {c.titulo}
-          </div>
-          <div
-            style={{
-              fontFamily: tp.serif,
-              fontStyle: "italic",
-              fontWeight: tp.cursiva,
-              fontSize: alto ? 76 : 66,
-              lineHeight: 1.1,
-            }}
-          >
-            {c.cursiva}
-          </div>
-        </div>
+        />
+        <Palabras
+          texto={c.cursiva}
+          desde={14 + c.titulo.split(" ").length * PASO_PALABRA + 4}
+          estilo={{
+            fontFamily: tp.serif,
+            fontStyle: "italic",
+            fontWeight: tp.cursiva,
+            fontSize: alto ? 76 : 66,
+            lineHeight: 1.1,
+          }}
+        />
         <div
           style={{
             marginTop: alto ? 34 : 24,
@@ -381,8 +461,8 @@ const Cierre: React.FC<{
             fontFamily: tp.sans,
             fontWeight: 700,
             fontSize: alto ? 40 : 36,
-            opacity: e(30),
-            transform: `scale(${0.94 + 0.06 * e(30)})`,
+            opacity: e(40),
+            transform: `translateY(${(1 - e(40)) * 22}px)`,
             boxShadow: "0 12px 34px rgba(0,0,0,0.35)",
           }}
         >
@@ -395,7 +475,7 @@ const Cierre: React.FC<{
               fontFamily: tp.sans,
               fontWeight: 500,
               fontSize: alto ? 30 : 28,
-              opacity: e(40) * 0.9,
+              opacity: e(50) * 0.9,
             }}
           >
             Personalizado en alpaca y bronce
