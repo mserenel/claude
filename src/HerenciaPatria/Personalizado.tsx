@@ -101,124 +101,84 @@ type Rotulo = {
   readonly cursiva?: string;
 };
 
-type Tramo = {
-  readonly ini: number; // segundo del original
-  readonly vel: number;
-  readonly desde: number; // cuadro del anuncio
-  readonly hasta: number;
-  readonly cierre?: boolean;
-};
+// Sin cortes ni fundidos: el video original corre de corrido, a velocidad
+// real, desde el segundo 0,3. Sólo se superponen los textos y el cierre.
+const INICIO = 0.3;
+// Cuadro del anuncio en el que se ve un segundo del original.
+const en = (seg: number) => Math.round((seg - INICIO) * 30);
+// El cierre (logo, frase y WhatsApp) entra sobre el último giro.
+const CIERRE = en(11.6);
+const SUAVE = 18;
 
-// Cuadro del anuncio en el que aparece un segundo del original dentro de un
-// tramo (para ubicar los textos sobre cada detalle).
-const en = (t: Tramo, seg: number) =>
-  Math.round(t.desde + ((seg - t.ini) / t.vel) * 30);
-
-const VEL = 0.85;
-const FUNDIDO = 18;
-
-const tramos: Record<Version, Tramo[]> = {
+const rotulos: Record<Version, Rotulo[]> = {
   A: [
-    { ini: 2.0, vel: VEL, desde: 0, hasta: 332 },
     {
-      ini: 13.6,
-      vel: 0.7,
-      desde: 332 - FUNDIDO,
-      hasta: PERSONALIZADO_FRAMES,
-      cierre: true,
+      desde: 0,
+      hasta: en(4.3),
+      texto: "Hay cosas",
+      cursiva: "que se heredan.",
+    },
+    {
+      desde: en(4.4),
+      hasta: en(6.2),
+      kicker: "CINCELADO A MANO",
+      texto: "Alrededor de cada dije",
+    },
+    {
+      desde: en(6.3),
+      hasta: en(8.9),
+      texto: "Con tus iniciales,",
+      cursiva: "tu historia.",
+    },
+    {
+      desde: en(9.0),
+      hasta: CIERRE - 4,
+      texto: "Tus colores,",
+      cursiva: "para siempre.",
     },
   ],
   B: [
-    { ini: 0.3, vel: VEL, desde: 0, hasta: 304 },
+    { desde: 0, hasta: en(2.0), texto: "Mirá", cursiva: "este detalle." },
     {
-      ini: 13.6,
-      vel: 0.6,
-      desde: 304 - FUNDIDO,
-      hasta: PERSONALIZADO_FRAMES,
-      cierre: true,
+      desde: en(2.1),
+      hasta: en(4.3),
+      kicker: "DIJES DE BRONCE",
+      texto: "El Sol de Mayo",
+    },
+    {
+      desde: en(4.4),
+      hasta: en(6.2),
+      kicker: "VIROLA DE ALPACA",
+      texto: "Cincelada a mano",
+    },
+    {
+      desde: en(6.3),
+      hasta: CIERRE - 4,
+      kicker: "PERSONALIZADO",
+      texto: "Letras y escudos",
+      cursiva: "a tu gusto.",
     },
   ],
   C: [
-    { ini: 8.8, vel: VEL, desde: 0, hasta: 166 },
-    { ini: 2.0, vel: VEL, desde: 166 - FUNDIDO, hasta: 251 },
     {
-      ini: 13.6,
-      vel: 0.55,
-      desde: 251 - FUNDIDO,
-      hasta: PERSONALIZADO_FRAMES,
-      cierre: true,
+      desde: 0,
+      hasta: en(4.3),
+      texto: "Tus iniciales.",
+      cursiva: "En tu mate.",
+    },
+    {
+      desde: en(4.4),
+      hasta: en(8.9),
+      kicker: "PERSONALIZADO",
+      texto: "En alpaca y bronce",
+    },
+    {
+      desde: en(9.0),
+      hasta: CIERRE - 4,
+      texto: "Tu escudo.",
+      cursiva: "Tus colores.",
     },
   ],
-};
-
-const rotulos: Record<Version, Rotulo[]> = {
-  A: (() => {
-    const t = tramos.A[0];
-    return [
-      {
-        desde: 0,
-        hasta: en(t, 4.3),
-        texto: "Hay cosas",
-        cursiva: "que se heredan.",
-      },
-      {
-        desde: en(t, 4.4),
-        hasta: en(t, 6.2),
-        kicker: "CINCELADO A MANO",
-        texto: "Alrededor de cada dije",
-      },
-      {
-        desde: en(t, 6.3),
-        hasta: en(t, 8.9),
-        texto: "Con tus iniciales,",
-        cursiva: "tu historia.",
-      },
-      {
-        desde: en(t, 9.0),
-        hasta: 326,
-        texto: "Tus colores,",
-        cursiva: "para siempre.",
-      },
-    ];
-  })(),
-  B: (() => {
-    const t = tramos.B[0];
-    return [
-      { desde: 0, hasta: en(t, 2.0), texto: "Mirá", cursiva: "este detalle." },
-      {
-        desde: en(t, 2.1),
-        hasta: en(t, 4.3),
-        kicker: "DIJES DE BRONCE",
-        texto: "El Sol de Mayo",
-      },
-      {
-        desde: en(t, 4.4),
-        hasta: en(t, 6.2),
-        kicker: "VIROLA DE ALPACA",
-        texto: "Cincelada a mano",
-      },
-      {
-        desde: en(t, 6.3),
-        hasta: 298,
-        kicker: "PERSONALIZADO",
-        texto: "Letras y escudos",
-        cursiva: "a tu gusto.",
-      },
-    ];
-  })(),
-  C: (() => {
-    const [t1, t2] = tramos.C;
-    return [
-      {
-        desde: 0,
-        hasta: en(t1, 11.4),
-        texto: "Tu escudo.",
-        cursiva: "En tu mate.",
-      },
-      { desde: en(t1, 11.5), hasta: 160, texto: "Tus iniciales." },
-      { desde: t2.desde + 10, hasta: 245, texto: "Tu símbolo." },
-    ];
-  })(),
 };
 
 const cierre: Record<Version, { titulo: string; cursiva: string }> = {
@@ -227,41 +187,36 @@ const cierre: Record<Version, { titulo: string; cursiva: string }> = {
   C: { titulo: "Hacé el tuyo", cursiva: "a tu medida." },
 };
 
-const Clip: React.FC<{
-  readonly tramo: Tramo;
-  readonly formato: Formato;
-  readonly primero: boolean;
-}> = ({ tramo, formato, primero }) => {
+const Clip: React.FC<{ readonly formato: Formato }> = ({ formato }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const dur = tramo.hasta - tramo.desde;
-  // Acercamiento muy lento y parejo, sin saltos de escala entre tramos.
-  const k = tramo.cierre
-    ? interpolate(f, [0, dur], [1.16, 1.22])
-    : interpolate(f, [0, dur], [1.2, 1.28]);
-  const entra = primero
-    ? 1
-    : interpolate(f, [0, FUNDIDO], [0, 1], {
-        extrapolateRight: "clamp",
-        easing: Easing.inOut(Easing.sin),
-      });
-  const fy = formato === "4x5" ? 42 : 40;
-  // En el cierre el mate baja un poco para dejar lugar al logo y al texto.
-  const dy = tramo.cierre ? (formato === "9x16" ? 110 : 44) : 0;
+  // Acercamiento muy lento y parejo durante todo el video.
+  const k = interpolate(f, [0, PERSONALIZADO_FRAMES], [1.16, 1.26]);
+  // Al llegar el cierre, el mate baja despacio para dejar lugar al logo.
+  const dy = interpolate(
+    f,
+    [CIERRE, CIERRE + 60],
+    [0, formato === "9x16" ? 110 : 44],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: Easing.inOut(Easing.sin),
+    },
+  );
+  const fy = formato === "4x5" ? 44 : 42;
   return (
-    <AbsoluteFill style={{ opacity: entra, overflow: "hidden" }}>
+    <AbsoluteFill style={{ overflow: "hidden" }}>
       <OffthreadVideo
         src={staticFile("hp-personalizado/mate-personalizado.mp4")}
-        trimBefore={Math.round(tramo.ini * fps)}
-        playbackRate={tramo.vel}
+        trimBefore={Math.round(INICIO * fps)}
         muted
         style={{
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          objectPosition: `50% ${tramo.cierre ? 46 : fy}%`,
+          objectPosition: `50% ${fy}%`,
           transform: `translateY(${dy}px) scale(${k})`,
-          transformOrigin: `50% ${tramo.cierre ? 46 : fy}%`,
+          transformOrigin: `50% ${fy}%`,
         }}
       />
     </AbsoluteFill>
@@ -349,7 +304,7 @@ const Cierre: React.FC<{
 }> = ({ version, formato, tp }) => {
   const f = useCurrentFrame();
   const e = (a: number) =>
-    interpolate(f, [a, a + 16], [0, 1], {
+    interpolate(f, [a, a + 24], [0, 1], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
       easing: Easing.out(Easing.cubic),
@@ -461,29 +416,15 @@ export const MatePersonalizado: React.FC<{
   const alto = formato === "9x16";
   // Texto arriba del mate, dentro de la zona segura (Reels: 270–1250).
   const top = alto ? 330 : 80;
-  const lista = tramos[version];
-  const cierreDesde = lista[lista.length - 1].desde;
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
-      {lista.map((tr, i) => (
-        <Sequence
-          key={`t${i}`}
-          from={tr.desde}
-          durationInFrames={tr.hasta - tr.desde}
-        >
-          <Clip tramo={tr} formato={formato} primero={i === 0} />
-        </Sequence>
-      ))}
-      {/* Sombra suave arriba para leer el texto, se va al llegar al cierre */}
-      <Sequence durationInFrames={cierreDesde + FUNDIDO}>
-        <SombraArriba alto={alto} hasta={cierreDesde} />
+      <Clip formato={formato} />
+      {/* Sombra suave arriba para leer el texto; se va al llegar el cierre */}
+      <Sequence durationInFrames={CIERRE + SUAVE}>
+        <SombraArriba alto={alto} hasta={CIERRE} />
       </Sequence>
       {rotulos[version].map((r, i) => (
-        <Sequence
-          key={`r${i}`}
-          from={r.desde}
-          durationInFrames={r.hasta - r.desde}
-        >
+        <Sequence key={i} from={r.desde} durationInFrames={r.hasta - r.desde}>
           <Texto
             paso={r}
             dur={r.hasta - r.desde}
@@ -493,7 +434,7 @@ export const MatePersonalizado: React.FC<{
           />
         </Sequence>
       ))}
-      <Sequence from={cierreDesde + FUNDIDO}>
+      <Sequence from={CIERRE}>
         <Cierre version={version} formato={formato} tp={tp} />
       </Sequence>
     </AbsoluteFill>
@@ -505,7 +446,7 @@ const SombraArriba: React.FC<{
   readonly hasta: number;
 }> = ({ alto, hasta }) => {
   const f = useCurrentFrame();
-  const o = interpolate(f, [hasta, hasta + FUNDIDO], [1, 0], {
+  const o = interpolate(f, [hasta, hasta + SUAVE], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
