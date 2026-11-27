@@ -86,87 +86,139 @@ const cargarProvisoria = () => {
     .catch((err) => cancelRender(err));
 };
 
-// Tomas del video original (segundos) y su encuadre: zoom y punto de foco
-// en % del cuadro (el mate está centrado, un poco arriba).
+// El video original es un solo giro continuo del mate. Para que fluya, cada
+// versión usa tramos largos de ese giro (en vez de muchos cortes) y sólo
+// pasa a otro tramo con un fundido lento. Los textos cambian mientras el
+// mate gira, cuando aparece cada detalle. En el original: letras «LAV»
+// 0–2 s, Sol de Mayo 2–4,4 s, cincelado 4,4–6,3 s, «MAM» 6,3–8,9 s, escudo
+// 9–11,4 s, vista de arriba 13,6–15,3 s.
 
-const T = {
-  lav: { ini: 0.3, z0: 1.18, z1: 1.28, fy: 40 },
-  sol: { ini: 2.0, z0: 1.15, z1: 1.3, fy: 40 },
-  hojas: { ini: 4.3, z0: 1.3, z1: 1.42, fy: 40 },
-  mam: { ini: 6.4, z0: 1.2, z1: 1.32, fy: 41 },
-  escudo: { ini: 9.0, z0: 1.18, z1: 1.3, fy: 41 },
-  arriba: { ini: 13.6, z0: 1.16, z1: 1.24, fy: 46, vel: 0.8, dy: 110 },
-} as const;
-
-type Plano = keyof typeof T;
-
-// Guion de cada versión: tomas en orden con su duración y el texto.
-type Paso = {
-  readonly toma: Plano;
-  readonly dur: number;
+type Rotulo = {
+  readonly desde: number; // cuadro del anuncio
+  readonly hasta: number;
   readonly kicker?: string;
   readonly texto?: string;
   readonly cursiva?: string;
 };
 
-const guiones: Record<Version, Paso[]> = {
+type Tramo = {
+  readonly ini: number; // segundo del original
+  readonly vel: number;
+  readonly desde: number; // cuadro del anuncio
+  readonly hasta: number;
+  readonly cierre?: boolean;
+};
+
+// Cuadro del anuncio en el que aparece un segundo del original dentro de un
+// tramo (para ubicar los textos sobre cada detalle).
+const en = (t: Tramo, seg: number) =>
+  Math.round(t.desde + ((seg - t.ini) / t.vel) * 30);
+
+const VEL = 0.85;
+const FUNDIDO = 18;
+
+const tramos: Record<Version, Tramo[]> = {
   A: [
-    { toma: "sol", dur: 72, texto: "Hay cosas", cursiva: "que se heredan." },
+    { ini: 2.0, vel: VEL, desde: 0, hasta: 332 },
     {
-      toma: "hojas",
-      dur: 60,
-      kicker: "CINCELADO A MANO",
-      texto: "Alrededor de cada dije",
+      ini: 13.6,
+      vel: 0.7,
+      desde: 332 - FUNDIDO,
+      hasta: PERSONALIZADO_FRAMES,
+      cierre: true,
     },
-    {
-      toma: "mam",
-      dur: 66,
-      texto: "Con tus iniciales,",
-      cursiva: "tu historia.",
-    },
-    {
-      toma: "escudo",
-      dur: 60,
-      texto: "Tus colores,",
-      cursiva: "para siempre.",
-    },
-    { toma: "arriba", dur: 192 },
   ],
   B: [
-    { toma: "lav", dur: 66, texto: "Mirá", cursiva: "este detalle." },
+    { ini: 0.3, vel: VEL, desde: 0, hasta: 304 },
     {
-      toma: "hojas",
-      dur: 60,
-      kicker: "VIROLA DE ALPACA",
-      texto: "Cincelada a mano",
+      ini: 13.6,
+      vel: 0.6,
+      desde: 304 - FUNDIDO,
+      hasta: PERSONALIZADO_FRAMES,
+      cierre: true,
     },
-    {
-      toma: "sol",
-      dur: 66,
-      kicker: "DIJES DE BRONCE",
-      texto: "El Sol de Mayo",
-    },
-    {
-      toma: "mam",
-      dur: 66,
-      kicker: "PERSONALIZADO",
-      texto: "Letras y escudos",
-      cursiva: "a tu gusto.",
-    },
-    { toma: "arriba", dur: 192 },
   ],
   C: [
-    { toma: "escudo", dur: 66, texto: "Tu escudo.", cursiva: "En tu mate." },
-    { toma: "mam", dur: 54, texto: "Tus iniciales." },
-    { toma: "sol", dur: 54, texto: "Tu símbolo." },
+    { ini: 8.8, vel: VEL, desde: 0, hasta: 166 },
+    { ini: 2.0, vel: VEL, desde: 166 - FUNDIDO, hasta: 251 },
     {
-      toma: "hojas",
-      dur: 60,
-      kicker: "PERSONALIZADO",
-      texto: "En alpaca y bronce",
+      ini: 13.6,
+      vel: 0.55,
+      desde: 251 - FUNDIDO,
+      hasta: PERSONALIZADO_FRAMES,
+      cierre: true,
     },
-    { toma: "arriba", dur: 216 },
   ],
+};
+
+const rotulos: Record<Version, Rotulo[]> = {
+  A: (() => {
+    const t = tramos.A[0];
+    return [
+      {
+        desde: 0,
+        hasta: en(t, 4.3),
+        texto: "Hay cosas",
+        cursiva: "que se heredan.",
+      },
+      {
+        desde: en(t, 4.4),
+        hasta: en(t, 6.2),
+        kicker: "CINCELADO A MANO",
+        texto: "Alrededor de cada dije",
+      },
+      {
+        desde: en(t, 6.3),
+        hasta: en(t, 8.9),
+        texto: "Con tus iniciales,",
+        cursiva: "tu historia.",
+      },
+      {
+        desde: en(t, 9.0),
+        hasta: 326,
+        texto: "Tus colores,",
+        cursiva: "para siempre.",
+      },
+    ];
+  })(),
+  B: (() => {
+    const t = tramos.B[0];
+    return [
+      { desde: 0, hasta: en(t, 2.0), texto: "Mirá", cursiva: "este detalle." },
+      {
+        desde: en(t, 2.1),
+        hasta: en(t, 4.3),
+        kicker: "DIJES DE BRONCE",
+        texto: "El Sol de Mayo",
+      },
+      {
+        desde: en(t, 4.4),
+        hasta: en(t, 6.2),
+        kicker: "VIROLA DE ALPACA",
+        texto: "Cincelada a mano",
+      },
+      {
+        desde: en(t, 6.3),
+        hasta: 298,
+        kicker: "PERSONALIZADO",
+        texto: "Letras y escudos",
+        cursiva: "a tu gusto.",
+      },
+    ];
+  })(),
+  C: (() => {
+    const [t1, t2] = tramos.C;
+    return [
+      {
+        desde: 0,
+        hasta: en(t1, 11.4),
+        texto: "Tu escudo.",
+        cursiva: "En tu mate.",
+      },
+      { desde: en(t1, 11.5), hasta: 160, texto: "Tus iniciales." },
+      { desde: t2.desde + 10, hasta: 245, texto: "Tu símbolo." },
+    ];
+  })(),
 };
 
 const cierre: Record<Version, { titulo: string; cursiva: string }> = {
@@ -175,43 +227,41 @@ const cierre: Record<Version, { titulo: string; cursiva: string }> = {
   C: { titulo: "Hacé el tuyo", cursiva: "a tu medida." },
 };
 
-const FUNDIDO = 8;
-
 const Clip: React.FC<{
-  readonly toma: Plano;
-  readonly dur: number;
+  readonly tramo: Tramo;
   readonly formato: Formato;
-  readonly primero?: boolean;
-}> = ({ toma, dur, formato, primero }) => {
+  readonly primero: boolean;
+}> = ({ tramo, formato, primero }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const t = T[toma];
-  const vel = "vel" in t ? t.vel : 0.9;
-  const k = interpolate(f, [0, dur], [t.z0, t.z1], {
-    easing: Easing.inOut(Easing.quad),
-  });
+  const dur = tramo.hasta - tramo.desde;
+  // Acercamiento muy lento y parejo, sin saltos de escala entre tramos.
+  const k = tramo.cierre
+    ? interpolate(f, [0, dur], [1.16, 1.22])
+    : interpolate(f, [0, dur], [1.2, 1.28]);
   const entra = primero
     ? 1
-    : interpolate(f, [0, FUNDIDO], [0, 1], { extrapolateRight: "clamp" });
-  // En 4:5 la toma vertical se ve entera de ancho y recortada arriba y abajo,
-  // centrada en el mate (no se deforma).
-  const fy = formato === "4x5" ? t.fy + 2 : t.fy;
+    : interpolate(f, [0, FUNDIDO], [0, 1], {
+        extrapolateRight: "clamp",
+        easing: Easing.inOut(Easing.sin),
+      });
+  const fy = formato === "4x5" ? 42 : 40;
   // En el cierre el mate baja un poco para dejar lugar al logo y al texto.
-  const dy = "dy" in t ? (formato === "9x16" ? t.dy : t.dy * 0.4) : 0;
+  const dy = tramo.cierre ? (formato === "9x16" ? 110 : 44) : 0;
   return (
     <AbsoluteFill style={{ opacity: entra, overflow: "hidden" }}>
       <OffthreadVideo
         src={staticFile("hp-personalizado/mate-personalizado.mp4")}
-        trimBefore={Math.round(t.ini * fps)}
-        playbackRate={vel}
+        trimBefore={Math.round(tramo.ini * fps)}
+        playbackRate={tramo.vel}
         muted
         style={{
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          objectPosition: `50% ${fy}%`,
+          objectPosition: `50% ${tramo.cierre ? 46 : fy}%`,
           transform: `translateY(${dy}px) scale(${k})`,
-          transformOrigin: `50% ${fy}%`,
+          transformOrigin: `50% ${tramo.cierre ? 46 : fy}%`,
         }}
       />
     </AbsoluteFill>
@@ -219,7 +269,7 @@ const Clip: React.FC<{
 };
 
 const Texto: React.FC<{
-  readonly paso: Paso;
+  readonly paso: Rotulo;
   readonly dur: number;
   readonly top: number;
   readonly gancho?: boolean;
@@ -227,12 +277,12 @@ const Texto: React.FC<{
 }> = ({ paso, dur, top, gancho, tp }) => {
   const f = useCurrentFrame();
   if (!paso.texto) return null;
-  const e = interpolate(f, gancho ? [-10, 2] : [4, 18], [0, 1], {
+  const e = interpolate(f, gancho ? [-10, 2] : [0, 16], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: Easing.out(Easing.cubic),
   });
-  const s = interpolate(f, [dur - 8, dur], [1, 0], {
+  const s = interpolate(f, [dur - 12, dur], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -408,55 +458,65 @@ export const MatePersonalizado: React.FC<{
 }> = ({ version, formato, provisoria }) => {
   if (provisoria) cargarProvisoria();
   const tp = provisoria ? tiposProvisorios : tiposMarca;
-  const pasos = guiones[version];
   const alto = formato === "9x16";
   // Texto arriba del mate, dentro de la zona segura (Reels: 270–1250).
   const top = alto ? 330 : 80;
-  let t = 0;
+  const lista = tramos[version];
+  const cierreDesde = lista[lista.length - 1].desde;
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
-      {pasos.map((p, i) => {
-        const desde = t;
-        t += p.dur;
-        const ultimo = i === pasos.length - 1;
-        return (
-          <Sequence
-            key={i}
-            from={Math.max(0, desde - (i ? FUNDIDO : 0))}
-            durationInFrames={p.dur + (i ? FUNDIDO : 0)}
-          >
-            <Clip
-              toma={p.toma}
-              dur={p.dur + FUNDIDO}
-              formato={formato}
-              primero={i === 0}
-            />
-            {/* Sombra suave arriba para leer el texto */}
-            {!ultimo ? (
-              <AbsoluteFill
-                style={{
-                  background: alto
-                    ? "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.12) 32%, rgba(0,0,0,0) 45%)"
-                    : "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0) 50%)",
-                }}
-              />
-            ) : null}
-            <Sequence from={i ? FUNDIDO : 0} layout="none">
-              {ultimo ? (
-                <Cierre version={version} formato={formato} tp={tp} />
-              ) : (
-                <Texto
-                  paso={p}
-                  dur={p.dur}
-                  top={top}
-                  gancho={i === 0}
-                  tp={tp}
-                />
-              )}
-            </Sequence>
-          </Sequence>
-        );
-      })}
+      {lista.map((tr, i) => (
+        <Sequence
+          key={`t${i}`}
+          from={tr.desde}
+          durationInFrames={tr.hasta - tr.desde}
+        >
+          <Clip tramo={tr} formato={formato} primero={i === 0} />
+        </Sequence>
+      ))}
+      {/* Sombra suave arriba para leer el texto, se va al llegar al cierre */}
+      <Sequence durationInFrames={cierreDesde + FUNDIDO}>
+        <SombraArriba alto={alto} hasta={cierreDesde} />
+      </Sequence>
+      {rotulos[version].map((r, i) => (
+        <Sequence
+          key={`r${i}`}
+          from={r.desde}
+          durationInFrames={r.hasta - r.desde}
+        >
+          <Texto
+            paso={r}
+            dur={r.hasta - r.desde}
+            top={top}
+            gancho={i === 0}
+            tp={tp}
+          />
+        </Sequence>
+      ))}
+      <Sequence from={cierreDesde + FUNDIDO}>
+        <Cierre version={version} formato={formato} tp={tp} />
+      </Sequence>
     </AbsoluteFill>
+  );
+};
+
+const SombraArriba: React.FC<{
+  readonly alto: boolean;
+  readonly hasta: number;
+}> = ({ alto, hasta }) => {
+  const f = useCurrentFrame();
+  const o = interpolate(f, [hasta, hasta + FUNDIDO], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return (
+    <AbsoluteFill
+      style={{
+        opacity: o,
+        background: alto
+          ? "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.12) 32%, rgba(0,0,0,0) 45%)"
+          : "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.1) 35%, rgba(0,0,0,0) 50%)",
+      }}
+    />
   );
 };
